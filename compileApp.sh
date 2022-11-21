@@ -1,1 +1,1 @@
-java -cp target/classes/ ibarodf.App
+mvn exec:java -D exec.mainClass=ibarodf.App
