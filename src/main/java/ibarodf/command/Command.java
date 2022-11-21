@@ -1,0 +1,14 @@
+package ibarodf.command;
+public enum Command {
+    DISPLAY_HELP,
+    DISPLAY_THE_META_DATA_OF_A_FILE,
+    //Operations on OTD file
+    DISPLAY_THE_META_DATA_OF_AN_ODT_FILE,
+    CHANGE_THE_TITLE_OF_AN_ODT_FILE,
+    ADD_A_NEW_SUBJECT_TO_AN_ODT_FILE,
+    ADD_A_KEYWORD_TO_AN_ODT_FILE,
+    REPLACE_THE_DESCRIPTION_OF_AN_ODT_FILE,
+    //Operation directory
+    DISPLAY_THE_META_DATA_OF_ODT_FILES_IN_A_DIRECTORY; 
+
+}   

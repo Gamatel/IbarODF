@@ -1,0 +1,28 @@
+HELP
+
+    DESCRIPTION
+        This program allows you to view the metadata of ODT files and edit some of them.
+    
+
+    CONTROLS
+    -h ou --help
+        display help
+
+    -f [file_name] or --file [file_name]
+        If [file_name] is an ODT file : displays its metadata.
+        Else display the name and the type of the file.
+
+        Command options ONLY FOR ODT FILES 
+            -t [new_file_name] or --title [new_file_name]
+                Change the file's name.
+            -s [subject] --subject [subject]
+                Add a new subject.
+            -k [keyword] or --keyword [keyword]
+                Add a new keyword.
+            -de [description] or --description [description]
+                Replaces the previous description with the new one.
+    
+    -d [path] or --directory [path]
+        Displays metadata for ODT files in a directory.
+
+    
