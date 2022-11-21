@@ -1,4 +1,5 @@
 package ibarodf.command;
+
 public enum Command {
     DISPLAY_HELP,
     DISPLAY_THE_META_DATA_OF_A_FILE,
