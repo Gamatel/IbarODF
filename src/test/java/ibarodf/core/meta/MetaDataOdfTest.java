@@ -14,13 +14,12 @@ import org.odftoolkit.odfdom.incubator.meta.OdfOfficeMeta;
 /**
  * Unit test for simple App.
  */
-public class MetaDataAbstractTest  
-{
+public class MetaDataOdfTest  {
     /**
      * Rigorous Test :-)
      */
 	@Test
-	public void testMetaDataAbstract  () throws Exception {
+	public void testMetaDataOdf  () throws Exception {
 		testSetter();
 		testConstructor();
 	}
@@ -40,7 +39,7 @@ public class MetaDataAbstractTest
 		final String value1 = "un test";
 		final String value2 = "un autre test";
 
-		MetaDataAbstract metaDataTitle = new MetaDataTitle(meta, value1);
+		MetaDataOdf metaDataTitle = new MetaDataTitle(meta, value1);
 
 		try {
 			metaDataTitle.setValue(value2);
@@ -61,7 +60,7 @@ public class MetaDataAbstractTest
 
 		final String value = "test";
 
-		MetaDataAbstract metaDataTitle = new MetaDataTitle(meta, value);
+		MetaDataOdf metaDataTitle = new MetaDataTitle(meta, value);
 		assertEquals(value, metaDataTitle.getValue());
 		assertEquals(MetaDataTitle.attr, metaDataTitle.getAttribut());
 	}

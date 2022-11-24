@@ -14,13 +14,12 @@ import org.odftoolkit.odfdom.incubator.meta.OdfOfficeMeta;
 /**
  * Unit test for simple App.
  */
-public class MetaDataAbstractTest  
-{
+public class MetaDataSubjectTest {
     /**
      * Rigorous Test :-)
      */
 	@Test
-	public void testMetaDataAbstract  () throws Exception {
+	public void testMetaDataSubject  () throws Exception {
 		testSetter();
 		testConstructor();
 	}
@@ -29,7 +28,7 @@ public class MetaDataAbstractTest
 		OdfMetaDom metaDom = odf.getMetaDom();
 		OdfOfficeMeta meta = new OdfOfficeMeta(metaDom);
 
-		return meta.getTitle();
+		return meta.getSubject();
 	}
 
 	private void testSetter() throws Exception{
@@ -40,18 +39,18 @@ public class MetaDataAbstractTest
 		final String value1 = "un test";
 		final String value2 = "un autre test";
 
-		MetaDataAbstract metaDataTitle = new MetaDataTitle(meta, value1);
+		MetaDataSubject metaData = new MetaDataSubject(meta, value1);
 
 		try {
-			metaDataTitle.setValue(value2);
+			metaData.setValue(value2);
 		} catch(Exception e){
 			System.err.print(e.getMessage() + "\n");
 			assertNull(e);
 		}
 
-		assertEquals(value2, metaDataTitle.getValue());
+		assertEquals(value2, metaData.getValue());
 		assertEquals(value2, getAttributTitleInOdf(testOdf));
-		assertEquals(metaDataTitle.getAttribut(), MetaDataTitle.attr);
+		assertEquals(metaData.getAttribut(), MetaDataSubject.attr);
 	}
 
 	private void testConstructor() throws Exception{
@@ -61,11 +60,12 @@ public class MetaDataAbstractTest
 
 		final String value = "test";
 
-		MetaDataAbstract metaDataTitle = new MetaDataTitle(meta, value);
-		assertEquals(value, metaDataTitle.getValue());
-		assertEquals(MetaDataTitle.attr, metaDataTitle.getAttribut());
+		MetaDataSubject metaData = new MetaDataSubject(meta, value);
+		assertEquals(value, metaData.getValue());
+		assertEquals(MetaDataSubject.attr, metaData.getAttribut());
 	}
 }
+
 
 
 

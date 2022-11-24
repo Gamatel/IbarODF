@@ -1,8 +1,10 @@
 package ibarodf.core.meta;
 
+import java.text.ParseException;
+
 public abstract class MetaDataAbstract {
 
-	private String attribut;
+	private final String attribut;
 	private String value;
 
 	public MetaDataAbstract(String attribut, String value) {
@@ -10,15 +12,11 @@ public abstract class MetaDataAbstract {
 		this.value = value;
 	}
 
-	public void setAttribut(String attribut) {
-		this.attribut = attribut;
-	}
-
 	public String getAttribut() {
 		return attribut;
 	}
 
-	public void setValue(String value) throws LockMetaDataException {
+	public void setValue(String value) throws ParseException {
 		this.value = value;
 	}
 
