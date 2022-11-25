@@ -8,12 +8,12 @@ import org.odftoolkit.odfdom.incubator.meta.OdfOfficeMeta;
 import java.text.ParseException;
 
 public class MetaDataCreationDate extends MetaDataOdf {
-	public final static String attr = "CreationDate";
+	public final static String ATTR = "CreationDate";
 	private final static String DATE_FORMAT = "dd/MM/yyyy HH:mm:ss";
 	public final static SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat(DATE_FORMAT);
 
 	public MetaDataCreationDate(final OdfOfficeMeta meta, final String value) {
-		super(meta, attr, value);
+		super(meta, ATTR, value);
 	}
 
 	public void setValue(final String value) throws ParseException {

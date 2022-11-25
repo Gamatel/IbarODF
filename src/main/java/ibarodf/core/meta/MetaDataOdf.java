@@ -2,7 +2,7 @@ package ibarodf.core.meta;
 
 import org.odftoolkit.odfdom.incubator.meta.OdfOfficeMeta;
 
-public class MetaDataOdf extends MetaDataAbstract {
+public class MetaDataOdf extends AbstractMetaData {
 	private final OdfOfficeMeta meta;
 
 	public MetaDataOdf(OdfOfficeMeta meta, String attribut, String value) {

@@ -5,13 +5,15 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import ibarodf.command.*;
+import ibarodf.core.ibarODFCore;
+import ibarodf.core.file.*;
 
 
 public class Main {
 
     public static void help(){
         try{
-            BufferedReader helpReader = new BufferedReader(new FileReader("src\\main\\java\\ibarodf\\help.txt"));
+            BufferedReader helpReader = new BufferedReader(new FileReader("help.txt"));
             String line;
             while((line = helpReader.readLine()) != null){
                 System.out.println(line);
@@ -29,17 +31,18 @@ public class Main {
             Command actionToPerform = askedActionToPerform.translate();
             if(actionToPerform == Command.DISPLAY_HELP){
                 help();
-            }else{// Path
-                System.out.println("Instanciation of IbarOdf :\nAction to perform : "+ actionToPerform);
-                System.out.println("on a the file of path : "+ CommandTranslator.stringToPath(args[1]));
-                
-
+            }else{
+                ibarODFCore ibar = new ibarODFCore(actionToPerform, CommandTranslator.stringToPath(args[1]), args);
+                System.out.println(ibar.launchCore());
             }
         }catch(NotAllowedCommandException e){
             System.out.println(e.getMessage());
         }catch(FileNotFoundException e){
             System.out.println(e.getMessage());
-        }catch(Exception e){
+        }catch(org.odftoolkit.odfdom.pkg.OdfValidationException e){
+            System.err.println("Is not  REAL odtFile.");
+        }
+        catch(Exception e){
             System.err.println("Something went wrong...");
             e.printStackTrace();
         }

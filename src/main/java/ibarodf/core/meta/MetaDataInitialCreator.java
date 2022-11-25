@@ -4,10 +4,10 @@ import java.text.ParseException;
 import org.odftoolkit.odfdom.incubator.meta.OdfOfficeMeta;
 
 public class MetaDataInitialCreator extends MetaDataOdf {
-	public final static String attr = "InitialCreator";
+	public final static String ATTR = "InitialCreator";
 
 	public MetaDataInitialCreator(OdfOfficeMeta meta, String value) {
-		super(meta, attr, value);
+		super(meta, ATTR, value);
 	}
 
 	public void setValue(String value) throws ParseException {

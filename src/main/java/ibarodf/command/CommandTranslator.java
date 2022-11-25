@@ -1,14 +1,14 @@
 package ibarodf.command;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
 
 
 public class CommandTranslator {
-    String[] command;
+    private String[] command;
     public CommandTranslator(String[] command){
         this.command = command;
     }
@@ -49,7 +49,8 @@ public class CommandTranslator {
     
     
     public static Path stringToPath(String filePath) throws FileNotFoundException, IOException{
-        Path path =  FileSystems.getDefault().getPath(filePath);
+        File file = new File(filePath);
+        Path path = file.toPath().toAbsolutePath().normalize();
         return path;
     }
 
@@ -66,19 +67,14 @@ public class CommandTranslator {
     public static boolean existsFile(String filePath){
         boolean exists = false;
         try{
-            Path path = stringToPath(filePath);
-            exists = Files.exists(path);
+            stringToPath(filePath);
+            exists = true;
         }catch(SecurityException e){
             e.getMessage();
         }catch(Exception e){
             System.err.println(e.getMessage());
         }
         return exists;
-    }
-    
-    public static boolean isADirectory(String filePath) throws FileNotFoundException, IOException{
-        Path path = stringToPath(filePath);
-        return existsFile(filePath) && Files.isDirectory(path);
     }
 
     public static boolean isAnOdtFile(String filePath)throws NotAllowedCommandException{
@@ -128,9 +124,6 @@ public class CommandTranslator {
         }
         throw new NotAllowedCommandException("cannot perform such operation on a directory.");
     }
-
-
-
     public Command translate() throws NotAllowedCommandException, FileNotFoundException, IOException{
         if(command.length == 0){
             throw new NotAllowedCommandException("no arguments.");
@@ -143,7 +136,7 @@ public class CommandTranslator {
         Command askedCommand = null;
         if(!existsFile(filePath)){
             throw new FileNotFoundException("the file "+filePath+ " does not exist");
-        }else if(isADirectory(filePath)){
+        }else if(Files.isDirectory(stringToPath(filePath))){
             askedCommand = actionToPerformOnADirectory();
         }else if(isAnOdtFile(filePath)){
             askedCommand = actionToPerformOnAnOdtFile();
