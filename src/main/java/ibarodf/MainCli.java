@@ -6,8 +6,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import ibarodf.command.*;
 import ibarodf.core.ibarODFCore;
-import ibarodf.core.file.*;
-
 
 public class MainCli {
 
@@ -44,7 +42,6 @@ public class MainCli {
         }
         catch(Exception e){
             System.err.println("Something went wrong...");
-            e.printStackTrace();
         }
     }
 }

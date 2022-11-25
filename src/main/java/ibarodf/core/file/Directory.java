@@ -1,6 +1,7 @@
 package ibarodf.core.file;
 import java.util.ArrayList;
 import java.io.File;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import ibarodf.command.*;
@@ -44,7 +45,7 @@ public  class Directory extends AbstractGenericFile {
         textPath = directory.list();
         try{
             for(String currentPath : textPath){ 
-                filesPath.add(CommandTranslator.stringToPath(getPath()+"\\"+currentPath));
+                filesPath.add(CommandTranslator.stringToPath(getPath()+FileSystems.getDefault().getSeparator()+currentPath));
             } 
         }catch(Exception e){
             System.err.println(e.getMessage());
