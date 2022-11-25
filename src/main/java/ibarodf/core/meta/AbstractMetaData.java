@@ -2,12 +2,12 @@ package ibarodf.core.meta;
 
 import java.text.ParseException;
 
-public abstract class MetaDataAbstract {
+public abstract class AbstractMetaData {
 
 	private final String attribut;
 	private String value;
 
-	public MetaDataAbstract(String attribut, String value) {
+	public AbstractMetaData(String attribut, String value) {
 		this.attribut = attribut;
 		this.value = value;
 	}
