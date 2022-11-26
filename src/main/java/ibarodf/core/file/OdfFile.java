@@ -28,13 +28,13 @@ public class OdfFile extends AbstractRegularFile {
 		odf = OdfDocument.loadDocument(getPath().toString());
 		OdfMetaDom metaDom = odf.getMetaDom();
 		meta = new OdfOfficeMeta(metaDom);
+		super.loadMetaData();
 		initAllMeta();
 	}
 
-	private void initAllMeta() {
+	private void initAllMeta() throws Exception{
 		Calendar calendar = meta.getCreationDate();
 		String calendarStr = MetaDataCreationDate.CalendarToFormattedString(calendar);
-
 		addMetaData(MetaDataTitle.ATTR, new MetaDataTitle(meta, meta.getTitle()));
 		addMetaData(MetaDataCreator.ATTR, new MetaDataCreator(meta, meta.getCreator()));
 		addMetaData(MetaDataInitialCreator.ATTR, new MetaDataInitialCreator(meta, meta.getInitialCreator()));

@@ -33,7 +33,6 @@ public  class Directory extends AbstractGenericFile {
             }
         }catch(Exception e){
             System.err.println(e.getMessage());
-            System.err.println(e.getStackTrace());
         }
     }
 
