@@ -27,7 +27,7 @@ public class CommandTranslator {
     
     
     private boolean isAskingToOperateOnAFile(){
-        return (command.length == 2 || command.length == 4) && (command[0].equals("-f") || command[0].equals("--file"));
+        return (command.length >= 2 && command.length <= 4) && (command[0].equals("-f") || command[0].equals("--file"));
     }
     
     private boolean isAskingToChangeTheTitleOfAFile(){
@@ -42,11 +42,19 @@ public class CommandTranslator {
         return isAskingToOperateOnAFile() && (command[2].equals("-k") || command[2].equals("--keyword"));
     }
 
-    
-    private boolean isAskingToReplaceTheDescriptionOfAFile(){
+    private boolean isAskingToChangeTheCommentsOfAFile(){
+        return isAskingToOperateOnAFile() && (command[2].equals("-co") || command[2].equals("--comments"));
+    }
+
+    private boolean isAskingToChangeTheCreatorOfAFile(){
+        return isAskingToOperateOnAFile() && (command[2].equals("-cr") || command[2].equals("--creator"));
+    }
+
+    private boolean isAskingToChangeTheDescriptionOfAFile(){
         return isAskingToOperateOnAFile() && (command[2].equals("-de") || command[2].equals("--description"));
     }
     
+
     
     public static Path stringToPath(String filePath) throws FileNotFoundException, IOException{
         File file = new File(filePath);
@@ -99,10 +107,14 @@ public class CommandTranslator {
         }else if(isAskingToChangeTheTitleOfAFile()){
             return Command.CHANGE_THE_TITLE_OF_AN_ODT_FILE;
         }else if(isAskingToAddASubjectToAFile()){
-            return Command.ADD_A_NEW_SUBJECT_TO_AN_ODT_FILE;
+            return Command.CHANGE_THE_SUBJECT_OF_AN_ODT_FILE ;
         }else if(isAskingToAddAKeywordToAFile()){
             return Command.ADD_A_KEYWORD_TO_AN_ODT_FILE;
-        }else if(isAskingToReplaceTheDescriptionOfAFile()){
+        }else if(isAskingToChangeTheCommentsOfAFile()){
+            return Command.CHANGE_THE_COMMENTS_OF_AN_ODT_FILE;
+        }else if(isAskingToChangeTheCreatorOfAFile()){
+            return Command.CHANGE_THE_CREATOR_OF_AN_ODT_FILE;
+        }else if(isAskingToChangeTheDescriptionOfAFile()){
             return Command.REPLACE_THE_DESCRIPTION_OF_AN_ODT_FILE;
         }
         throw new NotAllowedCommandException("unknown command.");

@@ -3,9 +3,9 @@ package ibarodf.core.meta;
 import java.text.ParseException;
 import org.odftoolkit.odfdom.incubator.meta.OdfOfficeMeta;
 
-public class MetaDataDescription extends MetaDataOdf {
-	public final static String ATTR = "Description";
-	public MetaDataDescription(OdfOfficeMeta meta, String value) {
+public class MetaDataComment extends MetaDataOdf {
+	public final static String ATTR = "Comments";
+	public MetaDataComment(OdfOfficeMeta meta, String value) {
 		super(meta, ATTR, value);
 	}
 

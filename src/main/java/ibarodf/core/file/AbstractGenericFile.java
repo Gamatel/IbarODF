@@ -14,6 +14,6 @@ public abstract class AbstractGenericFile {
         return path;
     }
 
-    abstract StringBuilder displayMetaData();
+    abstract StringBuilder displayMetaData() throws Exception;
     
 }

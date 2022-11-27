@@ -44,7 +44,7 @@ public  class Directory extends AbstractGenericFile {
         textPath = directory.list();
         try{
             for(String currentPath : textPath){ 
-                filesPath.add(CommandTranslator.stringToPath(getPath()+FileSystems.getDefault().getSeparator()+currentPath));
+                filesPath.add(CommandTranslator.stringToPath(getPath().toString()+FileSystems.getDefault().getSeparator()+currentPath));
             } 
         }catch(Exception e){
             System.err.println(e.getMessage());
@@ -54,7 +54,7 @@ public  class Directory extends AbstractGenericFile {
 
 
 
-    public StringBuilder displayMetaData(){
+    public StringBuilder displayMetaData() throws Exception{
         StringBuilder metaDataStr = new StringBuilder();
         String directoryName = getPath().getFileName().toString()+":{\n";
         metaDataStr.append(directoryName);
