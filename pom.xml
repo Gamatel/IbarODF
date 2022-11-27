@@ -23,6 +23,12 @@
 		<version>4.11</version>
 		<scope>test</scope>
 	</dependency>
+  <!--  -->
+  <dependency>
+    <groupId>net.lingala.zip4j</groupId>
+    <artifactId>zip4j</artifactId>
+    <version>1.3.2</version>
+  </dependency>
 	<!-- https://mvnrepository.com/artifact/org.odftoolkit/odfdom-java -->
 	<dependency>
 		<groupId>org.odftoolkit</groupId>
@@ -81,7 +87,7 @@
               <configuration>
                   <archive>
                       <manifest>
-                          <mainClass>ibarodf.Main</mainClass>
+                          <mainClass>ibarodf.MainCli</mainClass>
                       </manifest>
                   </archive>
                   <descriptorRefs>

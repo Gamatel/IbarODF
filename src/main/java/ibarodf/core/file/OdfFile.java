@@ -11,6 +11,7 @@ import ibarodf.core.meta.MetaDataCreator;
 import ibarodf.core.meta.MetaDataInitialCreator;
 import ibarodf.core.meta.MetaDataSubject;
 import ibarodf.core.meta.MetaDataDescription;
+import ibarodf.core.meta.MetaDataHandler;
 import ibarodf.core.meta.MetaDataCreationDate;
 
 
@@ -21,6 +22,7 @@ public class OdfFile extends AbstractRegularFile {
 	public OdfFile(final Path path) throws Exception {
 		super(path);
 		loadMetaData();
+		MetaDataHandler handler = new MetaDataHandler(path);
 	}	
 
 	@Override
