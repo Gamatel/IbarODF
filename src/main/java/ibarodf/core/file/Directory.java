@@ -15,14 +15,14 @@ public  class Directory extends AbstractGenericFile {
 
     public Directory(Path path){
         super(path);
-        ArrayList<Path> filesPath = getFilesPath();
+        ArrayList<Path> filesPath = getSubFilesPathFromDirectory(path);
         addFiles(filesPath);
     }
 
 
     void addFiles(ArrayList<Path> filesPath){
-        try{
-            for(Path currentPath : filesPath){
+        for(Path currentPath : filesPath){
+            try{
                 if(Files.isDirectory(currentPath)){
                     directories.add(new Directory(currentPath));
                 }else if(CommandTranslator.isAnOdtFile(currentPath.toString())){
@@ -30,21 +30,21 @@ public  class Directory extends AbstractGenericFile {
                 }else{
                     files.add(new NotOdtFile(currentPath));
                 }
+            }catch(Exception e){
+                files.add(new NotOdtFile(currentPath));
             }
-        }catch(Exception e){
-            System.err.println(e.getMessage());
         }
     }
 
 
-    public ArrayList<Path> getFilesPath(){
+    public static ArrayList<Path> getSubFilesPathFromDirectory(Path directoryPath){
         ArrayList<Path> filesPath = new ArrayList<Path>();
-        String[] textPath;
-        File directory = new File(getPath().toString());
-        textPath = directory.list();
+        File directory = new File(directoryPath.toString());
+        String[] textPath = directory.list();
+        String separator = FileSystems.getDefault().getSeparator();
         try{
             for(String currentPath : textPath){ 
-                filesPath.add(CommandTranslator.stringToPath(getPath().toString()+FileSystems.getDefault().getSeparator()+currentPath));
+                filesPath.add(CommandTranslator.stringToPath(directoryPath.toString()+separator+currentPath));
             } 
         }catch(Exception e){
             System.err.println(e.getMessage());
@@ -56,7 +56,7 @@ public  class Directory extends AbstractGenericFile {
 
     public StringBuilder displayMetaData() throws Exception{
         StringBuilder metaDataStr = new StringBuilder();
-        String directoryName = getPath().getFileName().toString()+":{\n";
+        String directoryName = "{"+getPath().getFileName().toString()+":{\n";
         metaDataStr.append(directoryName);
         for(Directory currentDirectory : directories){
             metaDataStr.append(currentDirectory.displayMetaData());
@@ -64,6 +64,7 @@ public  class Directory extends AbstractGenericFile {
         for(AbstractGenericFile currentFile : files){ 
             metaDataStr.append(currentFile.displayMetaData());
         }
+        metaDataStr.append("}\n");
         metaDataStr.append("}\n");
         return metaDataStr;
     }

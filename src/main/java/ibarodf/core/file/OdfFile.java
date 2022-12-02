@@ -8,9 +8,12 @@ import org.odftoolkit.odfdom.dom.OdfMetaDom;
 import org.odftoolkit.odfdom.incubator.meta.OdfOfficeMeta;
 
 import ibarodf.core.meta.MetaDataTitle;
+import ibarodf.core.meta.NoPictureException;
 import ibarodf.core.meta.Thumbnail;
 import ibarodf.core.meta.MetaDataCreator;
 import ibarodf.core.meta.MetaDataInitialCreator;
+import ibarodf.core.meta.MetaDataOdtPictures;
+import ibarodf.core.meta.MetaDataRegularFile;
 import ibarodf.core.meta.MetaDataSubject;
 import ibarodf.core.meta.MetaDataComment;
 import ibarodf.core.meta.MetaDataHandler;
@@ -24,8 +27,12 @@ public class OdfFile extends AbstractRegularFile {
 
 	public OdfFile(final Path path) throws Exception {
 		super(path);
+		try{
 		metaDataHandler = new MetaDataHandler(path);
 		loadMetaData();
+		}catch(Exception e){
+			throw new Exception("Something went wrong with the decompression of "+ path.getFileName()+".\nIt migth not be a REAL odt file.");
+		}
 	}	
 
 	@Override
@@ -46,7 +53,31 @@ public class OdfFile extends AbstractRegularFile {
 		addMetaData(MetaDataSubject.ATTR, new MetaDataSubject(meta, meta.getSubject()));		
 		addMetaData(MetaDataComment.ATTR, new MetaDataComment(meta, meta.getDescription()));
 		addMetaData(MetaDataCreationDate.ATTR, new MetaDataCreationDate(meta, calendarStr));
-		addMetaData(Thumbnail.ATTR, new Thumbnail(metaDataHandler.getThumbnailPath().toString()));
+		addMetaData(Thumbnail.ATTR, new Thumbnail(metaDataHandler.getThumbnailPath()));
+		addPictures();
+	}
+
+	public void addPictures(){
+		try{
+			Path picturesDirectoryPath = metaDataHandler.getPicturesDirectory(); 
+			addMetaData(MetaDataOdtPictures.ATTR, new MetaDataOdtPictures(picturesDirectoryPath));
+		}catch(NoPictureException e){
+			addMetaData(MetaDataOdtPictures.ATTR, new MetaDataRegularFile(MetaDataOdtPictures.ATTR, "No picture."));
+		}catch(Exception e){
+			System.out.println("Something went wrong with the addition of the pictures...");
+		}
+	}
+
+	public void addThumbnail(){
+		try{
+			Path thumbnailPath = metaDataHandler.getThumbnailPath(); 
+			addMetaData(Thumbnail.ATTR, new Thumbnail(thumbnailPath));
+		}catch(NoPictureException e){
+			addMetaData(MetaDataOdtPictures.ATTR, new MetaDataRegularFile(MetaDataOdtPictures.ATTR, "No thumbnail."));
+		}catch(Exception e){
+			System.out.println("Something went wrong with the addition of the thumbnail...");
+		}
+
 	}
 
 	public void saveChange() throws Exception {

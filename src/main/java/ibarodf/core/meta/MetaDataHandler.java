@@ -8,7 +8,6 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import ibarodf.command.Command;
 import ibarodf.command.CommandTranslator;
 import net.lingala.zip4j.core.ZipFile;
 
@@ -28,7 +27,7 @@ public class MetaDataHandler {
         } 
     }
 
-    private Path unzip() throws IOException {
+    private Path unzip() throws IOException{
         Path destination = Files.createTempDirectory("IBARODF");
         File destinationfile = new File(destination.toString());
         destinationfile.deleteOnExit();
@@ -36,17 +35,29 @@ public class MetaDataHandler {
             ZipFile zipFile = new ZipFile(fileToUnzipPath.toString());
             zipFile.extractAll(destination.toString());
         } catch (ZipException e) {
-            e.printStackTrace();
+            System.err.println("DECOMPRESSION ERROR");
         }
-        System.out.println(fileToUnzipPath.getFileName() + " decompressed : "+ destination);
         return destination;
     }
 
     public Path getThumbnailPath() throws Exception{
         String separator = FileSystems.getDefault().getSeparator();
-        return CommandTranslator.stringToPath(unzipedFilePath.toString()+separator+"Thumbnails"+separator+"thumbnail");
+        File thumbnailFile = new File(unzipedFilePath.toString()+separator+"Thumbnails"+separator+"thumbnail.png");
+        if(!thumbnailFile.exists()){
+            throw new NoPictureException(fileToUnzipPath);
+        }
+        return CommandTranslator.stringToPath(thumbnailFile.getAbsolutePath());
     }
 
+    public Path getPicturesDirectory() throws NoPictureException, Exception{
+        String separator = FileSystems.getDefault().getSeparator(); 
+        File picturesDirectory = new File(unzipedFilePath.toString()+separator+"Pictures");
+        if(!picturesDirectory.exists()){
+            throw new NoPictureException(fileToUnzipPath);
+        }
+        return CommandTranslator.stringToPath(picturesDirectory.getAbsolutePath());
+    }
+    
     public Path getUnzipedFilePath(){
         return unzipedFilePath;
     }

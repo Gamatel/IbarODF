@@ -20,7 +20,7 @@ public abstract class AbstractMetaData {
 		this.value = value;
 	}
 
-	public String getValue() {
+	public String getValue() throws Exception {
 		return value;
 	}
 

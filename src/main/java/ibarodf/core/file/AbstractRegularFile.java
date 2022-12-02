@@ -33,7 +33,7 @@ public abstract class AbstractRegularFile extends AbstractGenericFile{
 		metaDataHM.get(attribut).setValue(value);
 	}
 
-	public String getMetaData(final String attribut) {
+	public String getMetaData(final String attribut) throws Exception{
 		if(!metaDataHM.containsKey(attribut)) 
 			throw new IllegalArgumentException(String.format("Attribut %s doesnn't exist", attribut));
 		return metaDataHM.get(attribut).getValue();
@@ -58,7 +58,7 @@ public abstract class AbstractRegularFile extends AbstractGenericFile{
 
 	public void loadMetaData()  throws Exception{
 		addMetaData(AbstractRegularFile.FILE_TITLE,getTitle());
-        addMetaData(AbstractRegularFile.FILE_MIME_TYPE, getMIMEType());
+        addMIMEType();
     }
 
 	public MetaDataRegularFile getTitle(){
@@ -66,8 +66,13 @@ public abstract class AbstractRegularFile extends AbstractGenericFile{
         return new MetaDataRegularFile(MetaDataTitle.ATTR, file.getName());
     }
 
-    public MetaDataRegularFile getMIMEType() throws Exception{
-        return new MetaDataRegularFile("MIME_type", CommandTranslator.fileType(getPath().toString()));
+    public void addMIMEType(){
+		try{
+			MetaDataRegularFile metaMimeType = new MetaDataRegularFile(FILE_MIME_TYPE, CommandTranslator.fileType(getPath().toString()));
+			addMetaData(AbstractRegularFile.FILE_MIME_TYPE, metaMimeType);
+		}catch(Exception e){
+			addMetaData(AbstractRegularFile.FILE_MIME_TYPE, new MetaDataRegularFile(FILE_MIME_TYPE,"Unknown"));
+		}
     }
 
 
