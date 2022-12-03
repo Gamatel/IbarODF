@@ -42,13 +42,13 @@ public abstract class AbstractRegularFile extends AbstractGenericFile{
 	@Override
 	public StringBuilder displayMetaData() throws Exception{
 		StringBuilder metaDataStr = new StringBuilder();
-		metaDataStr.append("{");
+		metaDataStr.append("<");
 		String lineStr;
 		for (Map.Entry<String, AbstractMetaData> entry: getMetaData().entrySet()) {
-			lineStr = String.format("%s: %s,\n", entry.getKey(), entry.getValue().getValue());
+			lineStr = String.format("%s: %s,", entry.getKey(), entry.getValue().getValue());
 			metaDataStr.append(lineStr);
 		}
-		metaDataStr.append("}");
+		metaDataStr.append(">");
 		return metaDataStr;
 	}
 

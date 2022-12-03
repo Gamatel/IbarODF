@@ -14,7 +14,7 @@ public class Thumbnail extends AbstractMetaData {
     public String getValue() throws Exception{
         StringBuilder pathText = new StringBuilder(); 
         Path path = CommandTranslator.stringToPath(super.getValue()); 
-        pathText.append("\""+path+"\"");
+        pathText.append("*"+path+"?");
         return pathText.toString();
     }
 

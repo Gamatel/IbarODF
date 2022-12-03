@@ -24,6 +24,7 @@ public class OdfFile extends AbstractRegularFile {
 	private OdfDocument odf; 
 	private OdfOfficeMeta meta; 
 	private MetaDataHandler metaDataHandler;
+	private static int numberOfOdfFile = 0; 
 
 	public OdfFile(final Path path) throws Exception {
 		super(path);
@@ -86,6 +87,10 @@ public class OdfFile extends AbstractRegularFile {
 
 	public void saveChangeInOtherFile(final String path) throws Exception {
 		odf.save(path);
+	}
+
+	public static int getNumberOfOdfFile(){
+		return numberOfOdfFile; 
 	}
 }
 

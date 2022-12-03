@@ -30,8 +30,12 @@ public  class Directory extends AbstractGenericFile {
                 }else{
                     files.add(new NotOdtFile(currentPath));
                 }
-            }catch(Exception e){
+            }catch(UnrecognizableTypeFileException e){
                 files.add(new NotOdtFile(currentPath));
+            }catch(NotAllowedCommandException e){
+                files.add(new NotOdtFile(currentPath));
+            }catch(Exception e){
+                System.out.println(e.getMessage());
             }
         }
     }
@@ -56,7 +60,7 @@ public  class Directory extends AbstractGenericFile {
 
     public StringBuilder displayMetaData() throws Exception{
         StringBuilder metaDataStr = new StringBuilder();
-        String directoryName = "{"+getPath().getFileName().toString()+":{\n";
+        String directoryName = "{"+getPath().getFileName().toString()+"{";
         metaDataStr.append(directoryName);
         for(Directory currentDirectory : directories){
             metaDataStr.append(currentDirectory.displayMetaData());
@@ -64,13 +68,29 @@ public  class Directory extends AbstractGenericFile {
         for(AbstractGenericFile currentFile : files){ 
             metaDataStr.append(currentFile.displayMetaData());
         }
-        metaDataStr.append("}\n");
-        metaDataStr.append("}\n");
+        metaDataStr.append("}}");
+        metaDataStr.append(getInformations());
         return metaDataStr;
     }
 
     public String toString(){
         return "{Directory -- Path : "+ getPath() + " }"; 
+    }
+
+    public int getNumberOfDirectories(){
+        return directories.size();
+    }
+
+    public int getNumberOfFiles(){
+        return files.size();
+    }
+
+    public String getInformations(){
+        StringBuilder infos = new StringBuilder("\"In "+getPath().getFileName()+" :");
+        infos.append(getNumberOfDirectories()+" Directories - ");
+        infos.append(OdfFile.getNumberOfOdfFile()+" OdfFile -");
+        infos.append(files.size()+" Total regular file\"");
+        return infos.toString();
     }
 
     

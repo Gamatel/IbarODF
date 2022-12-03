@@ -11,6 +11,7 @@ import ibarodf.command.*;
 import ibarodf.core.ibarODFCore;
 
 public class MainCli {
+    public static final int NUMBER_SYMBOLE = 100; 
 
     public static void help(){
         try{
@@ -41,6 +42,57 @@ public class MainCli {
         ibar.replaceTheDescriptionOfAnOdtFile(title, subject, keywords, comments);
     }
 
+    public static void printProperly(String result){
+        System.out.println("");
+        int depth =0;
+        char[] charArray = result.toCharArray();
+        for(char singleChar :  charArray){
+            switch(singleChar){
+                case '{':
+                    depth ++;
+                    ligne();
+                    System.out.print(properTabulation(depth));
+                    break;
+                case '*':
+                    depth ++;
+                    System.out.print(properTabulation(depth)+"- click : ");
+                    break;
+                case '<':
+                    depth ++;
+                    System.out.print(properTabulation(depth));
+                    break;
+                case '}': case '>': case']': case '?': 
+                    depth--;
+                    break;
+                case ',' :
+                    System.out.print(properTabulation(depth));
+                    break;
+                case '"':
+                    ligne();
+                    System.out.print(properTabulation(depth+1));
+                    break;
+                default:
+                    System.out.print(singleChar);
+            }
+        }
+    }
+
+
+    public static String properTabulation(int numberOfTab){
+        StringBuilder tabulation = new StringBuilder("\n");
+        while(numberOfTab > 0){
+            tabulation.append("\t");
+            numberOfTab--;
+        }
+        return tabulation.toString();
+    } 
+
+    public static void ligne(){
+        System.out.println("");
+        for(int time=0; time<NUMBER_SYMBOLE; time++){
+            System.out.print("_");
+        }
+    }
 
     public static void main(String[] args){
         System.out.println("JAVA-POO PROJECT: ");
@@ -53,7 +105,8 @@ public class MainCli {
                 changeTheDescriptionOfAnOdtFile(actionToPerform, CommandTranslator.stringToPath(args[1]), args);
             }else{
                 ibarODFCore ibar = new ibarODFCore(actionToPerform, CommandTranslator.stringToPath(args[1]), args);
-                System.out.println(ibar.launchCore());
+                printProperly(ibar.launchCore().toString());
+                properTabulation(2);
             }
         }catch(NotAllowedCommandException e){
             System.out.println(e.getMessage());

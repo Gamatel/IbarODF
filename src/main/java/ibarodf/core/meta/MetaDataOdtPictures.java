@@ -22,11 +22,9 @@ public class MetaDataOdtPictures extends MetaDataRegularFile {
 
     public String getValue() throws Exception{
         StringBuilder pictures = new StringBuilder(super.getValue());
-        pictures.append("\n[");
         for(Path currentPicturePath : picturesPath){
-            pictures.append("\""+currentPicturePath+"\",\n");
+            pictures.append("*"+currentPicturePath+"?,");
         }
-        pictures.append("]");
         return pictures.toString();
 
     }

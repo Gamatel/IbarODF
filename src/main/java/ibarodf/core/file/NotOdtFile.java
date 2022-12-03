@@ -9,7 +9,7 @@ public class NotOdtFile extends AbstractRegularFile{
         try{
             loadMetaData();
         }catch(Exception e){
-            e.getMessage();
+            System.err.println(e.getMessage());
         }
     }
 

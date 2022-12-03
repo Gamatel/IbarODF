@@ -58,6 +58,9 @@ public class CommandTranslator {
     
     public static Path stringToPath(String filePath) throws FileNotFoundException, IOException{
         File file = new File(filePath);
+        if(!file.exists()){
+            throw new FileNotFoundException();
+        }
         Path path = file.toPath().toAbsolutePath().normalize();
         return path;
     }
@@ -72,34 +75,21 @@ public class CommandTranslator {
     
     }
 
-    public static boolean existsFile(String filePath){
-        boolean exists = false;
-        try{
-            stringToPath(filePath);
-            exists = true;
-        }catch(SecurityException e){
-            e.getMessage();
-        }catch(Exception e){
-            System.err.println(e.getMessage());
-        }
-        return exists;
-    }
 
-    public static boolean isAnOdtFile(String filePath)throws NotAllowedCommandException{
+    public static boolean isAnOdtFile(String filePath){
         boolean isOdt= false;
        try{ 
-            String type = fileType(filePath);
+            String type = fileType(filePath.toString());
             isOdt = type.equals("application/vnd.oasis.opendocument.text"); 
         }catch(UnrecognizableTypeFileException e){
-            System.out.println(e.getMessage());
-            throw new NotAllowedCommandException("unrecognizable file type.");
         }catch(FileNotFoundException e){
-            System.out.println(e.getMessage());
+            System.err.println(e.getMessage());
         }catch(IOException e){
-            System.out.println(e.getMessage());
+            System.err.println(e.getMessage());
         }
         return isOdt; 
     }
+
 
     public Command actionToPerformOnAnOdtFile() throws NotAllowedCommandException{
         if(isAskingToDisplayMetaDataOfAFile()){
@@ -145,8 +135,9 @@ public class CommandTranslator {
             throw new NotAllowedCommandException("unknown command.");
         }
         String filePath = command[1];
+        File file = new File(filePath);
         Command askedCommand = null;
-        if(!existsFile(filePath)){
+        if(!file.exists()){
             throw new FileNotFoundException("the file "+filePath+ " does not exist");
         }else if(Files.isDirectory(stringToPath(filePath))){
             askedCommand = actionToPerformOnADirectory();
