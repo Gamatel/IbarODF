@@ -1,5 +1,6 @@
-package ibarodf.core.meta;
+package ibarodf.core.file;
 
+import ibarodf.core.meta.NoPictureException;
 import net.lingala.zip4j.exception.ZipException;
 
 import java.io.File;
@@ -13,11 +14,11 @@ import net.lingala.zip4j.core.ZipFile;
 
 
 
-public class MetaDataHandler {
+public class TempDirHandler {
     private Path fileToUnzipPath;
     private Path unzipedFilePath;
 
-    public MetaDataHandler(Path fileToUnzipPath){
+    public TempDirHandler(Path fileToUnzipPath){
         this.fileToUnzipPath = fileToUnzipPath;
         try{
             unzipedFilePath = unzip();

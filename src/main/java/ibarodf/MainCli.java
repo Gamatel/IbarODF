@@ -94,29 +94,30 @@ public class MainCli {
         }
     }
 
-    public static void main(String[] args){
+    public static void main(String[] args) throws Exception{
         System.out.println("JAVA-POO PROJECT: ");
         CommandTranslator askedActionToPerform = new CommandTranslator(args);
-        try{
-            Command actionToPerform = askedActionToPerform.translate();
-            if(actionToPerform == Command.DISPLAY_HELP){
-                help();
-            }else if(actionToPerform == Command.REPLACE_THE_DESCRIPTION_OF_AN_ODT_FILE){
-                changeTheDescriptionOfAnOdtFile(actionToPerform, CommandTranslator.stringToPath(args[1]), args);
-            }else{
-                ibarODFCore ibar = new ibarODFCore(actionToPerform, CommandTranslator.stringToPath(args[1]), args);
-                printProperly(ibar.launchCore().toString());
-                properTabulation(2);
-            }
-        }catch(NotAllowedCommandException e){
-            System.out.println(e.getMessage());
-        }catch(FileNotFoundException e){
-            System.out.println(e.getMessage());
-        }catch(org.odftoolkit.odfdom.pkg.OdfValidationException e){
-            System.err.println("Is not  REAL odtFile.");
-        }
-        catch(Exception e){
-            System.err.println("Something went wrong...");
-        }
+        System.out.printf(askedActionToPerform.translate().toString());
+    //     try{
+    //         Command actionToPerform = askedActionToPerform.translate();
+    //         if(actionToPerform == Command.DISPLAY_HELP){
+    //             help();
+    //         }else if(actionToPerform == Command.REPLACE_THE_DESCRIPTION_OF_AN_ODF_FILE){
+    //             changeTheDescriptionOfAnOdtFile(actionToPerform, CommandTranslator.stringToPath(args[1]), args);
+    //         }else{
+    //             ibarODFCore ibar = new ibarODFCore(actionToPerform, CommandTranslator.stringToPath(args[1]), args);
+    //             printProperly(ibar.launchCore().toString());
+    //             properTabulation(2);
+    //         }
+    //     }catch(NotAllowedCommandException e){
+    //         System.out.println(e.getMessage());
+    //     }catch(FileNotFoundException e){
+    //         System.out.println(e.getMessage());
+    //     }catch(org.odftoolkit.odfdom.pkg.OdfValidationException e){
+    //         System.err.println("Is not  REAL odtFile.");
+    //     }
+    //     catch(Exception e){
+    //         System.err.println("Something went wrong...");
+    //     }
     }
 }

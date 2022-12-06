@@ -16,20 +16,19 @@ import ibarodf.core.meta.MetaDataOdtPictures;
 import ibarodf.core.meta.MetaDataRegularFile;
 import ibarodf.core.meta.MetaDataSubject;
 import ibarodf.core.meta.MetaDataComment;
-import ibarodf.core.meta.MetaDataHandler;
 import ibarodf.core.meta.MetaDataCreationDate;
 
 
 public class OdfFile extends AbstractRegularFile {
 	private OdfDocument odf; 
 	private OdfOfficeMeta meta; 
-	private MetaDataHandler metaDataHandler;
+	private TempDirHandler tempDirHandler;
 	private static int numberOfOdfFile = 0; 
 
 	public OdfFile(final Path path) throws Exception {
 		super(path);
 		try{
-		metaDataHandler = new MetaDataHandler(path);
+		tempDirHandler = new TempDirHandler(path);
 		loadMetaData();
 		}catch(Exception e){
 			throw new Exception("Something went wrong with the decompression of "+ path.getFileName()+".\nIt migth not be a REAL odt file.");
@@ -54,13 +53,13 @@ public class OdfFile extends AbstractRegularFile {
 		addMetaData(MetaDataSubject.ATTR, new MetaDataSubject(meta, meta.getSubject()));		
 		addMetaData(MetaDataComment.ATTR, new MetaDataComment(meta, meta.getDescription()));
 		addMetaData(MetaDataCreationDate.ATTR, new MetaDataCreationDate(meta, calendarStr));
-		addMetaData(Thumbnail.ATTR, new Thumbnail(metaDataHandler.getThumbnailPath()));
+		addMetaData(Thumbnail.ATTR, new Thumbnail(tempDirHandler.getThumbnailPath()));
 		addPictures();
 	}
 
 	public void addPictures(){
 		try{
-			Path picturesDirectoryPath = metaDataHandler.getPicturesDirectory(); 
+			Path picturesDirectoryPath = tempDirHandler.getPicturesDirectory();
 			addMetaData(MetaDataOdtPictures.ATTR, new MetaDataOdtPictures(picturesDirectoryPath));
 		}catch(NoPictureException e){
 			addMetaData(MetaDataOdtPictures.ATTR, new MetaDataRegularFile(MetaDataOdtPictures.ATTR, "No picture."));
@@ -71,7 +70,7 @@ public class OdfFile extends AbstractRegularFile {
 
 	public void addThumbnail(){
 		try{
-			Path thumbnailPath = metaDataHandler.getThumbnailPath(); 
+			Path thumbnailPath = tempDirHandler.getThumbnailPath();
 			addMetaData(Thumbnail.ATTR, new Thumbnail(thumbnailPath));
 		}catch(NoPictureException e){
 			addMetaData(MetaDataOdtPictures.ATTR, new MetaDataRegularFile(MetaDataOdtPictures.ATTR, "No thumbnail."));

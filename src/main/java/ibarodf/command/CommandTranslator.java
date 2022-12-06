@@ -74,8 +74,6 @@ public class CommandTranslator {
         return type;
     
     }
-
-
     public static boolean isAnOdtFile(String filePath){
         boolean isOdt= false;
        try{ 
@@ -90,29 +88,43 @@ public class CommandTranslator {
         return isOdt; 
     }
 
+    public static boolean isAnOdfFile(String filePath){
+        boolean isOdt= false;
 
-    public Command actionToPerformOnAnOdtFile() throws NotAllowedCommandException{
+        try{
+            String type = fileType(filePath.toString());
+            isOdt = type.contains("application/vnd.oasis.opendocument");
+        }catch(UnrecognizableTypeFileException e){
+        }catch(FileNotFoundException e){
+            System.err.println(e.getMessage());
+        }catch(IOException e){
+            System.err.println(e.getMessage());
+        }
+        return isOdt;
+    }
+
+    public Command actionToPerformOnAnOdFFile(String filePath) throws NotAllowedCommandException{
         if(isAskingToDisplayMetaDataOfAFile()){
-            return Command.DISPLAY_THE_META_DATA_OF_AN_ODT_FILE;
+            return isAnOdtFile(filePath) ? Command.DISPLAY_THE_META_DATA_OF_AN_ODT_FILE : Command.DISPLAY_THE_META_DATA_OF_AN_ODF_FILE;
         }else if(isAskingToChangeTheTitleOfAFile()){
-            return Command.CHANGE_THE_TITLE_OF_AN_ODT_FILE;
+            return isAnOdtFile(filePath) ? Command.CHANGE_THE_TITLE_OF_AN_ODT_FILE :Command.CHANGE_THE_TITLE_OF_AN_ODF_FILE;
         }else if(isAskingToAddASubjectToAFile()){
-            return Command.CHANGE_THE_SUBJECT_OF_AN_ODT_FILE ;
+            return isAnOdtFile(filePath) ? Command.CHANGE_THE_SUBJECT_OF_AN_ODT_FILE : Command.CHANGE_THE_SUBJECT_OF_AN_ODF_FILE;
         }else if(isAskingToAddAKeywordToAFile()){
-            return Command.ADD_A_KEYWORD_TO_AN_ODT_FILE;
+            return isAnOdtFile(filePath) ? Command.ADD_A_KEYWORD_TO_AN_ODT_FILE : Command.ADD_A_KEYWORD_TO_AN_ODF_FILE;
         }else if(isAskingToChangeTheCommentsOfAFile()){
-            return Command.CHANGE_THE_COMMENTS_OF_AN_ODT_FILE;
+            return isAnOdtFile(filePath) ? Command.CHANGE_THE_COMMENTS_OF_AN_ODT_FILE : Command.CHANGE_THE_COMMENTS_OF_AN_ODF_FILE;
         }else if(isAskingToChangeTheCreatorOfAFile()){
-            return Command.CHANGE_THE_CREATOR_OF_AN_ODT_FILE;
+            return isAnOdtFile(filePath) ? Command.CHANGE_THE_CREATOR_OF_AN_ODT_FILE : Command.CHANGE_THE_CREATOR_OF_AN_ODF_FILE;
         }else if(isAskingToChangeTheDescriptionOfAFile()){
-            return Command.REPLACE_THE_DESCRIPTION_OF_AN_ODT_FILE;
+            return isAnOdtFile(filePath) ? Command.REPLACE_THE_DESCRIPTION_OF_AN_ODT_FILE : Command.REPLACE_THE_DESCRIPTION_OF_AN_ODF_FILE;
         }
         throw new NotAllowedCommandException("unknown command.");
     }
 
     public Command actionToPerformOnFile() throws NotAllowedCommandException{
         if(isAskingToDisplayMetaDataOfAFile()) {
-            return Command.DISPLAY_THE_META_DATA_OF_A_FILE; 
+            return Command.DISPLAY_THE_META_DATA_ODF_A_FILE;
         }
         throw new NotAllowedCommandException("cannot perform such operation on a non ODT file.");
     }
@@ -120,7 +132,7 @@ public class CommandTranslator {
 
     public Command actionToPerformOnADirectory() throws NotAllowedCommandException{
         if(isAskingToDisplayMetaDataOfOdtFilesInADirectory()){
-            return Command.DISPLAY_THE_META_DATA_OF_ODT_FILES_IN_A_DIRECTORY;
+            return Command.DISPLAY_THE_META_DATA_OF_ODF_FILES_IN_A_DIRECTORY;
         }else if(isAskingToOperateOnAFile()){
             throw new NotAllowedCommandException(" current file is a directory.");            
         }
@@ -142,7 +154,9 @@ public class CommandTranslator {
         }else if(Files.isDirectory(stringToPath(filePath))){
             askedCommand = actionToPerformOnADirectory();
         }else if(isAnOdtFile(filePath)){
-            askedCommand = actionToPerformOnAnOdtFile();
+            askedCommand = actionToPerformOnAnOdFFile(filePath);
+        }else if(isAnOdfFile(filePath)){
+            askedCommand = actionToPerformOnAnOdFFile(filePath);
         }else if(isAskingToOperateOnAFile()){
             askedCommand =  actionToPerformOnFile(); 
         }
