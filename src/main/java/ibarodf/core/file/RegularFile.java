@@ -5,7 +5,7 @@ import java.util.Map;
 import java.io.File;
 import java.lang.StringBuilder;
 
-import ibarodf.command.CommandTranslator;
+import ibarodf.core.IbarODFCore;
 import ibarodf.core.meta.AbstractMetaData;
 import ibarodf.core.meta.MetaDataRegularFile;
 import ibarodf.core.meta.MetaDataTitle;
@@ -14,12 +14,12 @@ import java.nio.file.Path;
 import java.text.ParseException;
 import java.util.HashMap;
 
-public abstract class AbstractRegularFile extends AbstractGenericFile{
+public class RegularFile extends AbstractGenericFile{
 	private final HashMap<String, AbstractMetaData> metaDataHM = new HashMap<String, AbstractMetaData>();
 	public final static String FILE_TITLE = "File title"; 
 	public final static String FILE_MIME_TYPE = "MIME type";
 
-	public AbstractRegularFile(Path path) {
+	public RegularFile(Path path) {
 		super(path);
 	}
 	
@@ -57,7 +57,7 @@ public abstract class AbstractRegularFile extends AbstractGenericFile{
 	}
 
 	public void loadMetaData()  throws Exception{
-		addMetaData(AbstractRegularFile.FILE_TITLE,getTitle());
+		addMetaData(RegularFile.FILE_TITLE,getTitle());
         addMIMEType();
     }
 
@@ -68,10 +68,10 @@ public abstract class AbstractRegularFile extends AbstractGenericFile{
 
     public void addMIMEType(){
 		try{
-			MetaDataRegularFile metaMimeType = new MetaDataRegularFile(FILE_MIME_TYPE, CommandTranslator.fileType(getPath().toString()));
-			addMetaData(AbstractRegularFile.FILE_MIME_TYPE, metaMimeType);
+			MetaDataRegularFile metaMimeType = new MetaDataRegularFile(FILE_MIME_TYPE, IbarODFCore.fileType(getPath().toString()));
+			addMetaData(RegularFile.FILE_MIME_TYPE, metaMimeType);
 		}catch(Exception e){
-			addMetaData(AbstractRegularFile.FILE_MIME_TYPE, new MetaDataRegularFile(FILE_MIME_TYPE,"Unknown"));
+			addMetaData(RegularFile.FILE_MIME_TYPE, new MetaDataRegularFile(FILE_MIME_TYPE,"Unknown"));
 		}
     }
 

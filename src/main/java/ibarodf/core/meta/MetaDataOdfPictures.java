@@ -6,11 +6,11 @@ import java.util.ArrayList;
 
 import ibarodf.core.file.Directory;
 
-public class MetaDataOdtPictures extends MetaDataRegularFile {
+public class MetaDataOdfPictures extends AbstractMetaDataOdf {
     private ArrayList<Path> picturesPath;
     public final static String ATTR = "Pictures";
 
-    public MetaDataOdtPictures(Path pathOdtFile){
+    public MetaDataOdfPictures(Path pathOdtFile){
         super(ATTR, pathOdtFile.toString());
         picturesPath = Directory.getSubFilesPathFromDirectory(pathOdtFile);
 

@@ -3,7 +3,7 @@ package ibarodf.core.meta;
 import java.text.ParseException;
 import org.odftoolkit.odfdom.incubator.meta.OdfOfficeMeta;
 
-public class MetaDataSubject extends MetaDataOdf {
+public class MetaDataSubject extends MetaDataXML {
 	public final static String ATTR = "Subject";
 
 	public MetaDataSubject(OdfOfficeMeta meta, String value) {

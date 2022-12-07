@@ -7,7 +7,7 @@ import java.text.SimpleDateFormat;
 import org.odftoolkit.odfdom.incubator.meta.OdfOfficeMeta;
 import java.text.ParseException;
 
-public class MetaDataCreationDate extends MetaDataOdf {
+public class MetaDataCreationDate extends MetaDataXML {
 	public final static String ATTR = "CreationDate";
 	private final static String DATE_FORMAT = "dd/MM/yyyy HH:mm:ss";
 	public final static SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat(DATE_FORMAT);

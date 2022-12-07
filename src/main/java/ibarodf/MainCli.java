@@ -8,7 +8,8 @@ import java.nio.file.Path;
 import java.util.Scanner;
 
 import ibarodf.command.*;
-import ibarodf.core.ibarODFCore;
+import ibarodf.core.Command;
+import ibarodf.core.IbarODFCore;
 
 public class MainCli {
     public static final int NUMBER_SYMBOLE = 100; 
@@ -38,7 +39,7 @@ public class MainCli {
         System.out.println("Enter the new comments :");
         comments = scanEntry.nextLine();
         scanEntry.close();
-        ibarODFCore ibar = new ibarODFCore(actionToPerform, fileToOperateOn, args);
+        IbarODFCore ibar = new IbarODFCore(actionToPerform, fileToOperateOn, args);
         ibar.replaceTheDescriptionOfAnOdtFile(title, subject, keywords, comments);
     }
 
@@ -75,6 +76,7 @@ public class MainCli {
                     System.out.print(singleChar);
             }
         }
+        System.out.println();
     }
 
 
@@ -94,30 +96,31 @@ public class MainCli {
         }
     }
 
-    public static void main(String[] args) throws Exception{
-        System.out.println("JAVA-POO PROJECT: ");
+    public static void main(String[] args){
         CommandTranslator askedActionToPerform = new CommandTranslator(args);
-        System.out.printf(askedActionToPerform.translate().toString());
-    //     try{
-    //         Command actionToPerform = askedActionToPerform.translate();
-    //         if(actionToPerform == Command.DISPLAY_HELP){
-    //             help();
-    //         }else if(actionToPerform == Command.REPLACE_THE_DESCRIPTION_OF_AN_ODF_FILE){
-    //             changeTheDescriptionOfAnOdtFile(actionToPerform, CommandTranslator.stringToPath(args[1]), args);
-    //         }else{
-    //             ibarODFCore ibar = new ibarODFCore(actionToPerform, CommandTranslator.stringToPath(args[1]), args);
-    //             printProperly(ibar.launchCore().toString());
-    //             properTabulation(2);
-    //         }
-    //     }catch(NotAllowedCommandException e){
-    //         System.out.println(e.getMessage());
-    //     }catch(FileNotFoundException e){
-    //         System.out.println(e.getMessage());
-    //     }catch(org.odftoolkit.odfdom.pkg.OdfValidationException e){
-    //         System.err.println("Is not  REAL odtFile.");
-    //     }
-    //     catch(Exception e){
-    //         System.err.println("Something went wrong...");
-    //     }
+        try{
+            System.out.printf(askedActionToPerform.translate().toString());
+            Command actionToPerform = askedActionToPerform.translate();
+            if(actionToPerform == Command.DISPLAY_HELP){
+                help();
+            }else if(actionToPerform == Command.REPLACE_THE_DESCRIPTION_OF_AN_ODF_FILE){
+                changeTheDescriptionOfAnOdtFile(actionToPerform, IbarODFCore.stringToPath(args[1]), args);
+            }else{
+                IbarODFCore ibar = new IbarODFCore(actionToPerform, IbarODFCore.stringToPath(args[1]), args);
+                printProperly(ibar.launchCore().toString());
+                properTabulation(2);
+            }
+         }catch(NotAllowedCommandException e){
+            System.out.println(e.getMessage());
+         }catch(FileNotFoundException e){
+            System.out.println(e.getMessage());
+         }catch(org.odftoolkit.odfdom.pkg.OdfValidationException e){
+            System.err.println("Is not  REAL odtFile.");
+         }
+         catch(Exception e){
+            System.err.println("\nSomething went wrong...");
+            System.err.println(e.getMessage());
+            
+         }
     }
 }

@@ -12,18 +12,17 @@ import ibarodf.core.meta.NoPictureException;
 import ibarodf.core.meta.Thumbnail;
 import ibarodf.core.meta.MetaDataCreator;
 import ibarodf.core.meta.MetaDataInitialCreator;
-import ibarodf.core.meta.MetaDataOdtPictures;
+import ibarodf.core.meta.MetaDataOdfPictures;
 import ibarodf.core.meta.MetaDataRegularFile;
 import ibarodf.core.meta.MetaDataSubject;
 import ibarodf.core.meta.MetaDataComment;
 import ibarodf.core.meta.MetaDataCreationDate;
 
 
-public class OdfFile extends AbstractRegularFile {
+public class OdfFile extends RegularFile {
 	private OdfDocument odf; 
 	private OdfOfficeMeta meta; 
 	private TempDirHandler tempDirHandler;
-	private static int numberOfOdfFile = 0; 
 
 	public OdfFile(final Path path) throws Exception {
 		super(path);
@@ -32,9 +31,12 @@ public class OdfFile extends AbstractRegularFile {
 		loadMetaData();
 		}catch(Exception e){
 			throw new Exception("Something went wrong with the decompression of "+ path.getFileName()+".\nIt migth not be a REAL odt file.");
-		}
+		}	
 	}	
-
+	TempDirHandler getTempDirHandler(){
+		return tempDirHandler;
+	}
+	
 	@Override
 	public void loadMetaData() throws Exception{
 		odf = OdfDocument.loadDocument(getPath().toString());
@@ -43,7 +45,7 @@ public class OdfFile extends AbstractRegularFile {
 		super.loadMetaData();
 		initAllMeta();
 	}
-
+	
 	private void initAllMeta() throws Exception{
 		Calendar calendar = meta.getCreationDate();
 		String calendarStr = MetaDataCreationDate.CalendarToFormattedString(calendar);
@@ -56,24 +58,25 @@ public class OdfFile extends AbstractRegularFile {
 		addMetaData(Thumbnail.ATTR, new Thumbnail(tempDirHandler.getThumbnailPath()));
 		addPictures();
 	}
-
+	
 	public void addPictures(){
 		try{
 			Path picturesDirectoryPath = tempDirHandler.getPicturesDirectory();
-			addMetaData(MetaDataOdtPictures.ATTR, new MetaDataOdtPictures(picturesDirectoryPath));
+			addMetaData(MetaDataOdfPictures.ATTR, new MetaDataOdfPictures(picturesDirectoryPath));
 		}catch(NoPictureException e){
-			addMetaData(MetaDataOdtPictures.ATTR, new MetaDataRegularFile(MetaDataOdtPictures.ATTR, "No picture."));
+			addMetaData(MetaDataOdfPictures.ATTR, new MetaDataRegularFile(MetaDataOdfPictures.ATTR, "No picture."));
 		}catch(Exception e){
 			System.out.println("Something went wrong with the addition of the pictures...");
 		}
 	}
-
+	
+	
 	public void addThumbnail(){
 		try{
-			Path thumbnailPath = tempDirHandler.getThumbnailPath();
+			Path thumbnailPath = getTempDirHandler().getThumbnailPath();
 			addMetaData(Thumbnail.ATTR, new Thumbnail(thumbnailPath));
 		}catch(NoPictureException e){
-			addMetaData(MetaDataOdtPictures.ATTR, new MetaDataRegularFile(MetaDataOdtPictures.ATTR, "No thumbnail."));
+			addMetaData(Thumbnail.ATTR, new MetaDataRegularFile(MetaDataOdfPictures.ATTR, "No thumbnail."));
 		}catch(Exception e){
 			System.out.println("Something went wrong with the addition of the thumbnail...");
 		}
@@ -88,9 +91,8 @@ public class OdfFile extends AbstractRegularFile {
 		odf.save(path);
 	}
 
-	public static int getNumberOfOdfFile(){
-		return numberOfOdfFile; 
-	}
+
+
 }
 
 

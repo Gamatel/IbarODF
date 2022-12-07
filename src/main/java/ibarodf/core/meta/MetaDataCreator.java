@@ -3,7 +3,7 @@ package ibarodf.core.meta;
 import org.odftoolkit.odfdom.incubator.meta.OdfOfficeMeta;
 import java.text.ParseException;
 
-public class MetaDataCreator extends MetaDataOdf {
+public class MetaDataCreator extends MetaDataXML {
 	public final static String ATTR = "Creator";
 
 	public MetaDataCreator(OdfOfficeMeta meta, String value) {

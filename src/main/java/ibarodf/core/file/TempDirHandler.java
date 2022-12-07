@@ -9,7 +9,7 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import ibarodf.command.CommandTranslator;
+import ibarodf.core.IbarODFCore;
 import net.lingala.zip4j.core.ZipFile;
 
 
@@ -47,7 +47,7 @@ public class TempDirHandler {
         if(!thumbnailFile.exists()){
             throw new NoPictureException(fileToUnzipPath);
         }
-        return CommandTranslator.stringToPath(thumbnailFile.getAbsolutePath());
+        return IbarODFCore.stringToPath(thumbnailFile.getAbsolutePath());
     }
 
     public Path getPicturesDirectory() throws NoPictureException, Exception{
@@ -56,7 +56,7 @@ public class TempDirHandler {
         if(!picturesDirectory.exists()){
             throw new NoPictureException(fileToUnzipPath);
         }
-        return CommandTranslator.stringToPath(picturesDirectory.getAbsolutePath());
+        return IbarODFCore.stringToPath(picturesDirectory.getAbsolutePath());
     }
     
     public Path getUnzipedFilePath(){

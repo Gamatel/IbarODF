@@ -1,21 +1,25 @@
 package ibarodf.core;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 
-import ibarodf.command.Command;
 import ibarodf.core.file.Directory;
-import ibarodf.core.file.NotOdtFile;
 import ibarodf.core.file.OdfFile;
+import ibarodf.core.file.OdtFile;
+import ibarodf.core.file.RegularFile;
 import ibarodf.core.meta.MetaDataComment;
 import ibarodf.core.meta.MetaDataCreator;
 import ibarodf.core.meta.MetaDataSubject;
 import ibarodf.core.meta.MetaDataTitle;
 
-public class ibarODFCore {
+public class IbarODFCore {
 	private Command actionToPerform;
 	private Path fileToOperateOn;
 	private String[] args;
-	public ibarODFCore(Command actionToPerform, Path fileToOperateOn, String[] args) {
+	public IbarODFCore(Command actionToPerform, Path fileToOperateOn, String[] args) {
 		this.actionToPerform = actionToPerform;
 		this.fileToOperateOn = fileToOperateOn;
 		this.args = args;
@@ -27,7 +31,7 @@ public class ibarODFCore {
 	}
 
 	public StringBuilder displayTheMetaDataOfAFile() throws Exception{
-		NotOdtFile notOdtFile = new NotOdtFile(fileToOperateOn);
+		RegularFile notOdtFile = new RegularFile(fileToOperateOn);
 		return notOdtFile.displayMetaData();
 	}
 
@@ -48,10 +52,57 @@ public class ibarODFCore {
 
 	}
 
+	public static Path stringToPath(String filePath) throws FileNotFoundException, IOException{
+        File file = new File(filePath);
+        if(!file.exists()){
+            throw new FileNotFoundException();
+        }
+        Path path = file.toPath().toAbsolutePath().normalize();
+        return path;
+    }
+
+    public static String fileType(String filePath) throws FileNotFoundException, IOException, UnrecognizableTypeFileException {
+        Path path = stringToPath(filePath);
+        String type = Files.probeContentType(path);
+        if(type == null){
+            throw new UnrecognizableTypeFileException(path);
+        }
+        return type;
+    
+    }
+
+
+	public static boolean isAnOdtFile(String filePath){
+        boolean isOdt= false;
+       try{ 
+            String type = fileType(filePath.toString());
+            isOdt = type.equals("application/vnd.oasis.opendocument.text"); 
+        }catch(UnrecognizableTypeFileException e){
+        }catch(FileNotFoundException e){
+            System.err.println(e.getMessage());
+        }catch(IOException e){
+            System.err.println(e.getMessage());
+        }
+        return isOdt; 
+    }
+
+	public static boolean isAnOdfFile(String filePath){
+        boolean isOdf= false;
+        try{
+            String type = fileType(filePath.toString());
+            isOdf = type.contains("application/vnd.oasis.opendocument");
+        }catch(UnrecognizableTypeFileException e){
+        }catch(FileNotFoundException e){
+            System.err.println(e.getMessage());
+        }catch(IOException e){
+            System.err.println(e.getMessage());
+        }
+        return isOdf;
+    }
 
 	public StringBuilder displayMetaData() throws Exception{
 		switch(actionToPerform){
-			case DISPLAY_THE_META_DATA_ODF_A_FILE:
+			case DISPLAY_THE_META_DATA_A_FILE:
 				return displayTheMetaDataOfAFile();
 			case DISPLAY_THE_META_DATA_OF_ODF_FILES_IN_A_DIRECTORY:
 				return displayTheMetaDataOfOdtFileInADirectory();
@@ -62,8 +113,8 @@ public class ibarODFCore {
 		}
 	}
 
-	public StringBuilder operationOnOdtFile() throws Exception{
-		OdfFile file = new OdfFile(fileToOperateOn);
+	public StringBuilder operationOnOdfFile() throws Exception{
+		OdfFile file = isAnOdtFile(fileToOperateOn.toString())? new OdtFile(fileToOperateOn) : new OdfFile(fileToOperateOn);
 		StringBuilder msg = new StringBuilder();
 		switch(actionToPerform){
 			case CHANGE_THE_TITLE_OF_AN_ODF_FILE:
@@ -98,13 +149,12 @@ public class ibarODFCore {
 	}
 
 	public boolean wantToDisplayMetadata(){
-		return actionToPerform == Command.DISPLAY_THE_META_DATA_OF_AN_ODF_FILE || actionToPerform ==  Command.DISPLAY_THE_META_DATA_ODF_A_FILE || actionToPerform == Command.DISPLAY_THE_META_DATA_OF_ODF_FILES_IN_A_DIRECTORY;
+		return actionToPerform == Command.DISPLAY_THE_META_DATA_OF_AN_ODF_FILE || actionToPerform ==  Command.DISPLAY_THE_META_DATA_A_FILE || actionToPerform == Command.DISPLAY_THE_META_DATA_OF_ODF_FILES_IN_A_DIRECTORY;
 	}
 
 
 	public StringBuilder launchCore() throws Exception{
-		return wantToDisplayMetadata()? displayMetaData() : operationOnOdtFile();
-
+		return wantToDisplayMetadata()? displayMetaData() : operationOnOdfFile();
 	}
 
 }

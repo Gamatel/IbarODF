@@ -5,6 +5,9 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import ibarodf.command.*;
+import ibarodf.core.IbarODFCore;
+import ibarodf.core.UnrecognizableTypeFileException;
+
 
 
 
@@ -25,15 +28,16 @@ public  class Directory extends AbstractGenericFile {
             try{
                 if(Files.isDirectory(currentPath)){
                     directories.add(new Directory(currentPath));
-                }else if(CommandTranslator.isAnOdtFile(currentPath.toString())){
-                    files.add(new OdfFile(currentPath));
+                }else if(IbarODFCore.isAnOdfFile(currentPath.toString())){
+                    OdfFile odtFileToAdd = IbarODFCore.isAnOdtFile(currentPath.toString())? new OdtFile(currentPath) : new OdfFile(currentPath);
+                    files.add(odtFileToAdd);
                 }else{
-                    files.add(new NotOdtFile(currentPath));
+                    files.add(new RegularFile(currentPath));
                 }
             }catch(UnrecognizableTypeFileException e){
-                files.add(new NotOdtFile(currentPath));
+                files.add(new RegularFile(currentPath));
             }catch(NotAllowedCommandException e){
-                files.add(new NotOdtFile(currentPath));
+                files.add(new RegularFile(currentPath));
             }catch(Exception e){
                 System.out.println(e.getMessage());
             }
@@ -48,7 +52,7 @@ public  class Directory extends AbstractGenericFile {
         String separator = FileSystems.getDefault().getSeparator();
         try{
             for(String currentPath : textPath){ 
-                filesPath.add(CommandTranslator.stringToPath(directoryPath.toString()+separator+currentPath));
+                filesPath.add(IbarODFCore.stringToPath(directoryPath.toString()+separator+currentPath));
             } 
         }catch(Exception e){
             System.err.println(e.getMessage());
@@ -88,7 +92,6 @@ public  class Directory extends AbstractGenericFile {
     public String getInformations(){
         StringBuilder infos = new StringBuilder("\"In "+getPath().getFileName()+" :");
         infos.append(getNumberOfDirectories()+" Directories - ");
-        infos.append(OdfFile.getNumberOfOdfFile()+" OdfFile -");
         infos.append(files.size()+" Total regular file\"");
         return infos.toString();
     }
