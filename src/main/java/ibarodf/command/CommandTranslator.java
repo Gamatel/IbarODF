@@ -10,7 +10,7 @@ import ibarodf.core.IbarODFCore;
 
 
 public class CommandTranslator {
-    private String[] command;
+    private final String[] command;
     public CommandTranslator(String[] command){
         this.command = command;
     }
@@ -59,7 +59,7 @@ public class CommandTranslator {
 
 
 
-    public Command actionToPerformOnAnOdfFile(String filePath) throws NotAllowedCommandException{
+    public Command actionToPerformOnAnOdfFile() throws NotAllowedCommandException{
         if(isAskingToDisplayMetaDataOfAFile()){
             //return IbarODFCore.isAnOdtFile(filePath) ? Command.DISPLAY_THE_META_DATA_OF_AN_ODT_FILE : 
             return Command.DISPLAY_THE_META_DATA_OF_AN_ODF_FILE;
@@ -101,7 +101,7 @@ public class CommandTranslator {
         throw new NotAllowedCommandException("cannot perform such operation on a directory.");
     }
 
-    public Command translate() throws NotAllowedCommandException, FileNotFoundException, IOException{
+    public Command translate() throws NotAllowedCommandException, IOException{
         if(command.length == 0){
             throw new NotAllowedCommandException("no arguments.");
         }else if(isAskingForHelp()){
@@ -117,7 +117,7 @@ public class CommandTranslator {
         }else if(Files.isDirectory(IbarODFCore.stringToPath(filePath))){
             askedCommand = actionToPerformOnADirectory();
         }else if(IbarODFCore.isAnOdfFile(filePath)){
-            askedCommand = actionToPerformOnAnOdfFile(filePath);
+            askedCommand = actionToPerformOnAnOdfFile();
         }else if(isAskingToOperateOnAFile()){
             askedCommand =  actionToPerformOnFile(); 
         }

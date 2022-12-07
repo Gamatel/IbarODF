@@ -13,8 +13,8 @@ import ibarodf.core.UnrecognizableTypeFileException;
 
 
 public  class Directory extends AbstractGenericFile {
-    private ArrayList<Directory> directories = new ArrayList<Directory>();
-    private ArrayList<AbstractGenericFile> files = new ArrayList<AbstractGenericFile>();
+    private final ArrayList<Directory> directories = new ArrayList<>();
+    private final ArrayList<AbstractGenericFile> files = new ArrayList<>();
 
     public Directory(Path path){
         super(path);
@@ -29,16 +29,14 @@ public  class Directory extends AbstractGenericFile {
                 if(Files.isDirectory(currentPath)){
                     directories.add(new Directory(currentPath));
                 }else if(IbarODFCore.isAnOdfFile(currentPath.toString())){
-                    OdfFile odtFileToAdd = IbarODFCore.isAnOdtFile(currentPath.toString())? new OdtFile(currentPath) : new OdfFile(currentPath);
+                    OdfFile odtFileToAdd = new OdfFile(currentPath);
                     files.add(odtFileToAdd);
                 }else{
                     files.add(new RegularFile(currentPath));
                 }
-            }catch(UnrecognizableTypeFileException e){
+            }catch(UnrecognizableTypeFileException | NotAllowedCommandException e){
                 files.add(new RegularFile(currentPath));
-            }catch(NotAllowedCommandException e){
-                files.add(new RegularFile(currentPath));
-            }catch(Exception e){
+            } catch(Exception e){
                 System.out.println(e.getMessage());
             }
         }
@@ -46,13 +44,13 @@ public  class Directory extends AbstractGenericFile {
 
 
     public static ArrayList<Path> getSubFilesPathFromDirectory(Path directoryPath){
-        ArrayList<Path> filesPath = new ArrayList<Path>();
+        ArrayList<Path> filesPath = new ArrayList<>();
         File directory = new File(directoryPath.toString());
         String[] textPath = directory.list();
         String separator = FileSystems.getDefault().getSeparator();
         try{
             for(String currentPath : textPath){ 
-                filesPath.add(IbarODFCore.stringToPath(directoryPath.toString()+separator+currentPath));
+                filesPath.add(IbarODFCore.stringToPath(directoryPath +separator+currentPath));
             } 
         }catch(Exception e){
             System.err.println(e.getMessage());
@@ -90,10 +88,9 @@ public  class Directory extends AbstractGenericFile {
     }
 
     public String getInformations(){
-        StringBuilder infos = new StringBuilder("\"In "+getPath().getFileName()+" :");
-        infos.append(getNumberOfDirectories()+" Directories - ");
-        infos.append(files.size()+" Total regular file\"");
-        return infos.toString();
+        String infos = "\"In " + getPath().getFileName() + " :" + getNumberOfDirectories() + " Directories - " +
+                getNumberOfFiles() + " Total regular file\"";
+        return infos;
     }
 
     

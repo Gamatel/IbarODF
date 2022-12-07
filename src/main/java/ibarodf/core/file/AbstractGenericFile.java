@@ -4,7 +4,7 @@ import java.nio.file.Path;
 
 
 public abstract class AbstractGenericFile {
-    private Path path;
+    private final Path path;
 
     public AbstractGenericFile(Path path){
         this.path = path;

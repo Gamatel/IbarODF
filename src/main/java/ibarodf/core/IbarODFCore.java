@@ -8,7 +8,6 @@ import java.nio.file.Path;
 
 import ibarodf.core.file.Directory;
 import ibarodf.core.file.OdfFile;
-import ibarodf.core.file.OdtFile;
 import ibarodf.core.file.RegularFile;
 import ibarodf.core.meta.MetaDataComment;
 import ibarodf.core.meta.MetaDataCreator;
@@ -16,9 +15,9 @@ import ibarodf.core.meta.MetaDataSubject;
 import ibarodf.core.meta.MetaDataTitle;
 
 public class IbarODFCore {
-	private Command actionToPerform;
-	private Path fileToOperateOn;
-	private String[] args;
+	private final Command actionToPerform;
+	private final Path fileToOperateOn;
+	private final String[] args;
 	public IbarODFCore(Command actionToPerform, Path fileToOperateOn, String[] args) {
 		this.actionToPerform = actionToPerform;
 		this.fileToOperateOn = fileToOperateOn;
@@ -52,16 +51,15 @@ public class IbarODFCore {
 
 	}
 
-	public static Path stringToPath(String filePath) throws FileNotFoundException, IOException{
+	public static Path stringToPath(String filePath)  throws IOException{
         File file = new File(filePath);
         if(!file.exists()){
             throw new FileNotFoundException();
         }
-        Path path = file.toPath().toAbsolutePath().normalize();
-        return path;
+		return file.toPath().toAbsolutePath().normalize();
     }
 
-    public static String fileType(String filePath) throws FileNotFoundException, IOException, UnrecognizableTypeFileException {
+    public static String fileType(String filePath) throws IOException, UnrecognizableTypeFileException {
         Path path = stringToPath(filePath);
         String type = Files.probeContentType(path);
         if(type == null){
@@ -71,33 +69,16 @@ public class IbarODFCore {
     
     }
 
-
-	public static boolean isAnOdtFile(String filePath){
-        boolean isOdt= false;
-       try{ 
-            String type = fileType(filePath.toString());
-            isOdt = type.equals("application/vnd.oasis.opendocument.text"); 
-        }catch(UnrecognizableTypeFileException e){
-        }catch(FileNotFoundException e){
-            System.err.println(e.getMessage());
-        }catch(IOException e){
-            System.err.println(e.getMessage());
-        }
-        return isOdt; 
-    }
-
 	public static boolean isAnOdfFile(String filePath){
         boolean isOdf= false;
         try{
-            String type = fileType(filePath.toString());
+            String type = fileType(filePath);
             isOdf = type.contains("application/vnd.oasis.opendocument");
-        }catch(UnrecognizableTypeFileException e){
-        }catch(FileNotFoundException e){
-            System.err.println(e.getMessage());
-        }catch(IOException e){
+        }catch(UnrecognizableTypeFileException ignored){
+        } catch(IOException e){
             System.err.println(e.getMessage());
         }
-        return isOdf;
+		return isOdf;
     }
 
 	public StringBuilder displayMetaData() throws Exception{
@@ -114,7 +95,7 @@ public class IbarODFCore {
 	}
 
 	public StringBuilder operationOnOdfFile() throws Exception{
-		OdfFile file = isAnOdtFile(fileToOperateOn.toString())? new OdtFile(fileToOperateOn) : new OdfFile(fileToOperateOn);
+		OdfFile file = new OdfFile(fileToOperateOn);
 		StringBuilder msg = new StringBuilder();
 		switch(actionToPerform){
 			case CHANGE_THE_TITLE_OF_AN_ODF_FILE:
@@ -139,7 +120,7 @@ public class IbarODFCore {
 				msg.append("Creator changed!");
 				break;
 			case REPLACE_THE_DESCRIPTION_OF_AN_ODF_FILE:
-				msg.append("To change the description of "+ fileToOperateOn.getFileName() +" call replaceTheDescriptionOfAnOdtFile(String newTitle, String newSubject, String newKeyword, String newComments).");
+				msg.append("To change the description of ").append(fileToOperateOn.getFileName()).append(" call replaceTheDescriptionOfAnOdtFile(String newTitle, String newSubject, String newKeyword, String newComments).");
 				break;
 			default:
 				throw new Exception("Something went wrong...");

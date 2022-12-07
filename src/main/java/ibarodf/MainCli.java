@@ -44,7 +44,7 @@ public class MainCli {
     }
 
     public static void printProperly(String result){
-        System.out.println("");
+        System.out.println();
         int depth =0;
         char[] charArray = result.toCharArray();
         for(char singleChar :  charArray){
@@ -90,7 +90,7 @@ public class MainCli {
     } 
 
     public static void ligne(){
-        System.out.println("");
+        System.out.println();
         for(int time=0; time<NUMBER_SYMBOLE; time++){
             System.out.print("_");
         }
@@ -110,11 +110,9 @@ public class MainCli {
                 printProperly(ibar.launchCore().toString());
                 properTabulation(2);
             }
-         }catch(NotAllowedCommandException e){
+         }catch(NotAllowedCommandException | FileNotFoundException e){
             System.out.println(e.getMessage());
-         }catch(FileNotFoundException e){
-            System.out.println(e.getMessage());
-         }catch(org.odftoolkit.odfdom.pkg.OdfValidationException e){
+         } catch(org.odftoolkit.odfdom.pkg.OdfValidationException e){
             System.err.println("Is not  REAL odtFile.");
          }
          catch(Exception e){

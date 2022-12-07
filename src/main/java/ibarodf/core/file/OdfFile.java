@@ -22,7 +22,7 @@ import ibarodf.core.meta.MetaDataCreationDate;
 public class OdfFile extends RegularFile {
 	private OdfDocument odf; 
 	private OdfOfficeMeta meta; 
-	private TempDirHandler tempDirHandler;
+	private final TempDirHandler tempDirHandler;
 
 	public OdfFile(final Path path) throws Exception {
 		super(path);
@@ -52,7 +52,7 @@ public class OdfFile extends RegularFile {
 		addMetaData(MetaDataInitialCreator.ATTR, new MetaDataInitialCreator(meta, meta.getInitialCreator()));
 		addMetaData(MetaDataSubject.ATTR, new MetaDataSubject(meta, meta.getSubject()));		
 		addMetaData(MetaDataComment.ATTR, new MetaDataComment(meta, meta.getDescription()));
-		addMetaData(Thumbnail.ATTR, new Thumbnail(tempDirHandler.getThumbnailPath()));
+		addThumbnail();
 		addPictures();
 		addCreationDate();
 	}
@@ -86,19 +86,11 @@ public class OdfFile extends RegularFile {
 		}catch(Exception e){
 			System.out.println("Something went wrong with the addition of the thumbnail...");
 		}
-
 	}
 
 	public void saveChange() throws Exception {
 		odf.save(getPath().toString());
 	}
-
-	public void saveChangeInOtherFile(final String path) throws Exception {
-		odf.save(path);
-	}
-
-
-
 }
 
 

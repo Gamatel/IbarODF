@@ -15,7 +15,7 @@ import net.lingala.zip4j.core.ZipFile;
 
 
 public class TempDirHandler {
-    private Path fileToUnzipPath;
+    private final Path fileToUnzipPath;
     private Path unzipedFilePath;
 
     public TempDirHandler(Path fileToUnzipPath){
@@ -50,7 +50,7 @@ public class TempDirHandler {
         return IbarODFCore.stringToPath(thumbnailFile.getAbsolutePath());
     }
 
-    public Path getPicturesDirectory() throws NoPictureException, Exception{
+    public Path getPicturesDirectory() throws Exception{
         String separator = FileSystems.getDefault().getSeparator(); 
         File picturesDirectory = new File(unzipedFilePath.toString()+separator+"Pictures");
         if(!picturesDirectory.exists()){
@@ -58,11 +58,4 @@ public class TempDirHandler {
         }
         return IbarODFCore.stringToPath(picturesDirectory.getAbsolutePath());
     }
-    
-    public Path getUnzipedFilePath(){
-        return unzipedFilePath;
-    }
-
-
-
 }
