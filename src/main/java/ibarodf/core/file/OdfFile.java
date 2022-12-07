@@ -59,7 +59,7 @@ public class OdfFile extends RegularFile {
 
 	private void addCreationDate() {
 		Calendar creationDateInXML = meta.getCreationDate();
-		Calendar creationDate = creationDateInXML.equals(null) ? Calendar.getInstance() : creationDateInXML;
+		Calendar creationDate = creationDateInXML == null ? Calendar.getInstance() : creationDateInXML;
 		String creationDateStr = MetaDataCreationDate.CalendarToFormattedString(creationDate);
 
 		addMetaData(MetaDataCreationDate.ATTR, new MetaDataCreationDate(meta, creationDateStr));

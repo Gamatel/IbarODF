@@ -1,2 +1,2 @@
-mvn exec:java -D exec.mainClass=ibarodf.Main
-//-Dexec.args="arg0 arg1 arg2"
+mvn exec:java -D exec.mainClass=ibarodf.MainCli
+# -Dexec.args="arg0 arg1 arg2"
