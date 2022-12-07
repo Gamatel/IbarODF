@@ -47,16 +47,22 @@ public class OdfFile extends RegularFile {
 	}
 	
 	private void initAllMeta() throws Exception{
-		Calendar calendar = meta.getCreationDate();
-		String calendarStr = MetaDataCreationDate.CalendarToFormattedString(calendar);
 		addMetaData(MetaDataTitle.ATTR, new MetaDataTitle(meta, meta.getTitle()));
 		addMetaData(MetaDataCreator.ATTR, new MetaDataCreator(meta, meta.getCreator()));
 		addMetaData(MetaDataInitialCreator.ATTR, new MetaDataInitialCreator(meta, meta.getInitialCreator()));
 		addMetaData(MetaDataSubject.ATTR, new MetaDataSubject(meta, meta.getSubject()));		
 		addMetaData(MetaDataComment.ATTR, new MetaDataComment(meta, meta.getDescription()));
-		addMetaData(MetaDataCreationDate.ATTR, new MetaDataCreationDate(meta, calendarStr));
 		addMetaData(Thumbnail.ATTR, new Thumbnail(tempDirHandler.getThumbnailPath()));
 		addPictures();
+		addCreationDate();
+	}
+
+	private void addCreationDate() {
+		Calendar creationDateInXML = meta.getCreationDate();
+		Calendar creationDate = creationDateInXML.equals(null) ? Calendar.getInstance() : creationDateInXML;
+		String creationDateStr = MetaDataCreationDate.CalendarToFormattedString(creationDate);
+
+		addMetaData(MetaDataCreationDate.ATTR, new MetaDataCreationDate(meta, creationDateStr));
 	}
 	
 	public void addPictures(){
