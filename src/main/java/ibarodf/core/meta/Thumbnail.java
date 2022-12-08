@@ -2,6 +2,7 @@ package ibarodf.core.meta;
 
 
 import java.nio.file.Path;
+import java.text.ParseException;
 
 import ibarodf.core.IbarODFCore;
 
@@ -18,5 +19,8 @@ public class Thumbnail extends AbstractMetaDataOdf {
         return pathText.toString();
     }
 
+    public void setValue(String value) throws ParseException, ReadOnlyMetaException {
+        throw new ReadOnlyMetaException(ATTR);
+    }
 
 }

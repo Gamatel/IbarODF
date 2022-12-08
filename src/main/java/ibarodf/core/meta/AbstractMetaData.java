@@ -16,7 +16,7 @@ public abstract class AbstractMetaData {
 		return attribut;
 	}
 
-	public void setValue(String value) throws ParseException {
+	public void setValue(String value) throws ParseException, ReadOnlyMetaException {
 		this.value = value;
 	}
 

@@ -10,7 +10,7 @@ public class MetaDataInitialCreator extends MetaDataXML {
 		super(meta, ATTR, value);
 	}
 
-	public void setValue(String value) throws ParseException {
+	public void setValue(String value) throws ParseException, ReadOnlyMetaException {
 		getMeta().setInitialCreator(value);
 		super.setValue(value);
 	}

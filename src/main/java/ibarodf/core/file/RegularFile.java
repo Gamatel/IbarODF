@@ -13,9 +13,10 @@ import ibarodf.core.meta.MetaDataTitle;
 import java.nio.file.Path;
 import java.text.ParseException;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 public class RegularFile extends AbstractGenericFile{
-	private final HashMap<String, AbstractMetaData> metaDataHM = new HashMap<String, AbstractMetaData>();
+	private final HashMap<String, AbstractMetaData> metaDataHM = new LinkedHashMap<String, AbstractMetaData>();
 	public final static String FILE_TITLE = "File title"; 
 	public final static String FILE_MIME_TYPE = "MIME type";
 
@@ -30,7 +31,11 @@ public class RegularFile extends AbstractGenericFile{
 	
 
 	public void setMetaData(final String attribut, final String value) throws ParseException {
-		metaDataHM.get(attribut).setValue(value);
+		try {
+			metaDataHM.get(attribut).setValue(value);
+		} catch (ibarodf.core.meta.ReadOnlyMetaException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	public String getMetaData(final String attribut) throws Exception{

@@ -10,7 +10,7 @@ public class MetaDataTitle extends MetaDataXML {
 		super(meta, ATTR, value);
 	}
 
-	public void setValue(String value) throws ParseException {
+	public void setValue(String value) throws ParseException, ReadOnlyMetaException {
 		getMeta().setTitle(value);
 		super.setValue(value);
 	}

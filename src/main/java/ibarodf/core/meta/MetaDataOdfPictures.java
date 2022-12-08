@@ -23,4 +23,6 @@ public class MetaDataOdfPictures extends AbstractMetaDataOdf {
         }
         return pictures.toString();
     }
+
+
 }

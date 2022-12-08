@@ -16,7 +16,7 @@ public class MetaDataCreationDate extends MetaDataXML {
 		super(meta, ATTR, value);
 	}
 
-	public void setValue(final String value) throws ParseException {
+	public void setValue(final String value) throws ParseException, ReadOnlyMetaException {
 		GregorianCalendar creationDate = parseStringToCalendar(value);
 		getMeta().setCreationDate(creationDate);
 		super.setValue(value);
