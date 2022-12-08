@@ -6,6 +6,7 @@ import java.util.Calendar;
 import org.odftoolkit.odfdom.doc.OdfDocument;
 import org.odftoolkit.odfdom.dom.OdfMetaDom;
 import org.odftoolkit.odfdom.incubator.meta.OdfOfficeMeta;
+import org.odftoolkit.odfdom.incubator.meta.OdfMetaDocumentStatistic;
 
 import ibarodf.core.meta.MetaDataTitle;
 import ibarodf.core.meta.NoPictureException;
@@ -17,6 +18,7 @@ import ibarodf.core.meta.MetaDataRegularFile;
 import ibarodf.core.meta.MetaDataSubject;
 import ibarodf.core.meta.MetaDataComment;
 import ibarodf.core.meta.MetaDataCreationDate;
+import ibarodf.core.meta.MetaDataStats;
 
 
 public class OdfFile extends RegularFile {
@@ -52,9 +54,10 @@ public class OdfFile extends RegularFile {
 		addMetaData(MetaDataInitialCreator.ATTR, new MetaDataInitialCreator(meta, meta.getInitialCreator()));
 		addMetaData(MetaDataSubject.ATTR, new MetaDataSubject(meta, meta.getSubject()));		
 		addMetaData(MetaDataComment.ATTR, new MetaDataComment(meta, meta.getDescription()));
+		addCreationDate();
+		addDocStats();
 		addThumbnail();
 		addPictures();
-		addCreationDate();
 	}
 
 	private void addCreationDate() {
@@ -63,6 +66,13 @@ public class OdfFile extends RegularFile {
 		String creationDateStr = MetaDataCreationDate.CalendarToFormattedString(creationDate);
 
 		addMetaData(MetaDataCreationDate.ATTR, new MetaDataCreationDate(meta, creationDateStr));
+	}
+
+	private void addDocStats() {
+		OdfMetaDocumentStatistic stats = meta.getDocumentStatistic();
+		String statsStr = MetaDataStats.objDocumentStatisticToStr(stats);
+
+		addMetaData(MetaDataStats.ATTR, new MetaDataCreationDate(meta, statsStr));
 	}
 	
 	public void addPictures(){
