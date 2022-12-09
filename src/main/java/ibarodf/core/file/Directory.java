@@ -4,9 +4,10 @@ import java.io.File;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import ibarodf.command.*;
 import ibarodf.core.IbarODFCore;
-import ibarodf.core.UnrecognizableTypeFileException;
+
+
+
 
 
 
@@ -34,8 +35,6 @@ public  class Directory extends AbstractGenericFile {
                 }else{
                     files.add(new RegularFile(currentPath));
                 }
-            }catch(UnrecognizableTypeFileException | NotAllowedCommandException e){
-                files.add(new RegularFile(currentPath));
             } catch(Exception e){
                 System.out.println(e.getMessage());
             }

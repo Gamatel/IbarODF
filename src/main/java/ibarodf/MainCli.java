@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Scanner;
 
+import org.apache.xml.serializer.utils.SystemIDResolver;
+
 import ibarodf.command.*;
 import ibarodf.core.Command;
 import ibarodf.core.IbarODFCore;
@@ -30,7 +32,7 @@ public class MainCli {
     public static void changeTheDescriptionOfAnOdtFile(Command actionToPerform, Path fileToOperateOn, String[] args) throws Exception{
         Scanner scanEntry = new Scanner(System.in);
         String title, subject, keywords, comments;
-        System.out.println("Enter the new title :");
+        System.out.println("\nEnter the new title :");
         title = scanEntry.nextLine();
         System.out.println("Enter the new subject :");
         subject = scanEntry.nextLine();
@@ -56,16 +58,16 @@ public class MainCli {
                     break;
                 case '*':
                     depth ++;
-                    System.out.print(properTabulation(depth)+"- click : ");
+                    System.out.print(properTabulation(depth)+"- link : ");
                     break;
                 case '<':
                     depth ++;
                     System.out.print(properTabulation(depth));
                     break;
-                case '}': case '>': case']': case '?': 
+                case '}': case '>': case '?': 
                     depth--;
                     break;
-                case ',' :
+                case ';' :
                     System.out.print(properTabulation(depth));
                     break;
                 case '"':
@@ -108,7 +110,6 @@ public class MainCli {
             }else{
                 IbarODFCore ibar = new IbarODFCore(actionToPerform, IbarODFCore.stringToPath(args[1]), args);
                 printProperly(ibar.launchCore().toString());
-                properTabulation(2);
             }
          }catch(NotAllowedCommandException | FileNotFoundException e){
             System.out.println(e.getMessage());

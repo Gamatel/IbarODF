@@ -12,10 +12,10 @@ import ibarodf.core.meta.MetaDataTitle;
 
 import java.nio.file.Path;
 import java.text.ParseException;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 public class RegularFile extends AbstractGenericFile{
-	private final HashMap<String, AbstractMetaData> metaDataHM = new HashMap<String, AbstractMetaData>();
+	private final LinkedHashMap<String, AbstractMetaData> metaDataHM = new LinkedHashMap<String, AbstractMetaData>();
 	public final static String FILE_TITLE = "File title"; 
 	public final static String FILE_MIME_TYPE = "MIME type";
 
@@ -24,7 +24,7 @@ public class RegularFile extends AbstractGenericFile{
 	}
 	
 	
-	public HashMap<String, AbstractMetaData> getMetaData() {
+	public LinkedHashMap<String, AbstractMetaData> getMetaData() {
 		return metaDataHM;	
 	}
 	
@@ -45,7 +45,7 @@ public class RegularFile extends AbstractGenericFile{
 		metaDataStr.append("<");
 		String lineStr;
 		for (Map.Entry<String, AbstractMetaData> entry: getMetaData().entrySet()) {
-			lineStr = String.format("%s: %s,", entry.getKey(), entry.getValue().getValue());
+			lineStr = String.format("%s: %s;",entry.getKey(), entry.getValue().getValue());
 			metaDataStr.append(lineStr);
 		}
 		metaDataStr.append(">");

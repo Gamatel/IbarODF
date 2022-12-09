@@ -41,7 +41,11 @@ public class CommandTranslator {
     }
     
     private boolean isAskingToAddAKeywordToAFile(){
-        return isAskingToOperateOnAFile() && (command[2].equals("-k") || command[2].equals("--keyword"));
+        return isAskingToOperateOnAFile() && (command[2].equals("-Ak") || command[2].equals("--add-keyword"));
+    }
+
+    private boolean isAskingToReplaceTheKeywordsOfAFile(){
+        return isAskingToOperateOnAFile() && (command[2].equals("-Rk") || command[2].equals("--replace-keyword"));
     }
 
     private boolean isAskingToChangeTheCommentsOfAFile(){
@@ -61,25 +65,20 @@ public class CommandTranslator {
 
     public Command actionToPerformOnAnOdfFile() throws NotAllowedCommandException{
         if(isAskingToDisplayMetaDataOfAFile()){
-            //return IbarODFCore.isAnOdtFile(filePath) ? Command.DISPLAY_THE_META_DATA_OF_AN_ODT_FILE : 
             return Command.DISPLAY_THE_META_DATA_OF_AN_ODF_FILE;
         }else if(isAskingToChangeTheTitleOfAFile()){
-            //return IbarODFCore.isAnOdtFile(filePath) ? Command.CHANGE_THE_TITLE_OF_AN_ODT_FILE :
             return Command.CHANGE_THE_TITLE_OF_AN_ODF_FILE;
         }else if(isAskingToAddASubjectToAFile()){
-            //return IbarODFCore.isAnOdtFile(filePath) ? Command.CHANGE_THE_SUBJECT_OF_AN_ODT_FILE : 
             return Command.CHANGE_THE_SUBJECT_OF_AN_ODF_FILE;
         }else if(isAskingToAddAKeywordToAFile()){
-            //return IbarODFCore.isAnOdtFile(filePath) ? Command.ADD_A_KEYWORD_TO_AN_ODT_FILE : 
             return Command.ADD_A_KEYWORD_TO_AN_ODF_FILE;
+        }else if(isAskingToReplaceTheKeywordsOfAFile()){
+            return Command.REPLACE_KEYWORDS_TO_AN_ODF_FILE;
         }else if(isAskingToChangeTheCommentsOfAFile()){
-            //return IbarODFCore.isAnOdtFile(filePath) ? Command.CHANGE_THE_COMMENTS_OF_AN_ODT_FILE : 
             return Command.CHANGE_THE_COMMENTS_OF_AN_ODF_FILE;
         }else if(isAskingToChangeTheCreatorOfAFile()){
-            //return IbarODFCore.isAnOdtFile(filePath) ? Command.CHANGE_THE_CREATOR_OF_AN_ODT_FILE : 
             return Command.CHANGE_THE_CREATOR_OF_AN_ODF_FILE;
         }else if(isAskingToChangeTheDescriptionOfAFile()){
-            //return IbarODFCore.isAnOdtFile(filePath) ? Command.REPLACE_THE_DESCRIPTION_OF_AN_ODT_FILE : 
             return Command.REPLACE_THE_DESCRIPTION_OF_AN_ODF_FILE;
         }
         throw new NotAllowedCommandException("unknown command.");

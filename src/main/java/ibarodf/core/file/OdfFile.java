@@ -2,16 +2,19 @@ package ibarodf.core.file;
 
 import java.nio.file.Path;
 import java.util.Calendar;
+import java.util.List;
 
 import org.odftoolkit.odfdom.doc.OdfDocument;
 import org.odftoolkit.odfdom.dom.OdfMetaDom;
 import org.odftoolkit.odfdom.incubator.meta.OdfOfficeMeta;
+
 
 import ibarodf.core.meta.MetaDataTitle;
 import ibarodf.core.meta.NoPictureException;
 import ibarodf.core.meta.Thumbnail;
 import ibarodf.core.meta.MetaDataCreator;
 import ibarodf.core.meta.MetaDataInitialCreator;
+import ibarodf.core.meta.MetaDataKeyword;
 import ibarodf.core.meta.MetaDataOdfPictures;
 import ibarodf.core.meta.MetaDataRegularFile;
 import ibarodf.core.meta.MetaDataSubject;
@@ -22,17 +25,18 @@ import ibarodf.core.meta.MetaDataCreationDate;
 public class OdfFile extends RegularFile {
 	private OdfDocument odf; 
 	private OdfOfficeMeta meta; 
-	private final TempDirHandler tempDirHandler;
+	private TempDirHandler tempDirHandler;
 
-	public OdfFile(final Path path) throws Exception {
+	public OdfFile(Path path){
 		super(path);
 		try{
-		tempDirHandler = new TempDirHandler(path);
-		loadMetaData();
+			tempDirHandler = new TempDirHandler(path);
+			loadMetaData();
 		}catch(Exception e){
-			throw new Exception("Something went wrong with the decompression of "+ path.getFileName()+".\nIt migth not be a REAL odt file.");
+			System.out.println(e.getMessage());
 		}	
 	}	
+
 	TempDirHandler getTempDirHandler(){
 		return tempDirHandler;
 	}
@@ -47,14 +51,15 @@ public class OdfFile extends RegularFile {
 	}
 	
 	private void initAllMeta() throws Exception{
-		addMetaData(MetaDataTitle.ATTR, new MetaDataTitle(meta, meta.getTitle()));
-		addMetaData(MetaDataCreator.ATTR, new MetaDataCreator(meta, meta.getCreator()));
-		addMetaData(MetaDataInitialCreator.ATTR, new MetaDataInitialCreator(meta, meta.getInitialCreator()));
-		addMetaData(MetaDataSubject.ATTR, new MetaDataSubject(meta, meta.getSubject()));		
-		addMetaData(MetaDataComment.ATTR, new MetaDataComment(meta, meta.getDescription()));
+		addMetaData(MetaDataTitle.ATTR, new MetaDataTitle(meta));
+		addMetaData(MetaDataInitialCreator.ATTR, new MetaDataInitialCreator(meta));
+		addMetaData(MetaDataCreator.ATTR, new MetaDataCreator(meta));
+		addCreationDate();
+		addMetaData(MetaDataSubject.ATTR, new MetaDataSubject(meta));		
+		addMetaData(MetaDataKeyword.ATTR, new MetaDataKeyword(meta));		
+		addMetaData(MetaDataComment.ATTR, new MetaDataComment(meta));
 		addThumbnail();
 		addPictures();
-		addCreationDate();
 	}
 
 	private void addCreationDate() {
@@ -76,6 +81,26 @@ public class OdfFile extends RegularFile {
 		}
 	}
 	
+	public void addKeyword(String newKeywords){
+        String[] keywords = newKeywords.split(",");
+        for(String keyword : keywords){
+            meta.addKeyword(keyword);
+        }
+    }
+
+    public void deleteKeywords(){
+		if(!(meta.getKeywords() == null)){
+			List<String> keyList = meta.getKeywords();
+			keyList.removeAll(keyList);
+			meta.setKeywords(keyList);
+		}
+    }
+
+    public void replaceKeywords(String newKeywords){
+        deleteKeywords();
+        addKeyword(newKeywords);
+    }
+    
 	
 	public void addThumbnail(){
 		try{

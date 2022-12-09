@@ -19,7 +19,7 @@ public class MetaDataOdfPictures extends AbstractMetaDataOdf {
     public String getValue() throws Exception{
         StringBuilder pictures = new StringBuilder(super.getValue());
         for(Path currentPicturePath : picturesPath){
-            pictures.append("*").append(currentPicturePath).append("?,");
+            pictures.append("*").append(currentPicturePath).append("?");
         }
         return pictures.toString();
     }
