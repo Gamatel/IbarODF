@@ -1,5 +1,9 @@
 package ibarodf.core.file;
 
+
+import ibarodf.core.meta.Hyperlink;
+import ibarodf.core.meta.MetaDataHyperlink;
+import ibarodf.core.meta.NoContentException;
 import ibarodf.core.meta.NoPictureException;
 import net.lingala.zip4j.exception.ZipException;
 
@@ -8,15 +12,25 @@ import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+
 
 import ibarodf.core.IbarODFCore;
 import net.lingala.zip4j.core.ZipFile;
 
 
 
-public class TempDirHandler {
+public class TempDirHandler{
     private final Path fileToUnzipPath;
     private Path unzipedFilePath;
+    
 
     public TempDirHandler(Path fileToUnzipPath){
         this.fileToUnzipPath = fileToUnzipPath;
@@ -58,4 +72,42 @@ public class TempDirHandler {
         }
         return IbarODFCore.stringToPath(picturesDirectory.getAbsolutePath());
     }
+
+    public Path getContentFile() throws Exception{
+        String separator = FileSystems.getDefault().getSeparator(); 
+        File contentFile = new File(unzipedFilePath.toString()+separator+"content.xml");
+        if(!contentFile.exists()){
+            throw new NoContentException(fileToUnzipPath);
+        }
+        return IbarODFCore.stringToPath(contentFile.getAbsolutePath());
+    }
+
+    public NodeList getHyperlinksNodeList() throws Exception{
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder builder = factory.newDocumentBuilder();
+        Document contenteDocument = builder.parse(new File(getContentFile().toString()));
+        NodeList hyperlinkList = contenteDocument.getElementsByTagName(MetaDataHyperlink.HYPERLINK_TAG);
+        return hyperlinkList;
+    }
+
+    public ArrayList<Hyperlink> getHyperlink() throws Exception{
+        NodeList hyperlinksNodeList = getHyperlinksNodeList();
+        Element currentElement;
+        Hyperlink hyperlinkToAdd;
+        ArrayList<Hyperlink> hyperlinksArray = new ArrayList<Hyperlink>(); 
+        for(int index=0, listLength = hyperlinksNodeList.getLength() ; index<listLength; index++){
+            currentElement = (Element) hyperlinksNodeList.item(index);
+            hyperlinkToAdd = new Hyperlink(currentElement.getAttribute(MetaDataHyperlink.TYPE_TAG),currentElement.getAttribute(MetaDataHyperlink.REFERENCE_TAG), currentElement.getAttribute(MetaDataHyperlink.STYLE_NAME_TAG), currentElement.getAttribute(MetaDataHyperlink.VISITED_STYLE_NAME_TAG));
+            hyperlinksArray.add(hyperlinkToAdd);
+        }        
+        return hyperlinksArray;
+    }
+
+
+
+
+
+    
+    
+    
 }

@@ -8,10 +8,11 @@ import java.nio.file.Path;
 
 
 import ibarodf.core.file.Directory;
+import ibarodf.core.file.NotOdfFile;
 import ibarodf.core.file.OdfFile;
-import ibarodf.core.file.RegularFile;
 import ibarodf.core.meta.MetaDataComment;
 import ibarodf.core.meta.MetaDataCreator;
+import ibarodf.core.meta.MetaDataKeyword;
 import ibarodf.core.meta.MetaDataSubject;
 import ibarodf.core.meta.MetaDataTitle;
 
@@ -31,7 +32,7 @@ public class IbarODFCore {
 	}
 
 	public StringBuilder displayTheMetaDataOfAFile() throws Exception{
-		RegularFile notOdfFile = new RegularFile(fileToOperateOn);
+		NotOdfFile notOdfFile = new NotOdfFile(fileToOperateOn);
 		return notOdfFile.displayMetaData();
 	}
 
@@ -44,7 +45,7 @@ public class IbarODFCore {
 		OdfFile file = new OdfFile(fileToOperateOn);
 		file.setMetaData(MetaDataTitle.ATTR, newTitle);
 		file.setMetaData(MetaDataSubject.ATTR, newSubject);
-		file.replaceKeywords(newKeyword);
+		file.setMetaData(MetaDataKeyword.ATTR, newKeyword);
 		file.setMetaData(MetaDataComment.ATTR, newComments);
 		file.saveChange();
 		System.out.println("Description changed!");
@@ -106,12 +107,8 @@ public class IbarODFCore {
 				file.setMetaData(MetaDataSubject.ATTR, args[3]);
 				msg.append("Subject added!");
 				break;
-    		case ADD_A_KEYWORD_TO_AN_ODF_FILE:
-				file.addKeyword(args[3]);
-				msg.append("Keyword added!");
-				break;
-			case REPLACE_KEYWORDS_TO_AN_ODF_FILE:
-				file.replaceKeywords(args[3]);
+			case REPLACE_THE_KEYWORDS_TO_AN_ODF_FILE:
+				file.setMetaData(MetaDataKeyword.ATTR,args[3]);
 				msg.append("Keywords changed!");
 				break;
     		case CHANGE_THE_COMMENTS_OF_AN_ODF_FILE:

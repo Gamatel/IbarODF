@@ -23,12 +23,12 @@ public class MetaDataStats extends MetaDataXML {
 		final LinkedHashMap<String, Integer> hwStats = new LinkedHashMap<>();
 		loadStatsIntoHM(hwStats, stats);
 
-		strBuilder.append("{");
+		strBuilder.append("[");
 		for (Map.Entry<String, Integer> entry: hwStats.entrySet()) {
-			String lineStr = String.format("%s: %s,", entry.getKey(), entry.getValue());
+			String lineStr = String.format("%s: %s;", entry.getKey(), entry.getValue());
 			strBuilder.append(lineStr);
 		}
-		strBuilder.append("}");
+		strBuilder.append("]");
 
 		return strBuilder.toString();
 	}

@@ -12,15 +12,14 @@ import ibarodf.core.meta.MetaDataTitle;
 
 import java.nio.file.Path;
 import java.text.ParseException;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 public class RegularFile extends AbstractGenericFile{
-	private final HashMap<String, AbstractMetaData> metaDataHM = new LinkedHashMap<String, AbstractMetaData>();
+	private final LinkedHashMap<String, AbstractMetaData> metaDataHM = new LinkedHashMap<String, AbstractMetaData>();
 	public final static String FILE_TITLE = "File title"; 
 	public final static String FILE_MIME_TYPE = "MIME type";
 
-	public RegularFile(Path path) {
+	public RegularFile(Path path) throws Exception{
 		super(path);
 	}
 	

@@ -39,13 +39,9 @@ public class CommandTranslator {
     private boolean isAskingToAddASubjectToAFile(){
         return isAskingToOperateOnAFile() && (command[2].equals("-s") || command[2].equals("--subject"));
     }
-    
-    private boolean isAskingToAddAKeywordToAFile(){
-        return isAskingToOperateOnAFile() && (command[2].equals("-Ak") || command[2].equals("--add-keyword"));
-    }
 
     private boolean isAskingToReplaceTheKeywordsOfAFile(){
-        return isAskingToOperateOnAFile() && (command[2].equals("-Rk") || command[2].equals("--replace-keyword"));
+        return isAskingToOperateOnAFile() && (command[2].equals("-k") || command[2].equals("--keyword"));
     }
 
     private boolean isAskingToChangeTheCommentsOfAFile(){
@@ -70,10 +66,8 @@ public class CommandTranslator {
             return Command.CHANGE_THE_TITLE_OF_AN_ODF_FILE;
         }else if(isAskingToAddASubjectToAFile()){
             return Command.CHANGE_THE_SUBJECT_OF_AN_ODF_FILE;
-        }else if(isAskingToAddAKeywordToAFile()){
-            return Command.ADD_A_KEYWORD_TO_AN_ODF_FILE;
         }else if(isAskingToReplaceTheKeywordsOfAFile()){
-            return Command.REPLACE_KEYWORDS_TO_AN_ODF_FILE;
+            return Command.REPLACE_THE_KEYWORDS_TO_AN_ODF_FILE;
         }else if(isAskingToChangeTheCommentsOfAFile()){
             return Command.CHANGE_THE_COMMENTS_OF_AN_ODF_FILE;
         }else if(isAskingToChangeTheCreatorOfAFile()){

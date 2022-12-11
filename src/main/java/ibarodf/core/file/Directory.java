@@ -1,4 +1,5 @@
 package ibarodf.core.file;
+
 import java.util.ArrayList;
 import java.io.File;
 import java.nio.file.FileSystems;
@@ -33,7 +34,7 @@ public  class Directory extends AbstractGenericFile {
                     OdfFile odtFileToAdd = new OdfFile(currentPath);
                     files.add(odtFileToAdd);
                 }else{
-                    files.add(new RegularFile(currentPath));
+                    files.add(new NotOdfFile(currentPath));
                 }
             } catch(Exception e){
                 System.out.println(e.getMessage());

@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Scanner;
 
-import org.apache.xml.serializer.utils.SystemIDResolver;
 
 import ibarodf.command.*;
 import ibarodf.core.Command;
@@ -56,15 +55,11 @@ public class MainCli {
                     ligne();
                     System.out.print(properTabulation(depth));
                     break;
-                case '*':
-                    depth ++;
-                    System.out.print(properTabulation(depth)+"- link : ");
-                    break;
-                case '<':
+                case '<': case '[':
                     depth ++;
                     System.out.print(properTabulation(depth));
                     break;
-                case '}': case '>': case '?': 
+                case '}': case '>': case ']': 
                     depth--;
                     break;
                 case ';' :

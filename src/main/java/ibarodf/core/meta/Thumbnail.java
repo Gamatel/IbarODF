@@ -15,7 +15,7 @@ public class Thumbnail extends AbstractMetaDataOdf {
     public String getValue() throws Exception{
         StringBuilder pathText = new StringBuilder(); 
         Path path = IbarODFCore.stringToPath(super.getValue()); 
-        pathText.append("*"+path+"?");
+        pathText.append(path);
         return pathText.toString();
     }
 

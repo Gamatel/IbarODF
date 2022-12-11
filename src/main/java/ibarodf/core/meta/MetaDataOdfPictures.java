@@ -18,11 +18,18 @@ public class MetaDataOdfPictures extends AbstractMetaDataOdf {
 
     public String getValue() throws Exception{
         StringBuilder pictures = new StringBuilder(super.getValue());
+        Picture currentPicture;
+        pictures.append("[");
         for(Path currentPicturePath : picturesPath){
-            pictures.append("*").append(currentPicturePath).append("?");
+            currentPicture = new Picture(currentPicturePath);
+            pictures.append(currentPicture.toString());
         }
+        pictures.append("]");
         return pictures.toString();
     }
 
+    public ArrayList<Path> getPicturesPath(){
+        return picturesPath;
+    }
 
 }
