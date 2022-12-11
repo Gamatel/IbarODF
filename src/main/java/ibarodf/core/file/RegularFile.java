@@ -25,7 +25,7 @@ public class RegularFile extends AbstractGenericFile{
 	}
 	
 	
-	public HashMap<String, AbstractMetaData> getMetaData() {
+	public LinkedHashMap<String, AbstractMetaData> getMetaData() {
 		return metaDataHM;	
 	}
 	
@@ -50,7 +50,7 @@ public class RegularFile extends AbstractGenericFile{
 		metaDataStr.append("<");
 		String lineStr;
 		for (Map.Entry<String, AbstractMetaData> entry: getMetaData().entrySet()) {
-			lineStr = String.format("%s: %s,", entry.getKey(), entry.getValue().getValue());
+			lineStr = String.format("%s: %s;",entry.getKey(), entry.getValue().getValue());
 			metaDataStr.append(lineStr);
 		}
 		metaDataStr.append(">");

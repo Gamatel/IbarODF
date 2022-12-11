@@ -6,8 +6,8 @@ import org.odftoolkit.odfdom.incubator.meta.OdfOfficeMeta;
 public class MetaDataTitle extends MetaDataXML {
 	public final static String ATTR = "Title";
 
-	public MetaDataTitle(OdfOfficeMeta meta, String value) {
-		super(meta, ATTR, value);
+	public MetaDataTitle(OdfOfficeMeta meta) {
+		super(meta, ATTR, meta.getTitle());
 	}
 
 	public void setValue(String value) throws ParseException, ReadOnlyMetaException {

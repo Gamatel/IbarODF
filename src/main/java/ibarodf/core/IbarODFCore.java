@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+
 import ibarodf.core.file.Directory;
 import ibarodf.core.file.OdfFile;
 import ibarodf.core.file.RegularFile;
@@ -30,21 +31,20 @@ public class IbarODFCore {
 	}
 
 	public StringBuilder displayTheMetaDataOfAFile() throws Exception{
-		RegularFile notOdtFile = new RegularFile(fileToOperateOn);
-		return notOdtFile.displayMetaData();
+		RegularFile notOdfFile = new RegularFile(fileToOperateOn);
+		return notOdfFile.displayMetaData();
 	}
 
 	public StringBuilder diplayTheMetatDataOfAnOdtFile() throws Exception{
-		OdfFile odtFile = new OdfFile(fileToOperateOn); 
-		return odtFile.displayMetaData();
+		OdfFile odfFile = new OdfFile(fileToOperateOn); 
+		return odfFile.displayMetaData();
 	}
 
 	public void replaceTheDescriptionOfAnOdtFile(String newTitle, String newSubject, String newKeyword, String newComments) throws Exception{
 		OdfFile file = new OdfFile(fileToOperateOn);
 		file.setMetaData(MetaDataTitle.ATTR, newTitle);
 		file.setMetaData(MetaDataSubject.ATTR, newSubject);
-		System.out.println("Have to implemente adding a keyword!!!");
-		// file.setMetaData(MetaDataKeyword.ATTR, args[3]);
+		file.replaceKeywords(newKeyword);
 		file.setMetaData(MetaDataComment.ATTR, newComments);
 		file.saveChange();
 		System.out.println("Description changed!");
@@ -73,7 +73,7 @@ public class IbarODFCore {
         boolean isOdf= false;
         try{
             String type = fileType(filePath);
-            isOdf = type.contains("application/vnd.oasis.opendocument");
+            isOdf = !type.equals("application/vnd.oasis.opendocument.formula") && type.contains("application/vnd.oasis.opendocument");
         }catch(UnrecognizableTypeFileException ignored){
         } catch(IOException e){
             System.err.println(e.getMessage());
@@ -107,9 +107,12 @@ public class IbarODFCore {
 				msg.append("Subject added!");
 				break;
     		case ADD_A_KEYWORD_TO_AN_ODF_FILE:
-				System.out.println("Have to implement the adding of keywords");
-				// file.setMetaData(MetaDataKeyword.ATTR, args[3]);
+				file.addKeyword(args[3]);
 				msg.append("Keyword added!");
+				break;
+			case REPLACE_KEYWORDS_TO_AN_ODF_FILE:
+				file.replaceKeywords(args[3]);
+				msg.append("Keywords changed!");
 				break;
     		case CHANGE_THE_COMMENTS_OF_AN_ODF_FILE:
 				file.setMetaData(MetaDataComment.ATTR, args[3]);
