@@ -1,83 +1,37 @@
 package ibarodf.core.file;
 
 
-import java.util.Map;
-import java.io.File;
+
+import org.json.JSONObject;
+
 import java.lang.StringBuilder;
-
-import ibarodf.core.IbarODFCore;
-import ibarodf.core.meta.AbstractMetaData;
-import ibarodf.core.meta.MetaDataRegularFile;
-import ibarodf.core.meta.MetaDataTitle;
-
 import java.nio.file.Path;
-import java.text.ParseException;
-import java.util.LinkedHashMap;
+
 
 public class RegularFile extends AbstractGenericFile{
-	private final LinkedHashMap<String, AbstractMetaData> metaDataHM = new LinkedHashMap<String, AbstractMetaData>();
-	public final static String FILE_TITLE = "File title"; 
-	public final static String FILE_MIME_TYPE = "MIME type";
+	public static final String FILE_NAME = "Name";
+	public static final String MIME_TYPE = "Mime Type";
+
 
 	public RegularFile(Path path) throws Exception{
 		super(path);
 	}
 	
-	
-	public LinkedHashMap<String, AbstractMetaData> getMetaData() {
-		return metaDataHM;	
-	}
-	
-
-	public void setMetaData(final String attribut, final String value) throws ParseException {
-		try {
-			metaDataHM.get(attribut).setValue(value);
-		} catch (ibarodf.core.meta.ReadOnlyMetaException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	public String getMetaData(final String attribut) throws Exception{
-		if(!metaDataHM.containsKey(attribut)) 
-			throw new IllegalArgumentException(String.format("Attribut %s doesnn't exist", attribut));
-		return metaDataHM.get(attribut).getValue();
-	}
-
 	@Override
 	public StringBuilder displayMetaData() throws Exception{
-		StringBuilder metaDataStr = new StringBuilder();
-		metaDataStr.append("<");
-		String lineStr;
-		for (Map.Entry<String, AbstractMetaData> entry: getMetaData().entrySet()) {
-			lineStr = String.format("%s: %s;",entry.getKey(), entry.getValue().getValue());
-			metaDataStr.append(lineStr);
-		}
-		metaDataStr.append(">");
-		return metaDataStr;
+		StringBuilder result = new StringBuilder();
+		result.append("<File Name : "+ getFileName()+";");
+		result.append("MimeType : "+ getMimeType()+";>");
+		return result;
 	}
 
-	public void addMetaData(String key, AbstractMetaData metaData){
-		metaDataHM.put(key,metaData); 
+	public JSONObject toJonObject() throws Exception{
+		JSONObject fileJson = new JSONObject();
+		fileJson.put(FILE_NAME, getFileName());
+		fileJson.put(MIME_TYPE, getMimeType());
+		return fileJson;
 	}
-
-	public void loadMetaData()  throws Exception{
-		addMetaData(RegularFile.FILE_TITLE,getTitle());
-        addMIMEType();
-    }
-
-	public MetaDataRegularFile getTitle(){
-        File file = new File(getPath().toString());
-        return new MetaDataRegularFile(MetaDataTitle.ATTR, file.getName());
-    }
-
-    public void addMIMEType(){
-		try{
-			MetaDataRegularFile metaMimeType = new MetaDataRegularFile(FILE_MIME_TYPE, IbarODFCore.fileType(getPath().toString()));
-			addMetaData(RegularFile.FILE_MIME_TYPE, metaMimeType);
-		}catch(Exception e){
-			addMetaData(RegularFile.FILE_MIME_TYPE, new MetaDataRegularFile(FILE_MIME_TYPE,"Unknown"));
-		}
-    }
+	
 
 
 }

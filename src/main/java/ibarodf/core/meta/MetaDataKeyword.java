@@ -1,30 +1,18 @@
 package ibarodf.core.meta;
 
-import java.util.Iterator;
 import java.util.List;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.odftoolkit.odfdom.incubator.meta.OdfOfficeMeta;
 
 public class MetaDataKeyword extends MetaDataXML{
     public final static String ATTR = "Keyword";
-    public MetaDataKeyword(OdfOfficeMeta meta) throws Exception{
-        super(meta, ATTR, null);
-        setValue(getValue());
-    }
+    //Json Key
+    public final static String KEYWORDS = "Keywords";
 
-    public String getValue(){
-        if(getMeta().getKeywords() ==  null){
-            return "No Keyword";
-        }
-        Iterator<String> keywordsIt = getMeta().getKeywords().iterator();
-        StringBuffer keywords = new StringBuffer();
-        while(keywordsIt.hasNext()){
-            keywords.append(keywordsIt.next());
-            if(keywordsIt.hasNext()){
-                keywords.append(",");
-            }
-        }
-        return keywords.toString();
+    public MetaDataKeyword(OdfOfficeMeta meta, List<String> value ) throws Exception{
+        super(meta, ATTR, value);
     }
 
     public void addKeyword(String newKeywords){
@@ -47,6 +35,12 @@ public class MetaDataKeyword extends MetaDataXML{
         addKeyword(newKeywords);
     }
 
+    public JSONObject toJson() throws Exception{
+        JSONArray keywordArray = new JSONArray();
+        List<String> keywords = (List<String>) getValue();
+        keywordArray.put(keywords);
+        return (new JSONObject()).put(KEYWORDS, keywords);
+    }
     
 
 

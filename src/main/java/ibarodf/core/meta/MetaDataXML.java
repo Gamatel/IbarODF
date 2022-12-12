@@ -5,7 +5,7 @@ import org.odftoolkit.odfdom.incubator.meta.OdfOfficeMeta;
 public class MetaDataXML extends AbstractMetaData {
 	private final OdfOfficeMeta meta;
 
-	public MetaDataXML(OdfOfficeMeta meta, String attribut, String value) {
+	public MetaDataXML(OdfOfficeMeta meta, String attribut, Object value) {
 		super(attribut, value);
 		this.meta = meta;
 	}
@@ -13,4 +13,6 @@ public class MetaDataXML extends AbstractMetaData {
 	public OdfOfficeMeta getMeta() {
 		return meta;
 	}
+
+	
 }

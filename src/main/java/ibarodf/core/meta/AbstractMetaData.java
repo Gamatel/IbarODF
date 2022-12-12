@@ -2,12 +2,14 @@ package ibarodf.core.meta;
 
 import java.text.ParseException;
 
+import org.json.JSONObject;
+
 public abstract class AbstractMetaData {
 
 	private final String attribut;
-	private String value;
+	private Object value;
 
-	public AbstractMetaData(String attribut, String value) {
+	public AbstractMetaData(String attribut, Object value) {
 		this.attribut = attribut;
 		this.value = value;
 	}
@@ -20,11 +22,16 @@ public abstract class AbstractMetaData {
 		this.value = value;
 	}
 
-	public String getValue() throws Exception {
+	public Object getValue() throws Exception {
 		return value;
 	}
 
 	public String toString() {
 		return "MetaDataAbstract : { attribut: '" + attribut + "', value: '" + value + "'}";
 	}
+
+	public JSONObject toJson() throws Exception{
+		return (new JSONObject()).put(attribut, value);
+	}
+
 }

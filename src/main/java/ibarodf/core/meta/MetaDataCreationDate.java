@@ -9,6 +9,8 @@ import java.text.ParseException;
 
 public class MetaDataCreationDate extends MetaDataXML {
 	public final static String ATTR = "CreationDate";
+	public final static String CREATION_DATE = ATTR;
+
 	private final static String DATE_FORMAT = "dd/MM/yyyy HH:mm:ss";
 	public final static SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat(DATE_FORMAT);
 

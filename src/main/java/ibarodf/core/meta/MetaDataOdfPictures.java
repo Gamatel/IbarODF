@@ -1,35 +1,26 @@
 package ibarodf.core.meta;
 
-import java.nio.file.Path;
 import java.util.ArrayList;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 
-import ibarodf.core.file.Directory;
 
 public class MetaDataOdfPictures extends AbstractMetaDataOdf {
-    private final ArrayList<Path> picturesPath;
     public final static String ATTR = "Pictures";
+    public final static String PICTURES = ATTR;
 
-    public MetaDataOdfPictures(Path pathOdtFile){
-        super(ATTR, pathOdtFile.toString());
-        picturesPath = Directory.getSubFilesPathFromDirectory(pathOdtFile);
-
+    public MetaDataOdfPictures(ArrayList<Picture> value){
+        super(ATTR, value);
     }
 
-    public String getValue() throws Exception{
-        StringBuilder pictures = new StringBuilder(super.getValue());
-        Picture currentPicture;
-        pictures.append("[");
-        for(Path currentPicturePath : picturesPath){
-            currentPicture = new Picture(currentPicturePath);
-            pictures.append(currentPicture.toString());
+    public JSONObject toJson() throws Exception{
+        ArrayList<Picture> picturesList = (ArrayList<Picture>) getValue();
+        JSONArray picturesListJson = new JSONArray();
+        for(Picture picture: picturesList){
+            picturesListJson.put(picture.toJson());
         }
-        pictures.append("]");
-        return pictures.toString();
-    }
-
-    public ArrayList<Path> getPicturesPath(){
-        return picturesPath;
+        return (new JSONObject()).put(PICTURES, picturesListJson); 
     }
 
 }

@@ -6,10 +6,12 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import org.json.JSONObject;
 
+import ibarodf.core.file.AbstractGenericFile;
 import ibarodf.core.file.Directory;
-import ibarodf.core.file.NotOdfFile;
 import ibarodf.core.file.OdfFile;
+import ibarodf.core.file.RegularFile;
 import ibarodf.core.meta.MetaDataComment;
 import ibarodf.core.meta.MetaDataCreator;
 import ibarodf.core.meta.MetaDataKeyword;
@@ -32,7 +34,7 @@ public class IbarODFCore {
 	}
 
 	public StringBuilder displayTheMetaDataOfAFile() throws Exception{
-		NotOdfFile notOdfFile = new NotOdfFile(fileToOperateOn);
+		RegularFile notOdfFile = new RegularFile(fileToOperateOn);
 		return notOdfFile.displayMetaData();
 	}
 
@@ -129,13 +131,32 @@ public class IbarODFCore {
 		return msg;
 	}
 
-	public boolean wantToDisplayMetadata(){
+	public static boolean wantToDisplayMetadata(Command actionToPerform){
 		return actionToPerform == Command.DISPLAY_THE_META_DATA_OF_AN_ODF_FILE || actionToPerform ==  Command.DISPLAY_THE_META_DATA_A_FILE || actionToPerform == Command.DISPLAY_THE_META_DATA_OF_ODF_FILES_IN_A_DIRECTORY;
 	}
 
 
 	public StringBuilder launchCore() throws Exception{
-		return wantToDisplayMetadata()? displayMetaData() : operationOnOdfFile();
+		return wantToDisplayMetadata(actionToPerform)? displayMetaData() : operationOnOdfFile();
 	}
+
+	public JSONObject toJson() throws Exception{
+		AbstractGenericFile file;
+		switch(actionToPerform){
+			case DISPLAY_THE_META_DATA_A_FILE:
+				file = new RegularFile(fileToOperateOn);
+				break;
+			case DISPLAY_THE_META_DATA_OF_AN_ODF_FILE:
+				file = new OdfFile(fileToOperateOn);
+				break;
+			case DISPLAY_THE_META_DATA_OF_ODF_FILES_IN_A_DIRECTORY:
+				file = new Directory(fileToOperateOn); 
+				break;
+			default :
+				throw new Exception("Error in Json formatage!");
+		}
+		return file.toJonObject();
+	}
+	
 
 }

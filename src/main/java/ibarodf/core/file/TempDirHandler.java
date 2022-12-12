@@ -5,6 +5,7 @@ import ibarodf.core.meta.Hyperlink;
 import ibarodf.core.meta.MetaDataHyperlink;
 import ibarodf.core.meta.NoContentException;
 import ibarodf.core.meta.NoPictureException;
+import ibarodf.core.meta.Picture;
 import net.lingala.zip4j.exception.ZipException;
 
 import java.io.File;
@@ -71,6 +72,16 @@ public class TempDirHandler{
             throw new NoPictureException(fileToUnzipPath);
         }
         return IbarODFCore.stringToPath(picturesDirectory.getAbsolutePath());
+    }
+
+
+    public ArrayList<Picture> getPicture() throws Exception{
+        ArrayList<Path> picturesPathArrayList = Directory.getSubFilesPathFromDirectory(getPicturesDirectory());
+        ArrayList<Picture>  picturesArrayList = new ArrayList<Picture>();
+        for(Path picturePath :picturesPathArrayList){
+            picturesArrayList.add(new Picture(picturePath));
+        }
+        return picturesArrayList;
     }
 
     public Path getContentFile() throws Exception{

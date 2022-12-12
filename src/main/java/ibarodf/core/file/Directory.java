@@ -1,6 +1,10 @@
 package ibarodf.core.file;
 
 import java.util.ArrayList;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.io.File;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
@@ -16,8 +20,18 @@ import ibarodf.core.IbarODFCore;
 
 public  class Directory extends AbstractGenericFile {
     private final ArrayList<Directory> directories = new ArrayList<>();
-    private final ArrayList<AbstractGenericFile> files = new ArrayList<>();
+    private final ArrayList<OdfFile> odfFiles = new ArrayList<>();
+    private final ArrayList<RegularFile> regularFiles = new ArrayList<>();
+    private final String directoryName = getFileName();  
 
+    //Json Key
+    public static final String DIRECTORY_NAME =  "Directory Name";
+    public static final String SUBDIRECTORIES = "Directories";
+    public static final String REGULAR_FILES = "Regular files";
+    public static final String ODF_FILES = "Odf files";
+    public static final String CONTENT_OF_DIRECTORY = "In";
+    public static final String NUMBER_OF = "Number of ";
+    
     public Directory(Path path){
         super(path);
         ArrayList<Path> filesPath = getSubFilesPathFromDirectory(path);
@@ -32,9 +46,9 @@ public  class Directory extends AbstractGenericFile {
                     directories.add(new Directory(currentPath));
                 }else if(IbarODFCore.isAnOdfFile(currentPath.toString())){
                     OdfFile odtFileToAdd = new OdfFile(currentPath);
-                    files.add(odtFileToAdd);
+                    odfFiles.add(odtFileToAdd);
                 }else{
-                    files.add(new NotOdfFile(currentPath));
+                    regularFiles.add(new RegularFile(currentPath));
                 }
             } catch(Exception e){
                 System.out.println(e.getMessage());
@@ -67,8 +81,11 @@ public  class Directory extends AbstractGenericFile {
         for(Directory currentDirectory : directories){
             metaDataStr.append(currentDirectory.displayMetaData());
         }
-        for(AbstractGenericFile currentFile : files){ 
-            metaDataStr.append(currentFile.displayMetaData());
+        for(RegularFile currentRegularFile : regularFiles){ 
+            metaDataStr.append(currentRegularFile.displayMetaData());
+        }
+        for(OdfFile currentOdfFile : odfFiles){
+            metaDataStr.append(currentOdfFile.displayMetaData());
         }
         metaDataStr.append("}}");
         metaDataStr.append(getInformations());
@@ -83,14 +100,47 @@ public  class Directory extends AbstractGenericFile {
         return directories.size();
     }
 
+    public int getNumberOfRegularFiles(){
+        return regularFiles.size();
+    }
+
     public int getNumberOfFiles(){
-        return files.size();
+        return odfFiles.size();
     }
 
     public String getInformations(){
         String infos = "\"In " + getPath().getFileName() + " :" + getNumberOfDirectories() + " Directories - " +
                 getNumberOfFiles() + " Total regular file\"";
         return infos;
+    }
+
+    public JSONObject toJonObject() throws Exception{  
+        JSONObject directoryJson = new JSONObject();
+
+        JSONArray regularFilesJson = new JSONArray();
+        JSONArray odfFilesJson = new JSONArray();
+        JSONArray directoriesJson = new JSONArray();
+        JSONArray inDirectory = new JSONArray();
+
+        for(Directory currentDirectory : directories){
+            directoriesJson.put(currentDirectory.toJonObject());
+        }
+        for(RegularFile currentRegularFile : regularFiles){ 
+            regularFilesJson.put(currentRegularFile.toJonObject());
+        }
+        for(OdfFile currentOdfFile : odfFiles){
+            odfFilesJson.put(currentOdfFile.toJonObject());
+        }
+        inDirectory.put((new JSONObject()).put(NUMBER_OF + SUBDIRECTORIES, directories.size()));
+        inDirectory.put((new JSONObject()).put(NUMBER_OF + REGULAR_FILES, regularFiles.size()));
+        inDirectory.put((new JSONObject()).put(NUMBER_OF + ODF_FILES, odfFiles.size()));
+
+        directoryJson.put(DIRECTORY_NAME, directoryName);
+        directoryJson.put(REGULAR_FILES, regularFilesJson);
+        directoryJson.put(ODF_FILES, odfFilesJson);
+        directoryJson.put(SUBDIRECTORIES, directoriesJson);
+        directoryJson.put(CONTENT_OF_DIRECTORY, inDirectory);
+        return  directoryJson;
     }
 
     
