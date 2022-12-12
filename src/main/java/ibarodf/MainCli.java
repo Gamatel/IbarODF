@@ -1,9 +1,11 @@
 package ibarodf;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Scanner;
@@ -18,16 +20,19 @@ import ibarodf.core.Command;
 import ibarodf.core.IbarODFCore;
 import ibarodf.core.file.Directory;
 import ibarodf.core.file.OdfFile;
+import ibarodf.core.file.RegularFile;
 import ibarodf.core.meta.MetaDataHyperlink;
 import ibarodf.core.meta.MetaDataOdfPictures;
 import ibarodf.core.meta.MetaDataStats;
+import ibarodf.core.meta.Picture;
 
 public class MainCli {
     public static final int NUMBER_SYMBOLE = 100; 
 
     public static void help(){
         try{
-            BufferedReader helpReader = new BufferedReader(new FileReader("help.txt"));
+            String fileSeparator = FileSystems.getDefault().getSeparator();
+            BufferedReader helpReader = new BufferedReader(new FileReader(new File("ressources" + fileSeparator +"help.txt")));
             String line;
             while((line = helpReader.readLine()) != null){
                 System.out.println(line);
@@ -54,41 +59,8 @@ public class MainCli {
         ibar.replaceTheDescriptionOfAnOdtFile(title, subject, keywords, comments);
     }
 
-    public static void printProperly(String result){
-        System.out.println();
-        int depth =0;
-        char[] charArray = result.toCharArray();
-        for(char singleChar :  charArray){
-            switch(singleChar){
-                case '{':
-                    depth ++;
-                    ligne();
-                    System.out.print(properTabulation(depth));
-                    break;
-                case '<': case '[':
-                    depth ++;
-                    System.out.print(properTabulation(depth));
-                    break;
-                case '}': case '>': case ']': 
-                    depth--;
-                    break;
-                case ';' :
-                    System.out.print(properTabulation(depth));
-                    break;
-                case '"':
-                    ligne();
-                    System.out.print(properTabulation(depth+1));
-                    break;
-                default:
-                    System.out.print(singleChar);
-            }
-        }
-        System.out.println();
-    }
-
-
     public static String properTabulation(int numberOfTab){
-        StringBuilder tabulation = new StringBuilder("\n");
+        StringBuilder tabulation = new StringBuilder();
         while(numberOfTab > 0){
             tabulation.append("\t");
             numberOfTab--;
@@ -104,49 +76,54 @@ public class MainCli {
         System.out.println();
     }
 
-    public static void prettyDirectory(JSONObject directory){
+    public static void prettyDirectory(JSONObject directory, int depth){
         try {
+            String tabulation = properTabulation(depth);
             ligne();
-            System.out.println(Directory.DIRECTORY_NAME + " : " +directory.getString(Directory.DIRECTORY_NAME));
+            System.out.println(tabulation+Directory.DIRECTORY_NAME + " : " +directory.getString(Directory.DIRECTORY_NAME));
             ligne();
             JSONArray jsonRegularFiles = directory.getJSONArray(Directory.REGULAR_FILES);
             JSONArray jsonOdfFiles = directory.getJSONArray(Directory.ODF_FILES);
             JSONArray jsonDirectories = directory.getJSONArray(Directory.SUBDIRECTORIES);
             for(int index=0, indexMax = jsonRegularFiles.length(); index<indexMax ; index++ ){
-                prettyFile(jsonRegularFiles.getJSONObject(index));
+                prettyFile(jsonRegularFiles.getJSONObject(index), depth);
                 System.out.println("\n");
             }
             for(int index=0, indexMax = jsonOdfFiles.length(); index<indexMax ; index++ ){
-                prettyOdfFile(jsonOdfFiles.getJSONObject(index));
+                prettyOdfFile(jsonOdfFiles.getJSONObject(index), depth);
                 System.out.println("\n");
             }
             for(int index=0, indexMax = jsonDirectories.length(); index<indexMax ; index++ ){
-                prettyDirectory(jsonDirectories.getJSONObject(index));
+                prettyDirectory(jsonDirectories.getJSONObject(index), depth+1);
             }
             ligne();
-            System.out.println("In " + directory.getString(Directory.DIRECTORY_NAME));
-            System.out.println(directory.getJSONArray(Directory.CONTENT_OF_DIRECTORY));
+            System.out.println(tabulation + "In " + directory.getString(Directory.DIRECTORY_NAME));
+            prettyInformations(directory.getJSONArray(Directory.CONTENT_OF_DIRECTORY), depth);
             ligne();
         }catch(JsonException e){}
     }
 
-    public static void prettyFile(JSONObject file){
+    public static void prettyFile(JSONObject file, int depth){
         try {   
-            prettyObject(file);
+            String tabulation = properTabulation(depth);
+            System.out.println(tabulation + OdfFile.FILE_NAME + " : "+  file.get(RegularFile.FILE_NAME));
+            System.out.println(tabulation + OdfFile.MIME_TYPE + " : "+  file.get(RegularFile.MIME_TYPE));
         }catch(JsonException e){}
     }
 
-    public static void prettyOdfFile(JSONObject odfFile){
+    public static void prettyOdfFile(JSONObject odfFile, int depth){
         try {      
-            System.out.println(OdfFile.FILE_NAME + ":"+  odfFile.get(OdfFile.FILE_NAME));
-            System.out.println(OdfFile.MIME_TYPE + ":"+  odfFile.get(OdfFile.MIME_TYPE));
+            String tabulation = properTabulation(depth);
+            System.out.println(tabulation + OdfFile.FILE_NAME + " : "+  odfFile.get(OdfFile.FILE_NAME));
+            System.out.println(tabulation + OdfFile.MIME_TYPE + " : "+  odfFile.get(OdfFile.MIME_TYPE));
             JSONArray metaJsonArray = odfFile.getJSONArray(OdfFile.METADATAS);
-            prettyMetadata(metaJsonArray);
+            prettyMetadata(metaJsonArray, depth);
         }catch(JsonException e){}
     }
 
 
-    public static void prettyMetadata(JSONArray metadataJsonArray){
+    public static void prettyMetadata(JSONArray metadataJsonArray, int depth){
+        String tabulation = properTabulation(depth);
         JSONObject currentMeta = new JSONObject();
         Collection<String> typeMeta;
         for(int indexArray =0, indexMaxArray = metadataJsonArray.length(); indexArray < indexMaxArray; indexArray++){
@@ -155,57 +132,79 @@ public class MainCli {
             for(String  meta : typeMeta){
                 switch(meta){
                     case MetaDataHyperlink.HYPERLINKS:
-                        prettyHyperlink(currentMeta);
+                        System.out.println(tabulation+ MetaDataHyperlink.HYPERLINKS + ":");
+                        prettyHyperlink(currentMeta, depth+1);
                         break;
                     case MetaDataOdfPictures.PICTURES:
-                        prettyPicture(currentMeta);
+                        System.out.println(tabulation+MetaDataOdfPictures.PICTURES + ":");
+                        prettyPicture(currentMeta, depth+1);
                         break;
                     case MetaDataStats.STATISTICS:
-                        prettyStatistique(currentMeta);
+                        System.out.println(tabulation+MetaDataStats.STATISTICS + ":");
+                        prettyStatistique(currentMeta, depth+1);
                         break;
                     default :
-                        prettyObject(currentMeta);
+                        prettyObject(currentMeta, depth);
 
                 }
             }
         }
     }
 
-    public static void prettyHyperlink(JSONObject HyperlinkJson){   
+    public static void prettyHyperlink(JSONObject HyperlinkJson,  int depth){
+        String tabulation = properTabulation(depth);
         JSONArray hyperlinksArray = HyperlinkJson.getJSONArray(MetaDataHyperlink.HYPERLINKS);
         JSONObject currentLink;
-        for(int index= 0, indexMax = hyperlinksArray.length(); index<indexMax; index++){
+        int lengthArray = hyperlinksArray.length();
+        if(lengthArray==0){System.out.println(tabulation+ "No hyperlink");}
+        for(int index= 0 ; index<lengthArray; index++){
             currentLink = hyperlinksArray.getJSONObject(index);
-            prettyObject(currentLink);
+            System.out.println(tabulation+"Hyperlink :");
+            prettyObject(currentLink, depth+1);
         }     
     }
 
 
 
 
-    public static void prettyObject(JSONObject jsonObject){
+    public static void prettyObject(JSONObject jsonObject, int depth){
+        String tabulation = properTabulation(depth);
         Collection<String> attributsObject = jsonObject.keySet();
         for(String attribut : attributsObject){
-            System.out.println(attribut + ":"+  jsonObject.get(attribut));
+            System.out.println(tabulation + attribut + " : "+  jsonObject.get(attribut));
         }
     }
 
-    public static void prettyPicture(JSONObject pictureJson){
+    public static void prettyPicture(JSONObject pictureJson, int depth){
+        String tabulation = properTabulation(depth);
         JSONArray pictureArray = pictureJson.getJSONArray(MetaDataOdfPictures.PICTURES);
         JSONObject currentPicture;
-        for(int index= 0, indexMax =pictureArray.length(); index<indexMax; index++){
+        Path picturePath;
+        int lengthArray = pictureArray.length();
+        if(lengthArray==0){System.out.println(tabulation+ "No picture");}
+        for(int index= 0; index<lengthArray; index++){
             currentPicture = pictureArray.getJSONObject(index);
-            prettyObject(currentPicture);;
-        }     
+            picturePath = (Path) currentPicture.get(Picture.PATH); 
+            System.out.println(tabulation +"Picture "+picturePath.getFileName()+ " :");
+            prettyObject(currentPicture, depth+1);
+        }
     }
 
+    public static void prettyInformations(JSONArray informationJsonArray, int depth){
+        int arrayLength = informationJsonArray.length();
+        for(int index=0; index<arrayLength; index++){
+            prettyObject(informationJsonArray.getJSONObject(index), depth+1);
+
+        }
+    } 
+
     
-    public static void prettyStatistique(JSONObject metadataJsonArray){
+    public static void prettyStatistique(JSONObject metadataJsonArray, int depth){
         JSONArray statArray = metadataJsonArray.getJSONArray(MetaDataStats.STATISTICS);
         JSONObject currentStat;
         for(int index= 0, indexMax = statArray.length(); index< indexMax; index++){
             currentStat = statArray.getJSONObject(index);
-            prettyObject(currentStat);
+            prettyObject(currentStat,depth);
         }
 
     }
@@ -222,19 +221,19 @@ public class MainCli {
                 changeTheDescriptionOfAnOdtFile(actionToPerform, IbarODFCore.stringToPath(args[1]), args);
             }else if(actionToPerform == Command.DISPLAY_THE_META_DATA_A_FILE){
                 IbarODFCore ibar = new IbarODFCore(actionToPerform, IbarODFCore.stringToPath(args[1]), args);
-                prettyFile(ibar.toJson());
+                prettyFile(ibar.toJson(), 0);
             }else if(actionToPerform == Command.DISPLAY_THE_META_DATA_OF_AN_ODF_FILE){
                 IbarODFCore ibar = new IbarODFCore(actionToPerform, IbarODFCore.stringToPath(args[1]), args);
-                prettyOdfFile(ibar.toJson());    
+                prettyOdfFile(ibar.toJson(), 0);    
             }
             else if(IbarODFCore.wantToDisplayMetadata(actionToPerform)){
                 IbarODFCore ibar = new IbarODFCore(actionToPerform, IbarODFCore.stringToPath(args[1]), args);
-                prettyDirectory(ibar.toJson());
+                prettyDirectory(ibar.toJson(), 0);
                 // System.out.println(ibar.toJson());
             }
             else{
                 IbarODFCore ibar = new IbarODFCore(actionToPerform, IbarODFCore.stringToPath(args[1]), args);
-                printProperly(ibar.launchCore().toString());
+                System.out.println(ibar.launchCore());
             }
          }catch(NotAllowedCommandException | FileNotFoundException e){
             System.out.println(e.getLocalizedMessage());

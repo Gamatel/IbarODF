@@ -93,6 +93,15 @@ public class TempDirHandler{
         return IbarODFCore.stringToPath(contentFile.getAbsolutePath());
     }
 
+    public boolean haveAnMetaXmlFile(){
+        String separator = FileSystems.getDefault().getSeparator(); 
+        File metaXmlFile = new File(unzipedFilePath.toString()+separator+"meta.xml");
+        if(!metaXmlFile.exists()){
+            return false;
+        }
+        return true;
+    }
+
     public NodeList getHyperlinksNodeList() throws Exception{
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = factory.newDocumentBuilder();

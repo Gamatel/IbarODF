@@ -13,7 +13,7 @@ public class RegularFile extends AbstractGenericFile{
 	public static final String MIME_TYPE = "Mime Type";
 
 
-	public RegularFile(Path path) throws Exception{
+	public RegularFile(Path path){
 		super(path);
 	}
 	

@@ -45,10 +45,10 @@ public class OdfFile extends RegularFile {
 	public OdfFile(Path path) throws Exception{
 		super(path);
 		tempDirHandler = new TempDirHandler(path);
-		try{
+		if(tempDirHandler.haveAnMetaXmlFile()){
 			loadMetaData();
-		}catch(Exception e){
-			throw new Exception("Something went wrong in the addition of the metadatas."); 
+		}else{
+			throw new EmptyOdfFileException(path);
 		}	
 	}	
 

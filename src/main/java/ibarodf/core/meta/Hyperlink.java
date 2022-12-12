@@ -10,6 +10,7 @@ public class Hyperlink {
     public final String visitedStyleName;
 
     //JSON key
+
     public static final String REFERENCE = "Reference";
     public static final String TYPE = "Type" ;
     public static final String STYLE_NAME = "Style Name";

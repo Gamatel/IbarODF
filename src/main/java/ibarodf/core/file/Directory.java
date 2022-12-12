@@ -50,7 +50,9 @@ public  class Directory extends AbstractGenericFile {
                 }else{
                     regularFiles.add(new RegularFile(currentPath));
                 }
-            } catch(Exception e){
+            }catch(EmptyOdfFileException e){
+                regularFiles.add(new RegularFile(currentPath));
+            }catch(Exception e){
                 System.out.println(e.getMessage());
             }
         }
