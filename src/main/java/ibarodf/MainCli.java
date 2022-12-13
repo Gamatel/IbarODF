@@ -1,12 +1,8 @@
 package ibarodf;
 
-import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.nio.file.FileSystems;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Scanner;
 
@@ -14,6 +10,7 @@ import javax.json.JsonException;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+
 
 import ibarodf.command.*;
 import ibarodf.core.Command;
@@ -27,36 +24,19 @@ import ibarodf.core.meta.MetaDataStats;
 import ibarodf.core.meta.Picture;
 
 public class MainCli {
-    public static final int NUMBER_SYMBOLE = 100; 
+    public static final int LINE_SIZE_FOR_PRETTY_PRINT = 100; 
 
-    public static void help(){
-        try{
-            String fileSeparator = FileSystems.getDefault().getSeparator();
-            BufferedReader helpReader = new BufferedReader(new FileReader(new File("ressources" + fileSeparator +"help.txt")));
-            String line;
-            while((line = helpReader.readLine()) != null){
-                System.out.println(line);
-            } 
-            helpReader.close();
-        }catch(IOException e){
-            System.err.println("Sorry, cannot reach the help manual.");
-        }
-    }
-
-    public static void changeTheDescriptionOfAnOdtFile(Command actionToPerform, Path fileToOperateOn, String[] args) throws Exception{
+    
+    public static ArrayList<String> newDescription(Path fileToOperateOn) throws Exception{
         Scanner scanEntry = new Scanner(System.in);
-        String title, subject, keywords, comments;
-        System.out.println("\nEnter the new title :");
-        title = scanEntry.nextLine();
-        System.out.println("Enter the new subject :");
-        subject = scanEntry.nextLine();
-        System.out.println("Enter the new keywords :");
-        keywords = scanEntry.nextLine();
-        System.out.println("Enter the new comments :");
-        comments = scanEntry.nextLine();
+        String[] descriptionMetaData =  IbarODFCore.descriptionMetaData;        
+        ArrayList<String> newValues =  new ArrayList<String>();
+        for(int index=0, indexMax = descriptionMetaData.length; index<indexMax; index++){
+            System.out.println("\nEnter the new "+descriptionMetaData[index]);
+            newValues.add(scanEntry.nextLine());
+        }  
         scanEntry.close();
-        IbarODFCore ibar = new IbarODFCore(actionToPerform, fileToOperateOn, args);
-        ibar.replaceTheDescriptionOfAnOdtFile(title, subject, keywords, comments);
+        return newValues;
     }
 
     public static String properTabulation(int numberOfTab){
@@ -70,7 +50,7 @@ public class MainCli {
 
     public static void ligne(){
         System.out.println();
-        for(int time=0; time<NUMBER_SYMBOLE; time++){
+        for(int time=0; time<LINE_SIZE_FOR_PRETTY_PRINT; time++){
             System.out.print("-");
         }
         System.out.println();
@@ -99,11 +79,20 @@ public class MainCli {
         }catch(JsonException e){}
     }
 
+    public static void prettyDirectory(JSONObject directory){
+        prettyDirectory(directory,0);
+    }
+
+
     public static void prettyFile(JSONObject file, int depth){
         try {   
             prettyPrint(RegularFile.FILE_NAME , file.get(RegularFile.FILE_NAME) , depth);
             prettyPrint(RegularFile.MIME_TYPE  , file.get(RegularFile.MIME_TYPE) , depth);
         }catch(JsonException e){}
+    }
+
+    public static void prettyFile(JSONObject file){
+        prettyFile(file, 0);
     }
 
     public static void prettyOdfFile(JSONObject odfFile, int depth){
@@ -112,6 +101,10 @@ public class MainCli {
             JSONArray metaJsonArray = odfFile.getJSONArray(OdfFile.METADATAS);
             prettyMetadata(metaJsonArray, depth);
         }catch(JsonException e){}
+    }
+
+    public static void prettyOdfFile(JSONObject odfFile){
+        prettyOdfFile(odfFile,0);
     }
 
 
@@ -210,32 +203,70 @@ public class MainCli {
 
     }
 
+
+
     
 
     public static void main(String[] args){
         CommandTranslator askedActionToPerform = new CommandTranslator(args);
         try{
             Command actionToPerform = askedActionToPerform.translate();
-            if(actionToPerform == Command.DISPLAY_HELP){
-                help();
-            }else if(actionToPerform == Command.REPLACE_THE_DESCRIPTION_OF_AN_ODF_FILE){
-                changeTheDescriptionOfAnOdtFile(actionToPerform, IbarODFCore.stringToPath(args[1]), args);
-            }else if(actionToPerform == Command.DISPLAY_THE_META_DATA_A_FILE){
-                IbarODFCore ibar = new IbarODFCore(actionToPerform, IbarODFCore.stringToPath(args[1]), args);
-                prettyFile(ibar.toJson(), 0);
-            }else if(actionToPerform == Command.DISPLAY_THE_META_DATA_OF_AN_ODF_FILE){
-                IbarODFCore ibar = new IbarODFCore(actionToPerform, IbarODFCore.stringToPath(args[1]), args);
-                prettyOdfFile(ibar.toJson(), 0);    
+            System.out.println(actionToPerform);
+            switch(actionToPerform){
+                case DISPLAY_HELP:
+                    IbarODFCore.help();
+                    break;
+                case DISPLAY_THE_META_DATA_A_FILE:{
+                        Path path = IbarODFCore.stringToPath(args[1]);
+                        prettyFile(IbarODFCore.RegularFileToJson(path));
+                    }
+                    break; 
+                case DISPLAY_THE_META_DATA_OF_AN_ODF_FILE: {
+                        Path path = IbarODFCore.stringToPath(args[1]);
+                        prettyOdfFile(IbarODFCore.odfFileToJson(path));
+                    }
+                    break; 
+                case DISPLAY_THE_META_DATA_OF_ODF_FILES_IN_A_DIRECTORY:{
+                        Path path = IbarODFCore.stringToPath(args[1]);
+                        prettyDirectory(IbarODFCore.directoryToJson(path));
+                        // System.out.println(IbarODFCore.directoryToJson(path));
+                    }
+                    break; 
+                case CHANGE_THE_TITLE_OF_AN_ODF_FILE:{
+                        Path path = IbarODFCore.stringToPath(args[1]);
+                        IbarODFCore.changeTheTitleOfAnOdfFile(path, args[3]);
+                    }
+                    break;
+                case CHANGE_THE_SUBJECT_OF_AN_ODF_FILE:{
+                        Path path = IbarODFCore.stringToPath(args[1]);
+                        IbarODFCore.changeTheSubjectOfAnOdfFile(path, args[3]);
+                    }
+                    break; 
+                case REPLACE_THE_KEYWORDS_TO_AN_ODF_FILE:{
+                        Path path = IbarODFCore.stringToPath(args[1]);
+                        IbarODFCore.changeTheKeywordsOfAnOdfFile(path, args[3]);
+                    }
+                    break;
+                case CHANGE_THE_COMMENTS_OF_AN_ODF_FILE:{
+                        Path path = IbarODFCore.stringToPath(args[1]);
+                        IbarODFCore.changeTheCommentsOfAnOdfFile(path, args[3]);
+                    }
+                    break; 
+                case CHANGE_THE_CREATOR_OF_AN_ODF_FILE:{
+                        Path path = IbarODFCore.stringToPath(args[1]);
+                        IbarODFCore.changeTheCreatorOfAnOdfFile(path, args[3]);
+                }
+                    break; 
+                case REPLACE_THE_DESCRIPTION_OF_AN_ODF_FILE:{
+                        Path path = IbarODFCore.stringToPath(args[1]);
+                        ArrayList<String> changedDescription = newDescription(path); 
+                        IbarODFCore.changeTheDescriptionOfAnOdtFile(path, changedDescription);
+                    }
+                break; 
+
             }
-            else if(IbarODFCore.wantToDisplayMetadata(actionToPerform)){
-                IbarODFCore ibar = new IbarODFCore(actionToPerform, IbarODFCore.stringToPath(args[1]), args);
-                prettyDirectory(ibar.toJson(), 0);
-                // System.out.println(ibar.toJson());
-            }
-            else{
-                IbarODFCore ibar = new IbarODFCore(actionToPerform, IbarODFCore.stringToPath(args[1]), args);
-                System.out.println(ibar.launchCore());
-            }
+
+
          }catch(NotAllowedCommandException | FileNotFoundException e){
             System.out.println(e.getLocalizedMessage());
          } catch(org.odftoolkit.odfdom.pkg.OdfValidationException e){
