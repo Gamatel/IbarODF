@@ -24,22 +24,7 @@ import ibarodf.core.meta.MetaDataTitle;
 
 public abstract class AbtractIbarOdfCore {
 	public static final String[] descriptionMetaData = {MetaDataTitle.ATTR, MetaDataSubject.ATTR, MetaDataKeyword.ATTR, MetaDataComment.ATTR};
-	/* private final Command actionToPerform;
-	private final Path fileToOperateOn;
-	private ArrayList<String> newValues;
-	public IbarODFCore(Command actionToPerform, Path fileToOperateOn, ArrayList<String> newValues) {
-		this.actionToPerform = actionToPerform;
-		this.fileToOperateOn = fileToOperateOn;
-		this.newValues = newValues;
-	}
 
-	public IbarODFCore(){
-		this.actionToPerform = null;
-		this.fileToOperateOn = null;
-		this.newValues = null;
-	}
-	 */
-	
 	 public static void help(){
 		try{
 			String fileSeparator = FileSystems.getDefault().getSeparator();
@@ -54,37 +39,12 @@ public abstract class AbtractIbarOdfCore {
 		}
 	}
 	
-	/* public IbarODFCore(Command actionToPerform, Path fileToOperateOn) {
-		this(actionToPerform, fileToOperateOn, null);
-	}
-
-	public StringBuilder displayTheMetaDataOfOdtFileInADirectory() throws Exception{
-		Directory directory = new Directory(fileToOperateOn);
-		return directory.displayMetaData();
-	}
-	public StringBuilder displayTheMetaDataOfAFile() throws Exception{
-		RegularFile notOdfFile = new RegularFile(fileToOperateOn);
-		return notOdfFile.displayMetaData();
-	}
-
-	public StringBuilder diplayTheMetatDataOfAnOdtFile() throws Exception{
-		OdfFile odfFile = new OdfFile(fileToOperateOn); 
-		return odfFile.displayMetaData();
-	}
- */
 	
 	public static void changeTheDescriptionOfAnOdtFile(Path odfFileToOperateOn, ArrayList<String> newValues) throws Exception{
 		OdfFile file = new OdfFile(odfFileToOperateOn);
 		for(int index =0 , maxIndex = descriptionMetaData.length; index < maxIndex; index++ ){
 			file.setMetaData( descriptionMetaData[index], newValues.get(index));
 		}
-		/* 
-		file.setMetaData(MetaDataTitle.ATTR, newValues.indexOf(0));
-		file.setMetaData(MetaDataSubject.ATTR, );
-		file.setMetaData(MetaDataKeyword.ATTR, newKeyword);
-		file.setMetaData(MetaDataComment.ATTR, newComments);
-		file.saveChange();
-		 */
 		file.saveChange();
 		System.out.println("Description changed!");
 
@@ -118,22 +78,6 @@ public abstract class AbtractIbarOdfCore {
         }
 		return isOdf;
     }
-/* 
-	public StringBuilder displayMetaData() throws Exception{
-		switch(actionToPerform){
-			case DISPLAY_THE_META_DATA_A_FILE:
-				return displayTheMetaDataOfAFile();
-			case DISPLAY_THE_META_DATA_OF_ODF_FILES_IN_A_DIRECTORY:
-				return displayTheMetaDataOfOdtFileInADirectory();
-			case DISPLAY_THE_META_DATA_OF_AN_ODF_FILE:
-				return diplayTheMetatDataOfAnOdtFile();
-			default:
-				throw new Exception("Something went wrong...");
-		}
-	} */
-
-
-
 
 	public static void changeTheTitleOfAnOdfFile(Path path, String newTitle) throws Exception{
 		OdfFile file = new OdfFile(path);
@@ -172,55 +116,9 @@ public abstract class AbtractIbarOdfCore {
 		System.out.println("Creator changed!");
 	}
 
-
-
-/* 		
-	public void operationOnOdfFile() throws Exception{
-		OdfFile file = new OdfFile(fileToOperateOn);
-		switch(actionToPerform){
-			case CHANGE_THE_TITLE_OF_AN_ODF_FILE:
-				file.setMetaData(MetaDataTitle.ATTR, newValues.get(0));
-				System.out.println("Title changed!");
-				break;
-    		case CHANGE_THE_SUBJECT_OF_AN_ODF_FILE:
-				file.setMetaData(MetaDataSubject.ATTR,  newValues.get(0));
-				System.out.println("Subject added!");
-				break;
-			case REPLACE_THE_KEYWORDS_TO_AN_ODF_FILE:
-				file.setMetaData(MetaDataKeyword.ATTR, newValues.get(0));
-				System.out.println("Keywords changed!");
-				break;
-    		case CHANGE_THE_COMMENTS_OF_AN_ODF_FILE:
-				file.setMetaData(MetaDataComment.ATTR,  newValues.get(0));
-				System.out.println("Commentschanged!");
-				break;
-			case CHANGE_THE_CREATOR_OF_AN_ODF_FILE:
-				file.setMetaData(MetaDataCreator.ATTR,  newValues.get(0));
-				System.out.println("Creator changed!");
-				break;
-			case REPLACE_THE_DESCRIPTION_OF_AN_ODF_FILE:
-				replaceTheDescriptionOfAnOdtFile(newValues);	
-				System.out.println("Description changed!");
-				break;
-			default:
-				throw new Exception("Something went wrong...");
-		}
-		file.saveChange();
-	}
- */
-
-
-
-
 	public static boolean wantToDisplayMetadata(Command actionToPerform){
 		return actionToPerform == Command.DISPLAY_THE_META_DATA_OF_AN_ODF_FILE || actionToPerform ==  Command.DISPLAY_THE_META_DATA_A_FILE || actionToPerform == Command.DISPLAY_THE_META_DATA_OF_ODF_FILES_IN_A_DIRECTORY;
 	}
-
-
-/* 
-	public StringBuilder launchCore() throws Exception{
-		return wantToDisplayMetadata(actionToPerform)? displayMetaData() : operationOnOdfFile();
-	} */
 
 	public static JSONObject directoryToJson(Path directoryPath) throws Exception{
 		Directory directory = new Directory(directoryPath);
@@ -238,25 +136,5 @@ public abstract class AbtractIbarOdfCore {
 		return file.toJonObject();
 		
 	}
-
-
-/* 	public JSONObject toJson() throws Exception{
-		AbstractGenericFile file;
-		switch(actionToPerform){
-			case DISPLAY_THE_META_DATA_A_FILE:
-				file = new RegularFile(fileToOperateOn);
-				break;
-			case DISPLAY_THE_META_DATA_OF_AN_ODF_FILE:
-				file = new OdfFile(fileToOperateOn);
-				break;
-			case DISPLAY_THE_META_DATA_OF_ODF_FILES_IN_A_DIRECTORY:
-				file = new Directory(fileToOperateOn); 
-				break;
-			default :
-				throw new Exception("Error in Json formatage!");
-		}
-		return file.toJonObject();
-	}
- */	
 
 }

@@ -3,6 +3,10 @@ package ibarodf.core.meta;
 import java.lang.Integer;
 import java.text.ParseException;
 import org.odftoolkit.odfdom.incubator.meta.OdfOfficeMeta;
+
+import ibarodf.core.meta.exception.NoStatisticsException;
+import ibarodf.core.meta.exception.ReadOnlyMetaException;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.odftoolkit.odfdom.incubator.meta.OdfMetaDocumentStatistic;
@@ -41,23 +45,8 @@ public class MetaDataStats extends MetaDataXML {
 		throw new ReadOnlyMetaException(ATTR);
 	}
 
-/* 	public static String objDocumentStatisticToStr(OdfMetaDocumentStatistic stats) {
-		final StringBuilder strBuilder = new StringBuilder();
-		final LinkedHashMap<String, Integer> hwStats = new LinkedHashMap<>();
-		loadStatsIntoHM(hwStats, stats);
 
-		strBuilder.append("[");
-		for (Map.Entry<String, Integer> entry: hwStats.entrySet()) {
-			String lineStr = String.format("%s: %s;", entry.getKey(), entry.getValue());
-			strBuilder.append(lineStr);
-		}
-		strBuilder.append("]");
-
-		return strBuilder.toString();
-	} */
-
-
-	public static HashMap<String, Integer> getStatistics(OdfOfficeMeta meta) {
+	public static HashMap<String, Integer> getStatistics(OdfOfficeMeta meta) throws NoStatisticsException {
 		OdfMetaDocumentStatistic stats = meta.getDocumentStatistic(); 
 		HashMap<String, Integer> hwStats = new HashMap<String, Integer>(); 
 		hwStats.put(CELLCOUNT, stats.getCellCount());
@@ -75,6 +64,9 @@ public class MetaDataStats extends MetaDataXML {
 		hwStats.put(SYLLABLECOUNT, stats.getSyllableCount());
 		hwStats.put(TABLECOUNT, stats.getTableCount());
 		hwStats.put(WORDCOUNT, stats.getWordCount());
+		if(hwStats.isEmpty()){
+			throw new NoStatisticsException();
+		}
 		return hwStats;
 	}
 

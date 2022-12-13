@@ -1,6 +1,9 @@
 package ibarodf.core.meta;
 
 import org.odftoolkit.odfdom.incubator.meta.OdfOfficeMeta;
+
+import ibarodf.core.meta.exception.ReadOnlyMetaException;
+
 import java.text.ParseException;
 
 public class MetaDataCreator extends MetaDataXML {

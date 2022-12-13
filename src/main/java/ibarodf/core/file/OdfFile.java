@@ -1,5 +1,6 @@
 package ibarodf.core.file;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -16,15 +17,24 @@ import java.text.ParseException;
 
 
 import ibarodf.core.meta.MetaDataTitle;
-import ibarodf.core.meta.NoPictureException;
 import ibarodf.core.meta.Picture;
 import ibarodf.core.meta.Thumbnail;
+import ibarodf.core.meta.exception.NoPictureException;
+import net.lingala.zip4j.exception.ZipException;
 import ibarodf.core.meta.MetaDataCreator;
 import ibarodf.core.meta.MetaDataHyperlink;
 import ibarodf.core.meta.MetaDataInitialCreator;
 import ibarodf.core.meta.MetaDataKeyword;
 import ibarodf.core.meta.MetaDataOdfPictures;
 import ibarodf.core.meta.MetaDataSubject;
+import ibarodf.core.file.exception.CannotAddAllMetadatasException;
+import ibarodf.core.file.exception.CannotAddHyperLinkException;
+import ibarodf.core.file.exception.CannotAddKeywordException;
+import ibarodf.core.file.exception.CannotAddPictureException;
+import ibarodf.core.file.exception.CannotAddStatisticsException;
+import ibarodf.core.file.exception.CannotAddThumbnailException;
+import ibarodf.core.file.exception.CannotLoadOdfDocumentException;
+import ibarodf.core.file.exception.EmptyOdfFileException;
 import ibarodf.core.meta.AbstractMetaData;
 import ibarodf.core.meta.Hyperlink;
 import ibarodf.core.meta.MetaDataComment;
@@ -42,7 +52,7 @@ public class OdfFile extends RegularFile {
 	public static final String METADATAS = "Metadata"; 
 
 
-	public OdfFile(Path path) throws Exception{
+	public OdfFile(Path path) throws IOException, ZipException, EmptyOdfFileException, CannotLoadOdfDocumentException, CannotAddAllMetadatasException {
 		super(path);
 		tempDirHandler = new TempDirHandler(path);
 		if(tempDirHandler.haveAnMetaXmlFile()){
@@ -56,10 +66,14 @@ public class OdfFile extends RegularFile {
 		return tempDirHandler;
 	}
 	
-	public void loadMetaData() throws Exception{
-		odf = OdfDocument.loadDocument(getPath().toString());
-		OdfMetaDom metaDom = odf.getMetaDom();
-		meta = new OdfOfficeMeta(metaDom);
+	public void loadMetaData() throws CannotLoadOdfDocumentException, CannotAddAllMetadatasException{
+		try{
+			odf = OdfDocument.loadDocument(getPath().toString());
+			OdfMetaDom metaDom = odf.getMetaDom();
+			meta = new OdfOfficeMeta(metaDom);
+		}catch(Exception e){
+			throw new CannotLoadOdfDocumentException(getFileName());
+		}
 		initAllMeta();
 	}
 
@@ -71,14 +85,14 @@ public class OdfFile extends RegularFile {
 	public void setMetaData(final String attribut, final String value) throws ParseException {
 		try {
 			metaDataHM.get(attribut).setValue(value);
-		} catch (ibarodf.core.meta.ReadOnlyMetaException e) {
+		} catch (ibarodf.core.meta.exception.ReadOnlyMetaException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
 	public Object getMetaData(final String attribut) throws Exception{
 		if(!metaDataHM.containsKey(attribut)) 
-			throw new IllegalArgumentException(String.format("Attribut %s doesnn't exist", attribut));
+			throw new IllegalArgumentException(String.format("Attribut %s doesn't exist", attribut));
 		return metaDataHM.get(attribut).getValue();
 	}
 
@@ -100,13 +114,13 @@ public class OdfFile extends RegularFile {
 	}
 
 	
-	private void initAllMeta() throws Exception{
+	private void initAllMeta() throws CannotAddAllMetadatasException{
 		addMetaData(MetaDataTitle.ATTR, new MetaDataTitle(meta));
 		addMetaData(MetaDataCreator.ATTR, new MetaDataCreator(meta));
 		addMetaData(MetaDataInitialCreator.ATTR, new MetaDataInitialCreator(meta));
 		addMetaData(MetaDataSubject.ATTR, new MetaDataSubject(meta));		
 		addMetaData(MetaDataComment.ATTR, new MetaDataComment(meta));
-		addMetaData(MetaDataKeyword.ATTR, new MetaDataKeyword(meta, meta.getKeywords()));
+		addKeyword();
 		addHyperlink();
 		addCreationDate();
 		addDocStats();
@@ -114,19 +128,31 @@ public class OdfFile extends RegularFile {
 		addPictures();
 	}
 
+
+	public void addKeyword() throws CannotAddKeywordException{
+		try{
+		addMetaData(MetaDataKeyword.ATTR, new MetaDataKeyword(meta, meta.getKeywords()));
+		}catch(Exception e){
+			throw new CannotAddKeywordException(getFileName());
+		}
+	} 
+
 	private void addCreationDate() {
 		Calendar creationDateInXML = meta.getCreationDate();
 		Calendar creationDate = creationDateInXML == null ? Calendar.getInstance() : creationDateInXML;
 		String creationDateStr = MetaDataCreationDate.CalendarToFormattedString(creationDate);
-
 		addMetaData(MetaDataCreationDate.ATTR, new MetaDataCreationDate(meta, creationDateStr));
 	}
 
-	private void addDocStats() {
-		addMetaData(MetaDataStats.ATTR, new MetaDataStats(meta, MetaDataStats.getStatistics(meta)));
+	private void addDocStats() throws CannotAddStatisticsException {
+		try{
+			addMetaData(MetaDataStats.ATTR, new MetaDataStats(meta, MetaDataStats.getStatistics(meta)));
+		}catch(Exception e){
+			throw new CannotAddStatisticsException(getFileName());
+		}
 	}
 	
-	public void addPictures(){
+	public void addPictures() throws CannotAddPictureException{
 		try{
 			ArrayList<Picture> picturesDirectoryPath = tempDirHandler.getPicture();
 			addMetaData(MetaDataOdfPictures.ATTR, new MetaDataOdfPictures(picturesDirectoryPath));
@@ -134,28 +160,26 @@ public class OdfFile extends RegularFile {
 			addMetaData(MetaDataOdfPictures.ATTR, new MetaDataOdfPictures(new ArrayList<Picture>()));
 		}catch(Exception e){
 			System.out.println(e.getMessage());
-			System.out.println("Something went wrong with the addition of the pictures...");
+			throw new CannotAddPictureException(getFileName());
 		}
 	}
 	
-	public void addThumbnail(){
+	public void addThumbnail() throws CannotAddThumbnailException{
 		try{
 			Path thumbnailPath = getTempDirHandler().getThumbnailPath();
 			addMetaData(Thumbnail.ATTR, new Thumbnail(thumbnailPath));
 		}catch(Exception e){
-			System.out.println(e.getMessage());
-			System.out.println("Something went wrong with the addition of the thumbnail...");
+			throw new CannotAddThumbnailException(getFileName());
 		}
 	}
 
 
-	public void addHyperlink(){
+	public void addHyperlink() throws CannotAddHyperLinkException{
 		try{
 			ArrayList<Hyperlink> hyperlinkList = tempDirHandler.getHyperlink();
 			addMetaData(MetaDataHyperlink.ATTR,new MetaDataHyperlink(hyperlinkList));
 		}catch(Exception e){
-			System.err.println(e.getMessage());
-			System.err.println("Something went wrong with the addition of the hyperlinks");
+			throw new CannotAddHyperLinkException(getFileName());
 		}
 	}
 

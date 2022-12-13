@@ -14,7 +14,7 @@ import org.json.JSONObject;
 
 import ibarodf.command.*;
 import ibarodf.core.Command;
-import ibarodf.core.IbarODFCore;
+import ibarodf.core.AbtractIbarOdfCore;
 import ibarodf.core.file.Directory;
 import ibarodf.core.file.OdfFile;
 import ibarodf.core.file.RegularFile;
@@ -29,7 +29,7 @@ public class MainCli {
     
     public static ArrayList<String> newDescription(Path fileToOperateOn) throws Exception{
         Scanner scanEntry = new Scanner(System.in);
-        String[] descriptionMetaData =  IbarODFCore.descriptionMetaData;        
+        String[] descriptionMetaData =  AbtractIbarOdfCore.descriptionMetaData;        
         ArrayList<String> newValues =  new ArrayList<String>();
         for(int index=0, indexMax = descriptionMetaData.length; index<indexMax; index++){
             System.out.println("\nEnter the new "+descriptionMetaData[index]);
@@ -214,67 +214,61 @@ public class MainCli {
             System.out.println(actionToPerform);
             switch(actionToPerform){
                 case DISPLAY_HELP:
-                    IbarODFCore.help();
+                    AbtractIbarOdfCore.help();
                     break;
                 case DISPLAY_THE_META_DATA_A_FILE:{
-                        Path path = IbarODFCore.stringToPath(args[1]);
-                        prettyFile(IbarODFCore.RegularFileToJson(path));
+                        Path path = AbtractIbarOdfCore.stringToPath(args[1]);
+                        prettyFile(AbtractIbarOdfCore.RegularFileToJson(path));
                     }
                     break; 
                 case DISPLAY_THE_META_DATA_OF_AN_ODF_FILE: {
-                        Path path = IbarODFCore.stringToPath(args[1]);
-                        prettyOdfFile(IbarODFCore.odfFileToJson(path));
+                        Path path = AbtractIbarOdfCore.stringToPath(args[1]);
+                        prettyOdfFile(AbtractIbarOdfCore.odfFileToJson(path));
                     }
                     break; 
                 case DISPLAY_THE_META_DATA_OF_ODF_FILES_IN_A_DIRECTORY:{
-                        Path path = IbarODFCore.stringToPath(args[1]);
-                        prettyDirectory(IbarODFCore.directoryToJson(path));
+                        Path path = AbtractIbarOdfCore.stringToPath(args[1]);
+                        prettyDirectory(AbtractIbarOdfCore.directoryToJson(path));
                         // System.out.println(IbarODFCore.directoryToJson(path));
                     }
                     break; 
                 case CHANGE_THE_TITLE_OF_AN_ODF_FILE:{
-                        Path path = IbarODFCore.stringToPath(args[1]);
-                        IbarODFCore.changeTheTitleOfAnOdfFile(path, args[3]);
+                        Path path = AbtractIbarOdfCore.stringToPath(args[1]);
+                        AbtractIbarOdfCore.changeTheTitleOfAnOdfFile(path, args[3]);
                     }
                     break;
                 case CHANGE_THE_SUBJECT_OF_AN_ODF_FILE:{
-                        Path path = IbarODFCore.stringToPath(args[1]);
-                        IbarODFCore.changeTheSubjectOfAnOdfFile(path, args[3]);
+                        Path path = AbtractIbarOdfCore.stringToPath(args[1]);
+                        AbtractIbarOdfCore.changeTheSubjectOfAnOdfFile(path, args[3]);
                     }
                     break; 
                 case REPLACE_THE_KEYWORDS_TO_AN_ODF_FILE:{
-                        Path path = IbarODFCore.stringToPath(args[1]);
-                        IbarODFCore.changeTheKeywordsOfAnOdfFile(path, args[3]);
+                        Path path = AbtractIbarOdfCore.stringToPath(args[1]);
+                        AbtractIbarOdfCore.changeTheKeywordsOfAnOdfFile(path, args[3]);
                     }
                     break;
                 case CHANGE_THE_COMMENTS_OF_AN_ODF_FILE:{
-                        Path path = IbarODFCore.stringToPath(args[1]);
-                        IbarODFCore.changeTheCommentsOfAnOdfFile(path, args[3]);
+                        Path path = AbtractIbarOdfCore.stringToPath(args[1]);
+                        AbtractIbarOdfCore.changeTheCommentsOfAnOdfFile(path, args[3]);
                     }
                     break; 
                 case CHANGE_THE_CREATOR_OF_AN_ODF_FILE:{
-                        Path path = IbarODFCore.stringToPath(args[1]);
-                        IbarODFCore.changeTheCreatorOfAnOdfFile(path, args[3]);
+                        Path path = AbtractIbarOdfCore.stringToPath(args[1]);
+                        AbtractIbarOdfCore.changeTheCreatorOfAnOdfFile(path, args[3]);
                 }
                     break; 
                 case REPLACE_THE_DESCRIPTION_OF_AN_ODF_FILE:{
-                        Path path = IbarODFCore.stringToPath(args[1]);
+                        Path path = AbtractIbarOdfCore.stringToPath(args[1]);
                         ArrayList<String> changedDescription = newDescription(path); 
-                        IbarODFCore.changeTheDescriptionOfAnOdtFile(path, changedDescription);
+                        AbtractIbarOdfCore.changeTheDescriptionOfAnOdtFile(path, changedDescription);
                     }
                 break; 
-
             }
-
-
          }catch(NotAllowedCommandException | FileNotFoundException e){
             System.out.println(e.getLocalizedMessage());
-         } catch(org.odftoolkit.odfdom.pkg.OdfValidationException e){
-            System.err.println("Is not  REAL odtFile.");
-         }
-         catch(Exception e){
-            System.err.println("\nSomething went wrong...");
-            System.err.println(e.getLocalizedMessage());
+         }catch(Exception e){
+            e.printStackTrace();
+            
             
          }
     }

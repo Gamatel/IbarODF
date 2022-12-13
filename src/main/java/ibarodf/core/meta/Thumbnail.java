@@ -4,6 +4,8 @@ package ibarodf.core.meta;
 import java.nio.file.Path;
 import java.text.ParseException;
 
+import ibarodf.core.meta.exception.ReadOnlyMetaException;
+
 
 public class Thumbnail extends AbstractMetaDataOdf {
     public final static String ATTR = "Thumbnail";

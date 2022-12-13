@@ -3,6 +3,8 @@ package ibarodf.core.meta;
 import java.text.ParseException;
 import org.odftoolkit.odfdom.incubator.meta.OdfOfficeMeta;
 
+import ibarodf.core.meta.exception.ReadOnlyMetaException;
+
 public class MetaDataInitialCreator extends MetaDataXML {
 	public final static String ATTR = "InitialCreator";
 	public final static String INITIALCREATOR = ATTR;

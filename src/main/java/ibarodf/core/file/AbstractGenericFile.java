@@ -5,7 +5,7 @@ import java.nio.file.Path;
 
 import org.json.JSONObject;
 
-import ibarodf.core.IbarODFCore;
+import ibarodf.core.AbtractIbarOdfCore;
 
 
 public abstract class AbstractGenericFile {
@@ -39,7 +39,7 @@ public abstract class AbstractGenericFile {
             if(file.isDirectory()){
                 return TYPE_DIRECTORY;
             }
-			return IbarODFCore.fileType(getPath().toString());
+			return AbtractIbarOdfCore.fileType(getPath().toString());
 		}catch(Exception e){
 		    return UNKNOWN_TYPE;		
         }

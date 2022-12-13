@@ -5,6 +5,9 @@ import java.util.GregorianCalendar;
 import java.util.Date;
 import java.text.SimpleDateFormat; 
 import org.odftoolkit.odfdom.incubator.meta.OdfOfficeMeta;
+
+import ibarodf.core.meta.exception.ReadOnlyMetaException;
+
 import java.text.ParseException;
 
 public class MetaDataCreationDate extends MetaDataXML {

@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 
 import ibarodf.core.Command;
-import ibarodf.core.IbarODFCore;
+import ibarodf.core.AbtractIbarOdfCore;
 
 
 
@@ -107,9 +107,9 @@ public class CommandTranslator {
         Command askedCommand = null;
         if(!file.exists()){
             throw new FileNotFoundException("the file "+filePath+ " does not exist");
-        }else if(Files.isDirectory(IbarODFCore.stringToPath(filePath))){
+        }else if(Files.isDirectory(AbtractIbarOdfCore.stringToPath(filePath))){
             askedCommand = actionToPerformOnADirectory();
-        }else if(IbarODFCore.isAnOdfFile(filePath)){
+        }else if(AbtractIbarOdfCore.isAnOdfFile(filePath)){
             askedCommand = actionToPerformOnAnOdfFile();
         }else if(isAskingToOperateOnAFile()){
             askedCommand =  actionToPerformOnFile(); 

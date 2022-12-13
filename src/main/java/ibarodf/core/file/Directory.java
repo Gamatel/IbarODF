@@ -2,14 +2,20 @@ package ibarodf.core.file;
 
 import java.util.ArrayList;
 
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import ibarodf.core.IbarODFCore;
+import ibarodf.core.AbtractIbarOdfCore;
+import ibarodf.core.file.exception.CannotAddAllFilesException;
+import ibarodf.core.file.exception.CannotAddAllMetadatasException;
+import ibarodf.core.file.exception.EmptyOdfFileException;
+import net.lingala.zip4j.exception.ZipException;
 
 
 
@@ -30,28 +36,32 @@ public  class Directory extends AbstractGenericFile {
     public static final String CONTENT_OF_DIRECTORY = "In";
     public static final String NUMBER_OF = "Number of ";
     
-    public Directory(Path path){
+    public Directory(Path path) throws CannotAddAllFilesException{
         super(path);
-        ArrayList<Path> filesPath = getSubFilesPathFromDirectory(path);
-        addFiles(filesPath);
+        try {
+            ArrayList<Path> filesPath = getSubFilesPathFromDirectory(path);
+            addFiles(filesPath);
+        }catch(ArrayStoreException e){
+            System.out.println("C'est Array store Exception");
+        }
     }
 
 
-    void addFiles(ArrayList<Path> filesPath){
+    void addFiles(ArrayList<Path> filesPath) throws CannotAddAllFilesException{
         for(Path currentPath : filesPath){
             try{
                 if(Files.isDirectory(currentPath)){
                     directories.add(new Directory(currentPath));
-                }else if(IbarODFCore.isAnOdfFile(currentPath.toString())){
+                }else if(AbtractIbarOdfCore.isAnOdfFile(currentPath.toString())){
                     OdfFile odtFileToAdd = new OdfFile(currentPath);
                     odfFiles.add(odtFileToAdd);
                 }else{
                     regularFiles.add(new RegularFile(currentPath));
                 }
-            }catch(EmptyOdfFileException e){
+            }catch(IOException | ZipException | EmptyOdfFileException | CannotAddAllMetadatasException e){
                 regularFiles.add(new RegularFile(currentPath));
             }catch(Exception e){
-                System.out.println(e.getMessage());
+                throw new CannotAddAllFilesException(getFileName());
             }
         }
     }
@@ -64,7 +74,7 @@ public  class Directory extends AbstractGenericFile {
         String separator = FileSystems.getDefault().getSeparator();
         try{
             for(String currentPath : textPath){ 
-                filesPath.add(IbarODFCore.stringToPath(directoryPath +separator+currentPath));
+                filesPath.add(AbtractIbarOdfCore.stringToPath(directoryPath +separator+currentPath));
             } 
         }catch(Exception e){
             System.err.println(e.getMessage());

@@ -4,6 +4,8 @@ import java.text.ParseException;
 
 import org.json.JSONObject;
 
+import ibarodf.core.meta.exception.ReadOnlyMetaException;
+
 public abstract class AbstractMetaData {
 
 	private final String attribut;

@@ -3,9 +3,9 @@ package ibarodf.core.file;
 
 import ibarodf.core.meta.Hyperlink;
 import ibarodf.core.meta.MetaDataHyperlink;
-import ibarodf.core.meta.NoContentException;
-import ibarodf.core.meta.NoPictureException;
 import ibarodf.core.meta.Picture;
+import ibarodf.core.meta.exception.NoContentException;
+import ibarodf.core.meta.exception.NoPictureException;
 import net.lingala.zip4j.exception.ZipException;
 
 import java.io.File;
@@ -23,7 +23,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 
-import ibarodf.core.IbarODFCore;
+import ibarodf.core.AbtractIbarOdfCore;
 import net.lingala.zip4j.core.ZipFile;
 
 
@@ -33,7 +33,7 @@ public class TempDirHandler{
     private Path unzipedFilePath;
     
 
-    public TempDirHandler(Path fileToUnzipPath){
+    public TempDirHandler(Path fileToUnzipPath) throws IOException, ZipException{
         this.fileToUnzipPath = fileToUnzipPath;
         try{
             unzipedFilePath = unzip();
@@ -43,16 +43,12 @@ public class TempDirHandler{
         } 
     }
 
-    private Path unzip() throws IOException{
+    private Path unzip() throws IOException, ZipException{
         Path destination = Files.createTempDirectory("IBARODF");
         File destinationfile = new File(destination.toString());
         destinationfile.deleteOnExit();
-        try {
-            ZipFile zipFile = new ZipFile(fileToUnzipPath.toString());
-            zipFile.extractAll(destination.toString());
-        } catch (ZipException e) {
-            System.err.println("DECOMPRESSION ERROR");
-        }
+        ZipFile zipFile = new ZipFile(fileToUnzipPath.toString());
+        zipFile.extractAll(destination.toString());
         return destination;
     }
 
@@ -62,7 +58,7 @@ public class TempDirHandler{
         if(!thumbnailFile.exists()){
             throw new NoPictureException(fileToUnzipPath);
         }
-        return IbarODFCore.stringToPath(thumbnailFile.getAbsolutePath());
+        return AbtractIbarOdfCore.stringToPath(thumbnailFile.getAbsolutePath());
     }
 
     public Path getPicturesDirectory() throws Exception{
@@ -71,7 +67,7 @@ public class TempDirHandler{
         if(!picturesDirectory.exists()){
             throw new NoPictureException(fileToUnzipPath);
         }
-        return IbarODFCore.stringToPath(picturesDirectory.getAbsolutePath());
+        return AbtractIbarOdfCore.stringToPath(picturesDirectory.getAbsolutePath());
     }
 
 
@@ -90,7 +86,7 @@ public class TempDirHandler{
         if(!contentFile.exists()){
             throw new NoContentException(fileToUnzipPath);
         }
-        return IbarODFCore.stringToPath(contentFile.getAbsolutePath());
+        return AbtractIbarOdfCore.stringToPath(contentFile.getAbsolutePath());
     }
 
     public boolean haveAnMetaXmlFile(){
