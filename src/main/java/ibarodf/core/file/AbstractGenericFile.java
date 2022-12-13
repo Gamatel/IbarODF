@@ -13,12 +13,20 @@ public abstract class AbstractGenericFile {
     private final String fileName;
     private final String mimeType;
 
+
+    public final static String PATH = "Path";
+    public final static String FILE_NAME = "File Name";
+    public final static String MIME_TYPE = "Mime Type";
+
+    public final static String TYPE_DIRECTORY =  "Directory";
+    public final static String UNKNOWN_TYPE =  "Unknown";
+
+
     public AbstractGenericFile(Path path){
         this.path = path;
         this.fileName = setFileName();
         this.mimeType = setMIMEType();
     }
-
 
     private String setFileName(){
         File file = new File(getPath().toString());
@@ -27,9 +35,13 @@ public abstract class AbstractGenericFile {
 
     private String setMIMEType(){
 		try{
+            File file = new File(path.toString());
+            if(file.isDirectory()){
+                return TYPE_DIRECTORY;
+            }
 			return IbarODFCore.fileType(getPath().toString());
 		}catch(Exception e){
-		    return "Unknown";		
+		    return UNKNOWN_TYPE;		
         }
     }
 
@@ -45,7 +57,14 @@ public abstract class AbstractGenericFile {
         return fileName;
     }
 
-    abstract public JSONObject toJonObject() throws Exception; 
+    public JSONObject toJonObject() throws Exception{
+        JSONObject genericFile = new JSONObject();
+        genericFile.put(PATH, path);
+        genericFile.put(FILE_NAME, fileName);
+        genericFile.put(MIME_TYPE, mimeType);
+        return genericFile;
+    } 
+
     abstract public StringBuilder displayMetaData() throws Exception;
     
 }

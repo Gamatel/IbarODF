@@ -22,10 +22,8 @@ public  class Directory extends AbstractGenericFile {
     private final ArrayList<Directory> directories = new ArrayList<>();
     private final ArrayList<OdfFile> odfFiles = new ArrayList<>();
     private final ArrayList<RegularFile> regularFiles = new ArrayList<>();
-    private final String directoryName = getFileName();  
 
     //Json Key
-    public static final String DIRECTORY_NAME =  "Directory Name";
     public static final String SUBDIRECTORIES = "Directories";
     public static final String REGULAR_FILES = "Regular files";
     public static final String ODF_FILES = "Odf files";
@@ -90,7 +88,6 @@ public  class Directory extends AbstractGenericFile {
             metaDataStr.append(currentOdfFile.displayMetaData());
         }
         metaDataStr.append("}}");
-        metaDataStr.append(getInformations());
         return metaDataStr;
     }
 
@@ -110,20 +107,12 @@ public  class Directory extends AbstractGenericFile {
         return odfFiles.size();
     }
 
-    public String getInformations(){
-        String infos = "\"In " + getPath().getFileName() + " :" + getNumberOfDirectories() + " Directories - " +
-                getNumberOfFiles() + " Total regular file\"";
-        return infos;
-    }
-
     public JSONObject toJonObject() throws Exception{  
-        JSONObject directoryJson = new JSONObject();
+        JSONObject directoryJson = super.toJonObject();
 
         JSONArray regularFilesJson = new JSONArray();
         JSONArray odfFilesJson = new JSONArray();
         JSONArray directoriesJson = new JSONArray();
-        JSONArray inDirectory = new JSONArray();
-
         for(Directory currentDirectory : directories){
             directoriesJson.put(currentDirectory.toJonObject());
         }
@@ -133,15 +122,9 @@ public  class Directory extends AbstractGenericFile {
         for(OdfFile currentOdfFile : odfFiles){
             odfFilesJson.put(currentOdfFile.toJonObject());
         }
-        inDirectory.put((new JSONObject()).put(NUMBER_OF + SUBDIRECTORIES, directories.size()));
-        inDirectory.put((new JSONObject()).put(NUMBER_OF + REGULAR_FILES, regularFiles.size()));
-        inDirectory.put((new JSONObject()).put(NUMBER_OF + ODF_FILES, odfFiles.size()));
-
-        directoryJson.put(DIRECTORY_NAME, directoryName);
         directoryJson.put(REGULAR_FILES, regularFilesJson);
         directoryJson.put(ODF_FILES, odfFilesJson);
         directoryJson.put(SUBDIRECTORIES, directoriesJson);
-        directoryJson.put(CONTENT_OF_DIRECTORY, inDirectory);
         return  directoryJson;
     }
 
