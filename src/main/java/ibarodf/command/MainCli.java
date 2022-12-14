@@ -1,8 +1,11 @@
-package ibarodf;
+package ibarodf.command;
 
+import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Scanner;
 
@@ -11,9 +14,7 @@ import javax.json.JsonException;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-
-import ibarodf.command.*;
-import ibarodf.core.Command;
+import ibarodf.command.CommandTranslator.Command;
 import ibarodf.core.AbtractIbarOdfCore;
 import ibarodf.core.file.Directory;
 import ibarodf.core.file.OdfFile;
@@ -22,22 +23,80 @@ import ibarodf.core.meta.MetaDataHyperlink;
 import ibarodf.core.meta.MetaDataOdfPictures;
 import ibarodf.core.meta.MetaDataStats;
 import ibarodf.core.meta.Picture;
+import ibarodf.exception.UnableToChangeTheDescriptionOfTheFileException;
+import ibarodf.exception.UnableToDisplayInformationAboutTheFile;
+import ibarodf.exception.UnableToMakeAskedChangesException;
 
 public class MainCli {
     public static final int LINE_SIZE_FOR_PRETTY_PRINT = 100; 
 
     
-    public static ArrayList<String> newDescription(Path fileToOperateOn) throws Exception{
-        Scanner scanEntry = new Scanner(System.in);
-        String[] descriptionMetaData =  AbtractIbarOdfCore.descriptionMetaData;        
-        ArrayList<String> newValues =  new ArrayList<String>();
-        for(int index=0, indexMax = descriptionMetaData.length; index<indexMax; index++){
-            System.out.println("\nEnter the new "+descriptionMetaData[index]);
-            newValues.add(scanEntry.nextLine());
-        }  
-        scanEntry.close();
-        return newValues;
+    public static void changeTheDescription(Path filePath) throws UnableToChangeTheDescriptionOfTheFileException{
+        try{
+            String newTitle, newSubject, newKeyword, newComment;     
+            Scanner scanEntry = new Scanner(System.in);
+            System.out.println("Enter the new title");
+            newTitle = scanEntry.nextLine();
+            System.out.println("Enter the new subject");
+            newSubject = scanEntry.nextLine();
+            System.out.println("Enter the new keyword");
+            newKeyword = scanEntry.nextLine();
+            System.out.println("Enter the new comment");
+            newComment = scanEntry.nextLine();
+            scanEntry.close();
+            AbtractIbarOdfCore.changeTheDescriptionOfAnOdtFile(filePath, newTitle, newSubject, newKeyword, newComment);
+        }catch(Exception e){
+            throw new UnableToChangeTheDescriptionOfTheFileException(filePath);
+        }
     }
+
+    public static void displayMetadata(Command command, Path filePath) throws UnableToDisplayInformationAboutTheFile{
+        try{ 
+            switch(command){
+                case DISPLAY_THE_META_DATA_A_FILE:
+                    prettyFile(AbtractIbarOdfCore.RegularFileToJson(filePath));
+                    break;
+                case DISPLAY_THE_META_DATA_OF_AN_ODF_FILE: 
+                    prettyOdfFile(AbtractIbarOdfCore.odfFileToJson(filePath));
+                    break;
+                case DISPLAY_THE_META_DATA_OF_ODF_FILES_IN_A_DIRECTORY:
+                    prettyDirectory(AbtractIbarOdfCore.directoryToJson(filePath));
+                    break;
+                default:
+                    System.err.println("Error : Wasn't asking to display information about "+ filePath.getFileName());
+            }
+        }catch(Exception e){
+            throw new UnableToDisplayInformationAboutTheFile(filePath);
+        }
+    } 
+
+
+    public static void changeMetadata(Command command, Path filePath, String newValue) throws UnableToMakeAskedChangesException{    
+        try{
+            switch(command){
+                case CHANGE_THE_TITLE_OF_AN_ODF_FILE:
+                    AbtractIbarOdfCore.changeTheTitleOfAnOdfFile(filePath, newValue);
+                    break;
+                case CHANGE_THE_SUBJECT_OF_AN_ODF_FILE:
+                    AbtractIbarOdfCore.changeTheSubjectOfAnOdfFile(filePath, newValue);
+                    break; 
+                case CHANGE_THE_KEYWORDS_TO_AN_ODF_FILE:
+                    AbtractIbarOdfCore.changeTheKeywordsOfAnOdfFile(filePath, newValue);
+                    break;
+                case CHANGE_THE_COMMENTS_OF_AN_ODF_FILE:
+                    AbtractIbarOdfCore.changeTheCommentsOfAnOdfFile(filePath, newValue);
+                    break; 
+                case CHANGE_THE_CREATOR_OF_AN_ODF_FILE:
+                    AbtractIbarOdfCore.changeTheCreatorOfAnOdfFile(filePath,newValue);
+                    break; 
+                default :
+                    System.err.println("Error : Wasn't asking to make any change on "+ filePath.getFileName());
+            }
+        }catch(Exception e){
+            throw new UnableToMakeAskedChangesException(filePath);
+        }
+    }
+
 
     public static String properTabulation(int numberOfTab){
         StringBuilder tabulation = new StringBuilder();
@@ -155,9 +214,6 @@ public class MainCli {
         }     
     }
 
-
-
-
     public static void prettyObject(JSONObject jsonObject, int depth){
         Collection<String> attributsObject = jsonObject.keySet();
         for(String attribut : attributsObject){
@@ -187,8 +243,6 @@ public class MainCli {
         prettyPrint("Number Of Directory",( directoryJson.getJSONArray(Directory.SUBDIRECTORIES)).length(), depth+1);
         prettyPrint("Number Of Files", (directoryJson.getJSONArray(Directory.REGULAR_FILES)).length(), depth+1);
         prettyPrint("Number Of Odf Files",  (directoryJson.getJSONArray(Directory.ODF_FILES)).length(), depth+1);
-
-
         ligne();
     } 
 
@@ -204,72 +258,43 @@ public class MainCli {
     }
 
 
+    public static void help(){
+		try{
+			String separator = AbtractIbarOdfCore.getCurrentSystemSeparator();
+            BufferedReader helpReader = new BufferedReader(new FileReader(new File("ressources" + separator +"help.txt")));
+			String line;
+			while((line = helpReader.readLine()) != null){
+				System.out.println(line);
+			} 
+			helpReader.close();
+		}catch(IOException e){
+			System.err.println("Sorry, cannot reach the help manual.");
+		}
+	}
 
-    
 
     public static void main(String[] args){
         CommandTranslator askedActionToPerform = new CommandTranslator(args);
         try{
             Command actionToPerform = askedActionToPerform.translate();
-            System.out.println(actionToPerform);
-            switch(actionToPerform){
-                case DISPLAY_HELP:
-                    AbtractIbarOdfCore.help();
-                    break;
-                case DISPLAY_THE_META_DATA_A_FILE:{
-                        Path path = AbtractIbarOdfCore.stringToPath(args[1]);
-                        prettyFile(AbtractIbarOdfCore.RegularFileToJson(path));
-                    }
-                    break; 
-                case DISPLAY_THE_META_DATA_OF_AN_ODF_FILE: {
-                        Path path = AbtractIbarOdfCore.stringToPath(args[1]);
-                        prettyOdfFile(AbtractIbarOdfCore.odfFileToJson(path));
-                    }
-                    break; 
-                case DISPLAY_THE_META_DATA_OF_ODF_FILES_IN_A_DIRECTORY:{
-                        Path path = AbtractIbarOdfCore.stringToPath(args[1]);
-                        prettyDirectory(AbtractIbarOdfCore.directoryToJson(path));
-                        // System.out.println(IbarODFCore.directoryToJson(path));
-                    }
-                    break; 
-                case CHANGE_THE_TITLE_OF_AN_ODF_FILE:{
-                        Path path = AbtractIbarOdfCore.stringToPath(args[1]);
-                        AbtractIbarOdfCore.changeTheTitleOfAnOdfFile(path, args[3]);
-                    }
-                    break;
-                case CHANGE_THE_SUBJECT_OF_AN_ODF_FILE:{
-                        Path path = AbtractIbarOdfCore.stringToPath(args[1]);
-                        AbtractIbarOdfCore.changeTheSubjectOfAnOdfFile(path, args[3]);
-                    }
-                    break; 
-                case REPLACE_THE_KEYWORDS_TO_AN_ODF_FILE:{
-                        Path path = AbtractIbarOdfCore.stringToPath(args[1]);
-                        AbtractIbarOdfCore.changeTheKeywordsOfAnOdfFile(path, args[3]);
-                    }
-                    break;
-                case CHANGE_THE_COMMENTS_OF_AN_ODF_FILE:{
-                        Path path = AbtractIbarOdfCore.stringToPath(args[1]);
-                        AbtractIbarOdfCore.changeTheCommentsOfAnOdfFile(path, args[3]);
-                    }
-                    break; 
-                case CHANGE_THE_CREATOR_OF_AN_ODF_FILE:{
-                        Path path = AbtractIbarOdfCore.stringToPath(args[1]);
-                        AbtractIbarOdfCore.changeTheCreatorOfAnOdfFile(path, args[3]);
+            if(CommandTranslator.isAskingForHelp(actionToPerform)){
+                help();
+            }else{
+                Path path = AbtractIbarOdfCore.stringToPath(args[1]);
+                if(CommandTranslator.isAskingToDisplayMetadata(actionToPerform)){
+                    displayMetadata(actionToPerform,path); 
+                }else if(CommandTranslator.isAskingToChangeTheDescriptionOfAnOdfFile(actionToPerform)){
+                    changeTheDescription(path);
+                }else if(CommandTranslator.isAskingToChangeMetadataOnOdfFile(actionToPerform)){
+                    changeMetadata(actionToPerform, path, args[3]);
                 }
-                    break; 
-                case REPLACE_THE_DESCRIPTION_OF_AN_ODF_FILE:{
-                        Path path = AbtractIbarOdfCore.stringToPath(args[1]);
-                        ArrayList<String> changedDescription = newDescription(path); 
-                        AbtractIbarOdfCore.changeTheDescriptionOfAnOdtFile(path, changedDescription);
-                    }
-                break; 
             }
-         }catch(NotAllowedCommandException | FileNotFoundException e){
-            System.out.println(e.getLocalizedMessage());
-         }catch(Exception e){
+        }catch(UnableToChangeTheDescriptionOfTheFileException | UnableToDisplayInformationAboutTheFile| UnableToMakeAskedChangesException e ){
+            System.err.println(e.getMessage());
+        }catch(UnallowedCommandException | FileNotFoundException e ){
+            System.err.println(e.getMessage());
+        }catch(Exception e){
             e.printStackTrace();
-            
-            
-         }
+        }
     }
 }

@@ -5,6 +5,7 @@ import java.text.ParseException;
 import org.json.JSONObject;
 
 import ibarodf.core.meta.exception.ReadOnlyMetaException;
+import ibarodf.core.meta.exception.UnableToConvertToJsonFormatException;
 
 public abstract class AbstractMetaData {
 
@@ -24,15 +25,20 @@ public abstract class AbstractMetaData {
 		this.value = value;
 	}
 
-	public Object getValue() throws Exception {
+	public Object getValue(){
 		return value;
 	}
-
-	public String toString() {
-		return "MetaDataAbstract : { attribut: '" + attribut + "', value: '" + value + "'}";
+	
+    public String toString(){   
+        try{
+			return toJson().toString();
+		}catch(UnableToConvertToJsonFormatException e){   
+			return "none";
+		}
 	}
 
-	public JSONObject toJson() throws Exception{
+
+	public JSONObject toJson() throws UnableToConvertToJsonFormatException{
 		return (new JSONObject()).put(attribut, value);
 	}
 

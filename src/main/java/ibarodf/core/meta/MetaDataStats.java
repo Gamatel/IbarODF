@@ -72,7 +72,7 @@ public class MetaDataStats extends MetaDataXML {
 
 
 
-	public JSONObject toJson()throws Exception{
+	public JSONObject toJson(){
 		HashMap<String, Integer> statisticHashMap = (HashMap<String, Integer>) getValue();
 		Collection<String> statisticKey = statisticHashMap.keySet();
 		JSONArray statisticJsonArray = new JSONArray();

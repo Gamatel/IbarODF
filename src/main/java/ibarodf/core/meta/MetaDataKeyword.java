@@ -6,6 +6,8 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.odftoolkit.odfdom.incubator.meta.OdfOfficeMeta;
 
+import ibarodf.core.meta.exception.UnableToConvertToJsonFormatException;
+
 public class MetaDataKeyword extends MetaDataXML{
     public final static String ATTR = "Keyword";
     //Json Key
@@ -17,7 +19,12 @@ public class MetaDataKeyword extends MetaDataXML{
 
     public void addKeyword(String newKeywords){
         String[] keywords = newKeywords.split(",");
-        for(String keyword : keywords){
+        addKeyword(keywords);
+        
+    }
+
+    public void addKeyword(String[] newKeyword){
+        for(String keyword : newKeyword){
             getMeta().addKeyword(keyword);
         }
     }
@@ -35,11 +42,15 @@ public class MetaDataKeyword extends MetaDataXML{
         addKeyword(newKeywords);
     }
 
-    public JSONObject toJson() throws Exception{
-        JSONArray keywordArray = new JSONArray();
-        List<String> keywords = (List<String>) getValue();
-        keywordArray.put(keywords);
-        return (new JSONObject()).put(KEYWORDS, keywords);
+    public JSONObject toJson() throws UnableToConvertToJsonFormatException{
+        try {
+            JSONArray keywordArray = new JSONArray();
+            List<String> keywords = (List<String>) getValue();
+            keywordArray.put(keywords);
+            return (new JSONObject()).put(KEYWORDS, keywords);
+        }catch(Exception e){
+            throw new UnableToConvertToJsonFormatException(ATTR);
+        }
     }
     
 

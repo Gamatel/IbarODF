@@ -1,28 +1,26 @@
 package ibarodf.core.file;
 
 import java.util.ArrayList;
-
+import java.util.Iterator;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import ibarodf.core.AbtractIbarOdfCore;
-import ibarodf.core.file.exception.CannotAddAllFilesException;
-import ibarodf.core.file.exception.CannotAddAllMetadatasException;
+import ibarodf.core.file.exception.UnableToAddAllFilesException;
+import ibarodf.core.file.exception.UnableToAddMetadataException;
+import ibarodf.core.meta.exception.UnableToConvertToJsonFormatException;
 import ibarodf.core.file.exception.EmptyOdfFileException;
 import net.lingala.zip4j.exception.ZipException;
 
-
-
-
-
-
-
+/**
+ * This class represents a directory. It contains a list of directories, a list of regular files
+ * and a list of ODF files
+ */
 
 public  class Directory extends AbstractGenericFile {
     private final ArrayList<Directory> directories = new ArrayList<>();
@@ -36,106 +34,87 @@ public  class Directory extends AbstractGenericFile {
     public static final String CONTENT_OF_DIRECTORY = "In";
     public static final String NUMBER_OF = "Number of ";
     
-    public Directory(Path path) throws CannotAddAllFilesException{
+    public Directory(final Path path) throws UnableToAddAllFilesException{
         super(path);
         try {
-            ArrayList<Path> filesPath = getSubFilesPathFromDirectory(path);
+            final ArrayList<Path> filesPath = getSubFilesPathFromDirectory(path);
             addFiles(filesPath);
-        }catch(ArrayStoreException e){
-            System.out.println("C'est Array store Exception");
+        }catch(final Exception e){
+            System.out.println("ça merde dans le constructeur du Directory");
         }
     }
 
-
-    void addFiles(ArrayList<Path> filesPath) throws CannotAddAllFilesException{
-        for(Path currentPath : filesPath){
+    private void addFiles(final ArrayList<Path> filesPath) throws UnableToAddAllFilesException{
+        Iterator<Path> pathIterator = filesPath.iterator();
+        Path currentPath;
+        while(pathIterator.hasNext()){
+            currentPath = pathIterator.next();
             try{
                 if(Files.isDirectory(currentPath)){
                     directories.add(new Directory(currentPath));
                 }else if(AbtractIbarOdfCore.isAnOdfFile(currentPath.toString())){
-                    OdfFile odtFileToAdd = new OdfFile(currentPath);
+                    final OdfFile odtFileToAdd = new OdfFile(currentPath);
                     odfFiles.add(odtFileToAdd);
                 }else{
                     regularFiles.add(new RegularFile(currentPath));
                 }
-            }catch(IOException | ZipException | EmptyOdfFileException | CannotAddAllMetadatasException e){
+            }catch(IOException | ZipException | EmptyOdfFileException | UnableToAddMetadataException e){
                 regularFiles.add(new RegularFile(currentPath));
-            }catch(Exception e){
-                throw new CannotAddAllFilesException(getFileName());
+            }catch(final Exception e){
+                throw new UnableToAddAllFilesException(getFileName());
             }
         }
     }
 
-
-    public static ArrayList<Path> getSubFilesPathFromDirectory(Path directoryPath){
-        ArrayList<Path> filesPath = new ArrayList<>();
-        File directory = new File(directoryPath.toString());
-        String[] textPath = directory.list();
-        String separator = FileSystems.getDefault().getSeparator();
+    /**
+     * Get the children of a directory
+     * @param directoryPath The path of the directory to be searched
+     * @return A list of Path objects.
+     */
+    public static ArrayList<Path> getSubFilesPathFromDirectory(final Path directoryPath){
+        final ArrayList<Path> filesPath = new ArrayList<>();
+        final File directory = new File(directoryPath.toString());
+        final String[] textPath = directory.list();
+        final String separator = AbtractIbarOdfCore.getCurrentSystemSeparator();
         try{
-            for(String currentPath : textPath){ 
+            for(final String currentPath : textPath){ 
                 filesPath.add(AbtractIbarOdfCore.stringToPath(directoryPath +separator+currentPath));
             } 
-        }catch(Exception e){
+        }catch(final Exception e){
             System.err.println(e.getMessage());
         }   
         return filesPath;
     }
 
-
-
-    public StringBuilder displayMetaData() throws Exception{
-        StringBuilder metaDataStr = new StringBuilder();
-        String directoryName = "{"+getPath().getFileName().toString()+"{";
-        metaDataStr.append(directoryName);
-        for(Directory currentDirectory : directories){
-            metaDataStr.append(currentDirectory.displayMetaData());
+    /**
+     * Returns a JSON representation of the directory. 
+     * @return A JSONObject
+     */
+    public JSONObject toJonObject() throws UnableToConvertToJsonFormatException{  
+        try {
+            final JSONObject directoryJson = super.toJonObject();
+            final JSONArray regularFilesJson = new JSONArray();
+            final JSONArray odfFilesJson = new JSONArray();
+            final JSONArray directoriesJson = new JSONArray();
+            Iterator<Directory> DirectoryIt = directories.iterator();
+            Iterator<OdfFile> odfFileIt = odfFiles.iterator();
+            Iterator<RegularFile> regularFileIt = regularFiles.iterator();
+            while(DirectoryIt.hasNext()){
+                directoriesJson.put(DirectoryIt.next().toJonObject());
+            }
+            while(regularFileIt.hasNext()){ 
+                regularFilesJson.put(regularFileIt.next().toJonObject());
+            }
+            while(odfFileIt.hasNext()){
+                odfFilesJson.put(odfFileIt.next().toJonObject());
+            }
+            directoryJson.put(REGULAR_FILES, regularFilesJson);
+            directoryJson.put(ODF_FILES, odfFilesJson);
+            directoryJson.put(SUBDIRECTORIES, directoriesJson);
+            return  directoryJson;
+        }catch(UnableToConvertToJsonFormatException e){
+            throw new UnableToConvertToJsonFormatException(getFileName());
         }
-        for(RegularFile currentRegularFile : regularFiles){ 
-            metaDataStr.append(currentRegularFile.displayMetaData());
-        }
-        for(OdfFile currentOdfFile : odfFiles){
-            metaDataStr.append(currentOdfFile.displayMetaData());
-        }
-        metaDataStr.append("}}");
-        return metaDataStr;
-    }
-
-    public String toString(){
-        return "{Directory -- Path : "+ getPath() + " }"; 
-    }
-
-    public int getNumberOfDirectories(){
-        return directories.size();
-    }
-
-    public int getNumberOfRegularFiles(){
-        return regularFiles.size();
-    }
-
-    public int getNumberOfFiles(){
-        return odfFiles.size();
-    }
-
-    public JSONObject toJonObject() throws Exception{  
-        JSONObject directoryJson = super.toJonObject();
-
-        JSONArray regularFilesJson = new JSONArray();
-        JSONArray odfFilesJson = new JSONArray();
-        JSONArray directoriesJson = new JSONArray();
-        for(Directory currentDirectory : directories){
-            directoriesJson.put(currentDirectory.toJonObject());
-        }
-        for(RegularFile currentRegularFile : regularFiles){ 
-            regularFilesJson.put(currentRegularFile.toJonObject());
-        }
-        for(OdfFile currentOdfFile : odfFiles){
-            odfFilesJson.put(currentOdfFile.toJonObject());
-        }
-        directoryJson.put(REGULAR_FILES, regularFilesJson);
-        directoryJson.put(ODF_FILES, odfFilesJson);
-        directoryJson.put(SUBDIRECTORIES, directoriesJson);
-        return  directoryJson;
     }
 
     

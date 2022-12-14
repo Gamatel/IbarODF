@@ -1,6 +1,5 @@
 package ibarodf.core;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -8,7 +7,6 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.io.FileReader;
 
 
 import org.json.JSONObject;
@@ -16,6 +14,8 @@ import org.json.JSONObject;
 import ibarodf.core.file.Directory;
 import ibarodf.core.file.OdfFile;
 import ibarodf.core.file.RegularFile;
+import ibarodf.core.file.UnrecognizableTypeFileException;
+import ibarodf.core.file.exception.UnableToAccessToTheCurrentFile;
 import ibarodf.core.meta.MetaDataComment;
 import ibarodf.core.meta.MetaDataCreator;
 import ibarodf.core.meta.MetaDataKeyword;
@@ -24,33 +24,40 @@ import ibarodf.core.meta.MetaDataTitle;
 
 public abstract class AbtractIbarOdfCore {
 	public static final String[] descriptionMetaData = {MetaDataTitle.ATTR, MetaDataSubject.ATTR, MetaDataKeyword.ATTR, MetaDataComment.ATTR};
-
-	 public static void help(){
-		try{
-			String fileSeparator = FileSystems.getDefault().getSeparator();
-			BufferedReader helpReader = new BufferedReader(new FileReader(new File("ressources" + fileSeparator +"help.txt")));
-			String line;
-			while((line = helpReader.readLine()) != null){
-				System.out.println(line);
-			} 
-			helpReader.close();
-		}catch(IOException e){
-			System.err.println("Sorry, cannot reach the help manual.");
-		}
-	}
 	
 	
-	public static void changeTheDescriptionOfAnOdtFile(Path odfFileToOperateOn, ArrayList<String> newValues) throws Exception{
+	private static void  changeTheDescriptionOfAnOdtFile(Path odfFileToOperateOn, ArrayList<String> newValues) throws Exception{
+		String[] description = AbtractIbarOdfCore.descriptionMetaData;
 		OdfFile file = new OdfFile(odfFileToOperateOn);
-		for(int index =0 , maxIndex = descriptionMetaData.length; index < maxIndex; index++ ){
-			file.setMetaData( descriptionMetaData[index], newValues.get(index));
+		for(int index =0 , maxIndex = description.length; index < maxIndex; index++ ){
+			file.setMetaData( description[index], newValues.get(index));
 		}
 		file.saveChange();
 		System.out.println("Description changed!");
+	}
+	
+	public static void changeTheDescriptionOfAnOdtFile(Path filePath, String newTitle, String newSubject, String newKeywords, String newComments) throws Exception{
+		ArrayList<String> newValues = new ArrayList<String>();
+		newValues.add(newTitle);
+		newValues.add(newSubject);
+		newValues.add(newKeywords);
+		newValues.add(newComments);
+		changeTheDescriptionOfAnOdtFile(filePath, newValues);
 
 	}
 
-	public static Path stringToPath(String filePath)  throws IOException{
+
+	
+    public static boolean isAllowedToAccesToTheCurrentFile(Path pathDirectory) throws UnableToAccessToTheCurrentFile {
+        File directory =  pathDirectory.toFile();
+        if(!directory.canExecute() || !directory.canRead()|| !directory.canWrite()){
+            throw new UnableToAccessToTheCurrentFile(pathDirectory);
+        }
+		return true;
+    }
+
+
+	public static Path stringToPath(String filePath) throws FileNotFoundException{
         File file = new File(filePath);
         if(!file.exists()){
             throw new FileNotFoundException();
@@ -78,6 +85,10 @@ public abstract class AbtractIbarOdfCore {
         }
 		return isOdf;
     }
+
+	public static String getCurrentSystemSeparator(){
+		return FileSystems.getDefault().getSeparator(); 
+	}
 
 	public static void changeTheTitleOfAnOdfFile(Path path, String newTitle) throws Exception{
 		OdfFile file = new OdfFile(path);
@@ -114,10 +125,6 @@ public abstract class AbtractIbarOdfCore {
 		file.setMetaData(MetaDataCreator.ATTR, newCreator);
 		file.saveChange();
 		System.out.println("Creator changed!");
-	}
-
-	public static boolean wantToDisplayMetadata(Command actionToPerform){
-		return actionToPerform == Command.DISPLAY_THE_META_DATA_OF_AN_ODF_FILE || actionToPerform ==  Command.DISPLAY_THE_META_DATA_A_FILE || actionToPerform == Command.DISPLAY_THE_META_DATA_OF_ODF_FILES_IN_A_DIRECTORY;
 	}
 
 	public static JSONObject directoryToJson(Path directoryPath) throws Exception{

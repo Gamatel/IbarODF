@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import ibarodf.core.meta.exception.UnableToConvertToJsonFormatException;
+
 public class MetaDataHyperlink extends AbstractMetaDataOdf {
     public final static String ATTR = "Hyperlinks";
     public final static String HYPERLINK_TAG = "text:a";
@@ -21,13 +23,17 @@ public class MetaDataHyperlink extends AbstractMetaDataOdf {
         super(ATTR,value);   
     }
 
-    public JSONObject toJson() throws Exception{
-        ArrayList<Hyperlink> hyperlinkArray = (ArrayList<Hyperlink>)getValue();
-        JSONArray hyperlinkJson = new JSONArray();
-        for(Hyperlink hyperlink : hyperlinkArray ){
-            hyperlinkJson.put(hyperlink.toJson());
+    public JSONObject toJson() throws UnableToConvertToJsonFormatException{
+        try {
+            ArrayList<Hyperlink> hyperlinkArray = (ArrayList<Hyperlink>)getValue();
+            JSONArray hyperlinkJson = new JSONArray();
+            for(Hyperlink hyperlink : hyperlinkArray ){
+                hyperlinkJson.put(hyperlink.toJson());
+            }
+            return  (new JSONObject()).put(HYPERLINKS, hyperlinkJson);
+        }catch(Exception e){
+            throw new UnableToConvertToJsonFormatException(ATTR);
         }
-        return  (new JSONObject()).put(HYPERLINKS, hyperlinkJson);
     }
 
 

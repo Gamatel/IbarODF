@@ -1,13 +1,6 @@
 package ibarodf.core.file;
 
 
-import ibarodf.core.meta.Hyperlink;
-import ibarodf.core.meta.MetaDataHyperlink;
-import ibarodf.core.meta.Picture;
-import ibarodf.core.meta.exception.NoContentException;
-import ibarodf.core.meta.exception.NoPictureException;
-import net.lingala.zip4j.exception.ZipException;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileSystems;
@@ -22,17 +15,27 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-
 import ibarodf.core.AbtractIbarOdfCore;
+import ibarodf.core.file.exception.EmptyOdfFileException;
+import ibarodf.core.file.exception.UnableToReachHyperlinkException;
+import ibarodf.core.meta.Hyperlink;
+import ibarodf.core.meta.MetaDataHyperlink;
+import ibarodf.core.meta.Picture;
+import ibarodf.core.meta.exception.NoContentException;
+import ibarodf.core.meta.exception.NoPictureException;
+import ibarodf.core.meta.exception.UnableToReachPicture;
 import net.lingala.zip4j.core.ZipFile;
+import net.lingala.zip4j.exception.ZipException;
 
 
 
+/**
+ * The TempDirHandler class unzip an odf file and gives the access to the content of the unziped file
+ */
 public class TempDirHandler{
     private final Path fileToUnzipPath;
     private Path unzipedFilePath;
     
-
     public TempDirHandler(Path fileToUnzipPath) throws IOException, ZipException{
         this.fileToUnzipPath = fileToUnzipPath;
         try{
@@ -52,7 +55,12 @@ public class TempDirHandler{
         return destination;
     }
 
-    public Path getThumbnailPath() throws Exception{
+    /**
+     * It returns the path to the thumbnail of the unzip odf file 
+     * 
+     * @return A Path object.
+     */
+    public Path getThumbnailPath()throws NoPictureException, IOException{
         String separator = FileSystems.getDefault().getSeparator();
         File thumbnailFile = new File(unzipedFilePath.toString()+separator+"Thumbnails"+separator+"thumbnail.png");
         if(!thumbnailFile.exists()){
@@ -61,7 +69,7 @@ public class TempDirHandler{
         return AbtractIbarOdfCore.stringToPath(thumbnailFile.getAbsolutePath());
     }
 
-    public Path getPicturesDirectory() throws Exception{
+    private Path getPicturesDirectory() throws NoPictureException, IOException{
         String separator = FileSystems.getDefault().getSeparator(); 
         File picturesDirectory = new File(unzipedFilePath.toString()+separator+"Pictures");
         if(!picturesDirectory.exists()){
@@ -70,17 +78,23 @@ public class TempDirHandler{
         return AbtractIbarOdfCore.stringToPath(picturesDirectory.getAbsolutePath());
     }
 
-
-    public ArrayList<Picture> getPicture() throws Exception{
+    /**
+     * It returns an ArrayList of Picture objects, which are created from the paths of the pictures in the
+     * pictures directory
+     * 
+     * @return An ArrayList of Picture objects.
+     */
+    public ArrayList<Picture> getPictures() throws IOException, NoPictureException, UnableToReachPicture{
         ArrayList<Path> picturesPathArrayList = Directory.getSubFilesPathFromDirectory(getPicturesDirectory());
         ArrayList<Picture>  picturesArrayList = new ArrayList<Picture>();
         for(Path picturePath :picturesPathArrayList){
             picturesArrayList.add(new Picture(picturePath));
         }
+        
         return picturesArrayList;
     }
 
-    public Path getContentFile() throws Exception{
+    private Path getContentFile() throws NoContentException, IOException{
         String separator = FileSystems.getDefault().getSeparator(); 
         File contentFile = new File(unzipedFilePath.toString()+separator+"content.xml");
         if(!contentFile.exists()){
@@ -89,24 +103,27 @@ public class TempDirHandler{
         return AbtractIbarOdfCore.stringToPath(contentFile.getAbsolutePath());
     }
 
-    public boolean haveAnMetaXmlFile(){
+    public void haveAnMetaXmlFile() throws EmptyOdfFileException{
         String separator = FileSystems.getDefault().getSeparator(); 
         File metaXmlFile = new File(unzipedFilePath.toString()+separator+"meta.xml");
         if(!metaXmlFile.exists()){
-            return false;
+            throw new EmptyOdfFileException(fileToUnzipPath);
         }
-        return true;
     }
 
-    public NodeList getHyperlinksNodeList() throws Exception{
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        DocumentBuilder builder = factory.newDocumentBuilder();
-        Document contenteDocument = builder.parse(new File(getContentFile().toString()));
-        NodeList hyperlinkList = contenteDocument.getElementsByTagName(MetaDataHyperlink.HYPERLINK_TAG);
-        return hyperlinkList;
-    }
+    public NodeList getHyperlinksNodeList() throws UnableToReachHyperlinkException{
+        try {
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            Document contenteDocument = builder.parse(new File(getContentFile().toString()));
+            NodeList hyperlinkList = contenteDocument.getElementsByTagName(MetaDataHyperlink.HYPERLINK_TAG);
+            return hyperlinkList;
+        }catch(Exception e){
+            throw new UnableToReachHyperlinkException(fileToUnzipPath.getFileName().toString());
+        }
+    }   
 
-    public ArrayList<Hyperlink> getHyperlink() throws Exception{
+    public ArrayList<Hyperlink> getHyperlink() throws UnableToReachHyperlinkException{
         NodeList hyperlinksNodeList = getHyperlinksNodeList();
         Element currentElement;
         Hyperlink hyperlinkToAdd;

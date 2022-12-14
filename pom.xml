@@ -94,7 +94,7 @@
               <configuration>
                   <archive>
                       <manifest>
-                          <mainClass>ibarodf.MainCli</mainClass>
+                          <mainClass>ibarodf.command.MainCli</mainClass>
                       </manifest>
                   </archive>
                   <descriptorRefs>
