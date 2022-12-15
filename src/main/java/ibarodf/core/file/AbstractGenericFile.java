@@ -5,7 +5,7 @@ import java.nio.file.Path;
 
 import org.json.JSONObject;
 
-import ibarodf.core.AbtractIbarOdfCore;
+import ibarodf.core.IbarOdfCore;
 import ibarodf.core.meta.exception.UnableToConvertToJsonFormatException;
 
 
@@ -18,16 +18,21 @@ public abstract class AbstractGenericFile {
     public final static String MIME_TYPE = "Mime Type";
     public final static String TYPE_DIRECTORY =  "Directory";
     public final static String UNKNOWN_TYPE =  "Unknown";
+    public final static String SIZE =  "Size (Ko)";
+
 
     private final Path path;
     private final String fileName;
     private final String mimeType;
+    private final long size;
 
 
     public AbstractGenericFile(Path path){
         this.path = path;
-        this.fileName = initFileName();
+        File file = path.toFile();
+        this.fileName = file.getName();
         this.mimeType = initMIMEType();
+        this.size = file.length()/1024 ;
     }
 
     /**
@@ -57,23 +62,32 @@ public abstract class AbstractGenericFile {
         return fileName;
     }
 
-    
-    private String initFileName(){
-        File file = new File(getPath().toString());
-        return file.getName();
+    public long getSize(){
+        return size; 
     }
 
+
+    /**
+     * It returns the MIME type of the file, or "Directory" if the file is a
+     * directory
+     * 
+     * @return The MIME type of the file.
+     */
     private String initMIMEType(){
 		try{
-            File file = new File(path.toString());
+            File file = path.toFile();
             if(file.isDirectory()){
                 return TYPE_DIRECTORY;
             }
-			return AbtractIbarOdfCore.fileType(getPath().toString());
+			return IbarOdfCore.fileType(getPath());
 		}catch(Exception e){
 		    return UNKNOWN_TYPE;		
         }
     } 
+
+
+
+
     /**
      * Returns a JSON representation of the file.
      * 
@@ -84,6 +98,7 @@ public abstract class AbstractGenericFile {
         genericFile.put(PATH, path);
         genericFile.put(FILE_NAME, fileName);
         genericFile.put(MIME_TYPE, mimeType);
+        genericFile.put(SIZE, size);
         return genericFile;
     }
     

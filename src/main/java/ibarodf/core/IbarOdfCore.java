@@ -22,12 +22,12 @@ import ibarodf.core.meta.MetaDataKeyword;
 import ibarodf.core.meta.MetaDataSubject;
 import ibarodf.core.meta.MetaDataTitle;
 
-public abstract class AbtractIbarOdfCore {
+public abstract class IbarOdfCore {
 	public static final String[] descriptionMetaData = {MetaDataTitle.ATTR, MetaDataSubject.ATTR, MetaDataKeyword.ATTR, MetaDataComment.ATTR};
 	
 	
 	private static void  changeTheDescriptionOfAnOdtFile(Path odfFileToOperateOn, ArrayList<String> newValues) throws Exception{
-		String[] description = AbtractIbarOdfCore.descriptionMetaData;
+		String[] description = IbarOdfCore.descriptionMetaData;
 		OdfFile file = new OdfFile(odfFileToOperateOn);
 		for(int index =0 , maxIndex = description.length; index < maxIndex; index++ ){
 			file.setMetaData( description[index], newValues.get(index));
@@ -73,6 +73,10 @@ public abstract class AbtractIbarOdfCore {
         }
         return type;
     }
+
+	public static String fileType(Path filePath) throws IOException, UnrecognizableTypeFileException{
+		return fileType(filePath.toString());
+	}
 
 	public static boolean isAnOdfFile(String filePath){
         boolean isOdf= false;
@@ -127,9 +131,12 @@ public abstract class AbtractIbarOdfCore {
 		System.out.println("Creator changed!");
 	}
 
-	public static JSONObject directoryToJson(Path directoryPath) throws Exception{
-		Directory directory = new Directory(directoryPath);
+	public static JSONObject directoryToJson(Path directoryPath, boolean recursif) throws Exception{
+		Directory directory = new Directory(directoryPath, recursif);
 		return directory.toJonObject();
+	}
+	public static JSONObject directoryToJson(Path directoryPath) throws Exception{
+		return directoryToJson(directoryPath, false);
 	}
 
 	public static JSONObject odfFileToJson(Path path) throws Exception{

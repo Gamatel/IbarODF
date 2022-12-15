@@ -64,7 +64,7 @@ public class OdfFile extends RegularFile {
 			tempDirHandler.haveAnMetaXmlFile();
 			loadMetaData();
 		}catch(EmptyOdfFileException e){
-			throw new UnableToAddMetadataException(getPath());
+			throw new UnableToAddMetadataException(getPath(), e.getMessage());
 		}
 	}	
 

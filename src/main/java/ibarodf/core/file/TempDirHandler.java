@@ -15,7 +15,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-import ibarodf.core.AbtractIbarOdfCore;
+import ibarodf.core.IbarOdfCore;
 import ibarodf.core.file.exception.EmptyOdfFileException;
 import ibarodf.core.file.exception.UnableToReachHyperlinkException;
 import ibarodf.core.meta.Hyperlink;
@@ -66,7 +66,7 @@ public class TempDirHandler{
         if(!thumbnailFile.exists()){
             throw new NoPictureException(fileToUnzipPath);
         }
-        return AbtractIbarOdfCore.stringToPath(thumbnailFile.getAbsolutePath());
+        return IbarOdfCore.stringToPath(thumbnailFile.getAbsolutePath());
     }
 
     private Path getPicturesDirectory() throws NoPictureException, IOException{
@@ -75,7 +75,7 @@ public class TempDirHandler{
         if(!picturesDirectory.exists()){
             throw new NoPictureException(fileToUnzipPath);
         }
-        return AbtractIbarOdfCore.stringToPath(picturesDirectory.getAbsolutePath());
+        return IbarOdfCore.stringToPath(picturesDirectory.getAbsolutePath());
     }
 
     /**
@@ -100,7 +100,7 @@ public class TempDirHandler{
         if(!contentFile.exists()){
             throw new NoContentException(fileToUnzipPath);
         }
-        return AbtractIbarOdfCore.stringToPath(contentFile.getAbsolutePath());
+        return IbarOdfCore.stringToPath(contentFile.getAbsolutePath());
     }
 
     public void haveAnMetaXmlFile() throws EmptyOdfFileException{

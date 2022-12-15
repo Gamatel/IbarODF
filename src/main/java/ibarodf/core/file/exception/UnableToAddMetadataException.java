@@ -8,7 +8,11 @@ public class UnableToAddMetadataException extends Exception {
     }
 
     public UnableToAddMetadataException(Path filePath){
-        super("Couldn't add metadata for the file" + filePath.getFileName());
+        super("Couldn't add metadata for the file " + filePath.getFileName());
+    }
+
+    public UnableToAddMetadataException(Path filePath, String cause){
+        super("Couldn't add metadata for the file " + filePath.getFileName() + " Cause - "+ cause);
     }
     
 }
