@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 
 import ibarodf.core.IbarOdfCore;
+import ibarodf.core.file.UnrecognizableTypeFileException;
 
 
 /**
@@ -185,26 +186,31 @@ public class CommandTranslator {
      * @throws FileNotFoundException
      * @throws IOException 
      */
-    public Command translate() throws UnallowedCommandException, FileNotFoundException{
-        isValidLength(); 
-        if(isAskingForHelp()){
-            return Command.DISPLAY_HELP;
+    public Command translate() throws UnallowedCommandException, FileNotFoundException, IOException{
+        try{
+            isValidLength(); 
+            if(isAskingForHelp()){
+                return Command.DISPLAY_HELP;
+            }
+            String filePath = command[1];
+            Command askedCommand;
+            File file = new File(filePath);
+            if(!file.exists()){
+                throw new FileNotFoundException("the file "+filePath+ " does not exist");
+            }else 
+            if(Files.isDirectory(IbarOdfCore.stringToPath(filePath))){
+                askedCommand = actionToPerformOnADirectory();
+            }else if(IbarOdfCore.isAnOdfFile(filePath)){
+                askedCommand = actionToPerformOnAnOdfFile();
+            }else if(isAskingToOperateOnAFile()){
+                askedCommand =  actionToPerformOnFile(); 
+            }else{
+                throw new UnallowedCommandException("unknown command.");
+            }return askedCommand;
+        }catch(UnrecognizableTypeFileException e){
+            return Command.DISPLAY_THE_META_DATA_A_FILE;
         }
-        String filePath = command[1];
-        Command askedCommand;
-        File file = new File(filePath);
-        if(!file.exists()){
-            throw new FileNotFoundException("the file "+filePath+ " does not exist");
-        }else 
-        if(Files.isDirectory(IbarOdfCore.stringToPath(filePath))){
-            askedCommand = actionToPerformOnADirectory();
-        }else if(IbarOdfCore.isAnOdfFile(filePath)){
-            askedCommand = actionToPerformOnAnOdfFile();
-        }else if(isAskingToOperateOnAFile()){
-            askedCommand =  actionToPerformOnFile(); 
-        }else{
-            throw new UnallowedCommandException("unknown command.");
-        }return askedCommand;
+
     }
     
 }

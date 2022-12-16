@@ -35,6 +35,7 @@ public abstract class AbstractGenericFile {
         this.size = file.length()/1024 ;
     }
 
+
     /**
      * This function returns the Mime Type a file
      * @return The Mime Type variable is being returned.

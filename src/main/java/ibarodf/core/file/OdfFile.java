@@ -1,5 +1,6 @@
 package ibarodf.core.file;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -53,14 +54,17 @@ public class OdfFile extends RegularFile {
 	// Json Key
 	public static final String METADATA = "Metadata";
 
-	public OdfFile(Path path) throws IOException, ZipException, EmptyOdfFileException, UnableToLoadOdfDocumentException,
-			UnableToAddMetadataException {
+	public OdfFile(Path path) throws IOException, ZipException, EmptyOdfFileException, UnableToLoadOdfDocumentException,UnableToAddMetadataException, FileNotFoundException{
 		super(path);
+		if(!path.toFile().exists()){
+			throw new FileNotFoundException("The file "+ path.getFileName());
+		}
 		try {
 			tempDirHandler = new TempDirHandler(path);
-			tempDirHandler.haveAnMetaXmlFile();
-			loadMetaData();
-		} catch (EmptyOdfFileException e) {
+			if(tempDirHandler.haveAnMetaXmlFile()){
+				loadMetaData();
+			}
+		} catch (Exception e) {
 			throw new UnableToAddMetadataException(getPath(), e.getMessage());
 		}
 	}
@@ -265,6 +269,7 @@ public class OdfFile extends RegularFile {
 			odfFileJson.put(METADATA, metadataArray);
 			return odfFileJson;
 		} catch (UnableToConvertToJsonFormatException e) {
+			System.err.println(e.getLocalizedMessage());
 			throw new UnableToConvertToJsonFormatException(getFileName());
 		}
 	}

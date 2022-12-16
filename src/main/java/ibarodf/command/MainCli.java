@@ -46,8 +46,9 @@ public class MainCli {
      * 
      * @param command The command that was given to the program.
      * @param filePath The path to the file or directory
+     * @throws FileNotFoundException
      */
-    public static void displayMetadata(Command command, Path filePath) throws UnableToDisplayInformationAboutTheFile{
+    public static void displayMetadata(Command command, Path filePath) throws UnableToDisplayInformationAboutTheFile, FileNotFoundException{
         try{ 
             switch(command){
                 case DISPLAY_THE_META_DATA_A_FILE:
@@ -61,7 +62,7 @@ public class MainCli {
                     PrettyResult.prettyDirectory(IbarOdfCore.directoryToJson(filePath));
                     // IbarOdfCore.directoryToJson(filePath, true);
                     break;
-                    case DISPLAY_THE_META_DATA_OF_ODF_FILES_IN_A_DIRECTORY_RECURSIVELY:
+                case DISPLAY_THE_META_DATA_OF_ODF_FILES_IN_A_DIRECTORY_RECURSIVELY:
                     // System.out.println(IbarOdfCore.directoryToJson(filePath, true));
                     PrettyResult.prettyDirectory(IbarOdfCore.directoryToJson(filePath, true)); 
                     // IbarOdfCore.directoryToJson(filePath, true);
@@ -69,6 +70,8 @@ public class MainCli {
                 default:
                     System.err.println("Error : Wasn't asking to display information about "+ filePath.getFileName());
             }
+        }catch(FileNotFoundException e){
+            throw new FileNotFoundException("Cannot find "+ filePath);
         }catch(Exception e){
             throw new UnableToDisplayInformationAboutTheFile(filePath);
         }
@@ -143,9 +146,12 @@ public class MainCli {
             }
         }catch(UnableToChangeTheDescriptionOfTheFileException | UnableToDisplayInformationAboutTheFile| UnableToMakeAskedChangesException e ){
             System.err.println(e.getMessage());
+            e.getStackTrace(); 
         }catch(UnallowedCommandException | FileNotFoundException e ){
+            e.getStackTrace(); 
             System.err.println(e.getMessage());
         }catch(Exception e){
+            e.getStackTrace(); 
             System.err.println(e.getMessage());
         }
     }

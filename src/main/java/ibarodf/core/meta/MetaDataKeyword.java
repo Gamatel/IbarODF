@@ -56,7 +56,8 @@ public class MetadataKeyword extends MetadataXML{
             List<String> keywords = (List<String>)getValue();
             keywordArray.put(keywords);
             return (new JSONObject()).put(KEYWORDS, keywords);
-        }catch(Exception e){
+        }catch(ClassCastException e){
+            System.err.println(e.getLocalizedMessage());
             throw new UnableToConvertToJsonFormatException(ATTR);
         }
     }

@@ -8,11 +8,15 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import ibarodf.core.IbarOdfCore;
-import ibarodf.core.file.exception.UnableToAddAllFilesException;
+import ibarodf.core.file.exception.EmptyOdfFileException;
+import ibarodf.core.file.exception.UnableToAddMetadataException;
+import ibarodf.core.file.exception.UnableToLoadOdfDocumentException;
 import ibarodf.core.meta.exception.UnableToConvertToJsonFormatException;
+import net.lingala.zip4j.exception.ZipException;
 
 /**
  * This class represents a directory. It contains a list of directories, a list of regular files
@@ -40,20 +44,16 @@ public  class Directory extends RegularFile {
     public static final String INFORMATIONS = "Informations";
     public static final String WRONG_FILES = "Wrong Files";
     public static final String TOTAL_NUMBER_OF_FILES = "Total";
-
+    public static final String[] ALL_INFORMATIONS = {SUBDIRECTORIES, REGULAR_FILES, ODF_FILES, WRONG_FILES, TOTAL_NUMBER_OF_FILES};
     
-    public Directory(Path path, boolean isRecursif) throws UnableToAddAllFilesException{
+    public Directory(Path path, boolean isRecursif) throws FileNotFoundException{
         super(path);
         this.isRecursif = isRecursif;
-        try {
-            ArrayList<Path>filesPath = getSubFilesPathFromDirectory(path);
-            addFiles(filesPath);
-        }catch(Exception e){
-            throw new UnableToAddAllFilesException(getFileName());
-        }
+        ArrayList<Path>filesPath = getSubFilesPathFromDirectory(path);
+        addFiles(filesPath);
     }
-
-    public Directory(Path path) throws UnableToAddAllFilesException{
+    
+    public Directory(Path path) throws FileNotFoundException{
         this(path, false);
     }
 
@@ -71,29 +71,48 @@ public  class Directory extends RegularFile {
             currentPath = pathIterator.next();
             try{
                 if(Files.isDirectory(currentPath)){
-                    if(isRecursif){
-                        directories.add(new Directory(currentPath, true));
-                    }else{
-                        regularFiles.add(new RegularFile(currentPath));
-                    }
-                    numberOfSubDirectories++;
-                }else if(IbarOdfCore.isAnOdfFile(currentPath.toString())){
-                    odfFiles.add(new OdfFile(currentPath));
-                    numberOfOdfFiles++;
+                    addADirectory(currentPath);
                 }else{
-                    regularFiles.add(new RegularFile(currentPath));
-                    numberOfRegularFiles++;
+                    addAfile(currentPath);
                 }
+            }catch(UnrecognizableTypeFileException e){
+                regularFiles.add(new RegularFile(currentPath));
+                numberOfRegularFiles ++;
             }catch(Exception e){
-                if(e.getMessage().isEmpty()){
-                    wrongFiles.add(new WrongFile(currentPath));
-                }else{
-                    wrongFiles.add(new WrongFile(currentPath, e.getMessage()));
-                    numberOfWrongFiles++;
-                }
+                addWrongFile(currentPath, e);
             }
         }
     }
+
+    private void addAfile(Path odfFilePath) throws UnableToLoadOdfDocumentException, UnrecognizableTypeFileException, IOException, ZipException, EmptyOdfFileException, UnableToAddMetadataException{
+        if(IbarOdfCore.isAnOdfFile(odfFilePath)){
+            odfFiles.add(new OdfFile(odfFilePath));
+            numberOfOdfFiles++;
+        }else{
+            regularFiles.add(new RegularFile(odfFilePath));
+            numberOfRegularFiles++;
+        }
+    }
+
+    private void addWrongFile(Path wrongFilePath, Exception e){
+        numberOfWrongFiles++;
+        if(e.getMessage() == null){
+            wrongFiles.add(new WrongFile(wrongFilePath));
+        }else{
+            wrongFiles.add(new WrongFile(wrongFilePath, e.getMessage()));
+        }
+    }
+
+    private void addADirectory(Path pathDirectory) throws FileNotFoundException{
+        if(isRecursif){
+            directories.add(new Directory(pathDirectory, true));
+        }else{
+            regularFiles.add(new RegularFile(pathDirectory));
+        }
+        numberOfSubDirectories++;
+    }
+
+
 
     /**
      * This function gets the children of a directory
@@ -106,16 +125,13 @@ public  class Directory extends RegularFile {
         String[] textPath = directory.list();
         String separator = IbarOdfCore.getCurrentSystemSeparator();
         Path childPath;
-        try{
             for(String currentPath : textPath){ 
                 childPath = IbarOdfCore.stringToPath(directoryPath +separator+currentPath);
                 if(childPath.toFile().canExecute()){
                     filesPath.add(childPath);
                 }
             } 
-        }catch(Exception e){
-            System.err.println(e.getMessage());
-        }   
+          
         return filesPath; 
     }
 
@@ -168,9 +184,11 @@ public  class Directory extends RegularFile {
             directoryJson.put(INFORMATIONS, informationFileToJson());
             return  directoryJson;
         }catch(UnableToConvertToJsonFormatException e){
+            System.err.println(e.getLocalizedMessage());
             throw new UnableToConvertToJsonFormatException(getFileName());
         }
     }
 
+    //TODO : erreur
     
 }

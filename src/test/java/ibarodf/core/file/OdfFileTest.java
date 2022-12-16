@@ -6,11 +6,9 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
 
-
 import org.junit.Test;
 
-import ibarodf.core.meta.MetaDataTitle;
-
+import ibarodf.core.meta.MetadataTitle;
 
 /**
  * Unit test for simple App.
@@ -19,7 +17,7 @@ public class OdfFileTest {
 	private final String path = "test.odt";
 
 	@Test
-	public void testOdfFileTest() throws Exception{
+	public void testOdfFileTest() throws Exception {
 		testConstructor();
 		testGetterFake();
 		testGetterNotFake();
@@ -32,20 +30,20 @@ public class OdfFileTest {
 			OdfFile fileOdf = new OdfFile(path);
 			assertEquals(path, fileOdf.getPath());
 
-		} catch(Exception e){
+		} catch (Exception e) {
 			System.err.print(e.getMessage());
 			assertNull(e);
 		}
 	}
 
-	public void testGetterFake() throws Exception{
+	public void testGetterFake() throws Exception {
 		OdfFile fileOdf = new OdfFile(path);
 		final String fakeAttribut = "FakeTitle";
 		boolean isFake = false; // the responce is yes
-		
+
 		try {
 			fileOdf.getMetaData(fakeAttribut);
-		} catch(Exception e){
+		} catch (Exception e) {
 			System.err.print(e.getMessage());
 			isFake = true;
 			assertNotNull(e);
@@ -54,14 +52,14 @@ public class OdfFileTest {
 		assertTrue(isFake);
 	}
 
-	public void testGetterNotFake() throws Exception{
+	public void testGetterNotFake() throws Exception {
 		OdfFile fileOdf = new OdfFile(path);
-		final String fakeAttribut = MetaDataTitle.attr;
+		final String fakeAttribut = MetadataTitle.attr;
 		boolean isFake = false; // the responce is yes
-		
+
 		try {
 			fileOdf.getMetaData(fakeAttribut);
-		} catch(Exception e){
+		} catch (Exception e) {
 			System.err.print(e.getMessage());
 			isFake = true;
 			assertNotNull(e);
@@ -74,14 +72,11 @@ public class OdfFileTest {
 		OdfFile fileOdf = new OdfFile(path);
 		final String value = "Le Nouveau test d'Alexandre";
 
-		fileOdf.setMetaData(MetaDataTitle.attr, value);
-		final String testValue = fileOdf.getMetaData(MetaDataTitle.attr);
+		fileOdf.setMetaData(MetadataTitle.attr, value);
+		final String testValue = fileOdf.getMetaData(MetadataTitle.attr);
 		assertEquals(value, testValue);
 	}
 
-	// TODO Tester saveChange saveCghangeInOtherFile:  <24-11-22, yourname> //
+	// TODO Tester saveChange saveCghangeInOtherFile: <24-11-22, yourname> //
 
 }
-
-
-

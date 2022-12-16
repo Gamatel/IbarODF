@@ -126,12 +126,13 @@ public class TempDirHandler {
      * It checks if the file meta.xml exists in the unzipped file
      * @throws EmptyOdfFileException
      */
-    public void haveAnMetaXmlFile() throws EmptyOdfFileException {
+    public boolean haveAnMetaXmlFile() throws EmptyOdfFileException {
         String separator = FileSystems.getDefault().getSeparator();
         File metaXmlFile = new File(unzipedFilePath.toString() + separator + "meta.xml");
         if (!metaXmlFile.exists()) {
             throw new EmptyOdfFileException(fileToUnzipPath);
         }
+        return true;
     }
 
     /**

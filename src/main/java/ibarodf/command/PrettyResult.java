@@ -130,7 +130,7 @@ public abstract class PrettyResult {
     private static void displaySubDirectories(JSONObject jsonDirectory, int depth) {
         JSONArray jsonDirectories = jsonDirectory.getJSONArray(Directory.SUBDIRECTORIES);
         for (int index = 0, indexMax = jsonDirectories.length(); index < indexMax; index++) {
-            prettyDirectory(jsonDirectories.getJSONObject(index), depth + 1);
+            prettyDirectory(jsonDirectories.getJSONObject(index), depth);
         }
     }
 
@@ -180,7 +180,11 @@ public abstract class PrettyResult {
      */
     private static void prettyWrongFile(JSONObject jsonWrongFile, int depth) {
         prettyPrint(Directory.WRONG_FILES, depth);
-        prettyFile(jsonWrongFile, depth + 1);
+        if(jsonWrongFile.get(AbstractGenericFile.MIME_TYPE).equals(AbstractGenericFile.TYPE_DIRECTORY)){
+            prettyClosedDirectory(jsonWrongFile, depth+1);
+        }else{
+            prettyFile(jsonWrongFile, depth+1);
+        }
         prettyPrint(WrongFile.ERRORMESSAGE, jsonWrongFile.get(WrongFile.ERRORMESSAGE), depth + 1);
 
     }
