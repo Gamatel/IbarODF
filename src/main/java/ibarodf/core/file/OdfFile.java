@@ -14,19 +14,18 @@ import org.odftoolkit.odfdom.dom.OdfMetaDom;
 import org.odftoolkit.odfdom.incubator.meta.OdfOfficeMeta;
 import java.text.ParseException;
 
-
-import ibarodf.core.meta.MetaDataTitle;
-import ibarodf.core.meta.Picture;
-import ibarodf.core.meta.Thumbnail;
+import ibarodf.core.meta.MetadataTitle;
+import ibarodf.core.meta.MetadataThumbnail;
 import ibarodf.core.meta.exception.NoPictureException;
 import ibarodf.core.meta.exception.UnableToConvertToJsonFormatException;
+import ibarodf.core.meta.object.Hyperlink;
+import ibarodf.core.meta.object.Picture;
 import net.lingala.zip4j.exception.ZipException;
-import ibarodf.core.meta.MetaDataCreator;
-import ibarodf.core.meta.MetaDataHyperlink;
-import ibarodf.core.meta.MetaDataInitialCreator;
-import ibarodf.core.meta.MetaDataKeyword;
-import ibarodf.core.meta.MetaDataOdfPictures;
-import ibarodf.core.meta.MetaDataSubject;
+import ibarodf.core.meta.MetadataCreator;
+import ibarodf.core.meta.MetadataHyperlink;
+import ibarodf.core.meta.MetadataInitialCreator;
+import ibarodf.core.meta.MetadataKeyword;
+import ibarodf.core.meta.MetadataOdfPictures;
 import ibarodf.core.file.exception.UnableToAddMetadataException;
 import ibarodf.core.file.exception.UnableToAddHyperLinkException;
 import ibarodf.core.file.exception.UnableToAddKeywordException;
@@ -36,97 +35,122 @@ import ibarodf.core.file.exception.UnableToAddThumbnailException;
 import ibarodf.core.file.exception.UnableToLoadOdfDocumentException;
 import ibarodf.core.file.exception.UnableToSaveChangesException;
 import ibarodf.core.file.exception.EmptyOdfFileException;
-import ibarodf.core.meta.AbstractMetaData;
-import ibarodf.core.meta.Hyperlink;
-import ibarodf.core.meta.MetaDataComment;
-import ibarodf.core.meta.MetaDataCreationDate;
-import ibarodf.core.meta.MetaDataStats;
-
+import ibarodf.core.meta.AbstractMetadata;
+import ibarodf.core.meta.MetadataComment;
+import ibarodf.core.meta.MetadataCreationDate;
+import ibarodf.core.meta.MetadataStats;
+import ibarodf.core.meta.MetadataSubject;
 
 /**
- * The class OdfFile is a subclass of RegularFile. It contains a LinkedHashMap of AbstractMetaData
- * 
+ * The class OdfFile is a subclass of RegularFile. This stores the main metadata of Odf files
  */
 public class OdfFile extends RegularFile {
-	private OdfDocument odf; 
-	private OdfOfficeMeta meta; 
-	private final TempDirHandler tempDirHandler; 
-	private final LinkedHashMap<String, AbstractMetaData> metaDataHM = new LinkedHashMap<String, AbstractMetaData>();
+	private OdfDocument odf;
+	private OdfOfficeMeta meta;
+	private final TempDirHandler tempDirHandler;
+	private final LinkedHashMap<String, AbstractMetadata> metadata = new LinkedHashMap<String, AbstractMetadata>();
 
-	//Json Key
-	public static final String METADATAS = "Metadata"; 
+	// Json Key
+	public static final String METADATA = "Metadata";
 
-
-	public OdfFile(Path path) throws IOException, ZipException, EmptyOdfFileException, UnableToLoadOdfDocumentException, UnableToAddMetadataException {
+	public OdfFile(Path path) throws IOException, ZipException, EmptyOdfFileException, UnableToLoadOdfDocumentException,
+			UnableToAddMetadataException {
 		super(path);
 		try {
 			tempDirHandler = new TempDirHandler(path);
 			tempDirHandler.haveAnMetaXmlFile();
 			loadMetaData();
-		}catch(EmptyOdfFileException e){
+		} catch (EmptyOdfFileException e) {
 			throw new UnableToAddMetadataException(getPath(), e.getMessage());
 		}
-	}	
+	}
 
-	TempDirHandler getTempDirHandler(){
+	/**
+	 * This function returns the TempDirHandler object that is used to makes
+	 * operations on the unziped version of the ODF file
+	 * 
+	 * @see {@link ibarodf.core.file.TempDirHandler}
+	 * @return The TempDirHandler object.
+	 */
+	TempDirHandler getTempDirHandler() {
 		return tempDirHandler;
 	}
-	
-	private void loadMetaData() throws UnableToLoadOdfDocumentException, UnableToAddMetadataException{
-		try{
+
+	/**
+	 * It loads the ODF document and initializes the metadata
+	 * 
+	 * @throws UnableToLoadOdfDocumentException
+	 * @throws UnableToAddMetadataException
+	 */
+	private void loadMetaData() throws UnableToLoadOdfDocumentException, UnableToAddMetadataException {
+		try {
 			odf = OdfDocument.loadDocument(getPath().toString());
 			OdfMetaDom metaDom = odf.getMetaDom();
 			meta = new OdfOfficeMeta(metaDom);
-			initAllMeta();
-		}catch(Exception e){
+			initAllMetadata();
+		} catch (Exception e) {
 			throw new UnableToLoadOdfDocumentException(getFileName());
 		}
 	}
 
 	/**
 	 * This function returns a LinkedHashMap of the metadata of the current object
+	 * 
 	 * @return A LinkedHashMap of String and AbstractMetaData.
 	 */
-	public LinkedHashMap<String, AbstractMetaData> getMetaData() {
-		return metaDataHM;	
+	public LinkedHashMap<String, AbstractMetadata> getMetaData() {
+		return metadata;
 	}
-	
+
 	/**
 	 * It sets the value of a metadata
+	 * 
 	 * @param attribut the name of the metadata to be set
-	 * @param value The value to set the attribute to.
+	 * @param value    The value to set the attribute to.
+	 * @throws ParseException
 	 */
-
 	public void setMetaData(final String attribut, final String value) throws ParseException {
 		try {
-			metaDataHM.get(attribut).setValue(value);
+			metadata.get(attribut).setValue(value);
 		} catch (ibarodf.core.meta.exception.ReadOnlyMetaException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
 	/**
-	 * This methode gets the value of the metadata  
+	 * This methode gets the value of the metadata
+	 * 
 	 * @param attribut The name of the attribute you want to get the value of.
 	 * @return The value of the attribute.
+	 * @throws IllegalArgumentException
 	 */
-	public Object getMetaData(final String attribut){
-		if(!metaDataHM.containsKey(attribut)) 
+	public Object getMetaData(final String attribut) throws IllegalArgumentException {
+		if (!metadata.containsKey(attribut))
 			throw new IllegalArgumentException(String.format("Attribut %s doesn't exist", attribut));
-		return metaDataHM.get(attribut).getValue();
+		return metadata.get(attribut).getValue();
 	}
 
-	private void addMetaData(String key, AbstractMetaData metaData){
-		metaDataHM.put(key,metaData); 
+	/**
+	 * This function adds a metadata to the ODF file
+	 * 
+	 * @param key      The key that correspond to the type of metadata.
+	 * @param metaData The metadata object to be added to the hash map.
+	 */
+	private void addMetadata(String key, AbstractMetadata metaData) {
+		metadata.put(key, metaData);
 	}
 
-	
-	private void initAllMeta() throws UnableToAddMetadataException{
-		addMetaData(MetaDataTitle.ATTR, new MetaDataTitle(meta));
-		addMetaData(MetaDataCreator.ATTR, new MetaDataCreator(meta));
-		addMetaData(MetaDataInitialCreator.ATTR, new MetaDataInitialCreator(meta));
-		addMetaData(MetaDataSubject.ATTR, new MetaDataSubject(meta));		
-		addMetaData(MetaDataComment.ATTR, new MetaDataComment(meta));
+	/**
+	 * It adds all the metadata to the ODF file
+	 * 
+	 * @throws UnableToAddMetadataException
+	 */
+	private void initAllMetadata() throws UnableToAddMetadataException {
+		addMetadata(MetadataTitle.ATTR, new MetadataTitle(meta));
+		addMetadata(MetadataCreator.ATTR, new MetadataCreator(meta));
+		addMetadata(MetadataInitialCreator.ATTR, new MetadataInitialCreator(meta));
+		addMetadata(MetadataSubject.ATTR, new MetadataSubject(meta));
+		addMetadata(MetadataComment.ATTR, new MetadataComment(meta));
 		addKeyword();
 		addHyperlink();
 		addCreationDate();
@@ -135,99 +159,114 @@ public class OdfFile extends RegularFile {
 		addPictures();
 	}
 
-
-	private void addKeyword() throws UnableToAddKeywordException{
-		try{
-		addMetaData(MetaDataKeyword.ATTR, new MetaDataKeyword(meta, meta.getKeywords()));
-		}catch(Exception e){
+	/**
+	 * This function adds a keyword to the metadata of the file
+	 * 
+	 * @throws UnableToAddKeywordException
+	 */
+	private void addKeyword() throws UnableToAddKeywordException {
+		try {
+			addMetadata(MetadataKeyword.ATTR, new MetadataKeyword(meta, meta.getKeywords()));
+		} catch (Exception e) {
 			throw new UnableToAddKeywordException(getFileName());
 		}
-	} 
+	}
 
+	/**
+	 * If the creation date is null and it that case set it to the current date.
+	 * Then add it to the metatData of the file
+	 */
 	private void addCreationDate() {
 		Calendar creationDateInXML = meta.getCreationDate();
 		Calendar creationDate = creationDateInXML == null ? Calendar.getInstance() : creationDateInXML;
-		String creationDateStr = MetaDataCreationDate.CalendarToFormattedString(creationDate);
-		addMetaData(MetaDataCreationDate.ATTR, new MetaDataCreationDate(meta, creationDateStr));
+		String creationDateStr = MetadataCreationDate.CalendarToFormattedString(creationDate);
+		addMetadata(MetadataCreationDate.ATTR, new MetadataCreationDate(meta, creationDateStr));
 	}
 
+	/**
+	 * This function adds the statistics of the Odf files to the its metadata
+	 * 
+	 * @throws UnableToAddStatisticsException
+	 */
 	private void addDocStats() throws UnableToAddStatisticsException {
-		try{
-			addMetaData(MetaDataStats.ATTR, new MetaDataStats(meta, MetaDataStats.getStatistics(meta)));
-		}catch(Exception e){
+		try {
+			addMetadata(MetadataStats.ATTR, new MetadataStats(meta, MetadataStats.getStatistics(meta)));
+		} catch (Exception e) {
 			throw new UnableToAddStatisticsException(getFileName());
 		}
 	}
-	
-	private void addPictures() throws UnableToAddPictureException{
-		try{
+
+	/**
+	 * It adds the pictures of the ODF file to its the metadata
+	 * @throws UnableToAddPictureException
+	 */
+	private void addPictures() throws UnableToAddPictureException {
+		try {
 			ArrayList<Picture> picturesDirectoryPath = tempDirHandler.getPictures();
-			addMetaData(MetaDataOdfPictures.ATTR, new MetaDataOdfPictures(picturesDirectoryPath));
-		}catch(NoPictureException e){
-			addMetaData(MetaDataOdfPictures.ATTR, new MetaDataOdfPictures(new ArrayList<Picture>()));
-		}catch(Exception e){
+			addMetadata(MetadataOdfPictures.ATTR, new MetadataOdfPictures(picturesDirectoryPath));
+		} catch (NoPictureException e) {
+			addMetadata(MetadataOdfPictures.ATTR, new MetadataOdfPictures(new ArrayList<Picture>()));
+		} catch (Exception e) {
 			throw new UnableToAddPictureException(getFileName());
 		}
 	}
-	
-	private void addThumbnail() throws UnableToAddThumbnailException{
-		try{
+
+	/**
+	 * It adds the thumbnail of the ODF file to its metadata
+	 * 
+	 * @throws UnableToAddThumbnailException
+	 */
+	private void addThumbnail() throws UnableToAddThumbnailException {
+		try {
 			Path thumbnailPath = getTempDirHandler().getThumbnailPath();
-			addMetaData(Thumbnail.ATTR, new Thumbnail(thumbnailPath));
-		}catch(Exception e){
+			addMetadata(MetadataThumbnail.ATTR, new MetadataThumbnail(thumbnailPath));
+		} catch (Exception e) {
 			throw new UnableToAddThumbnailException(getFileName());
 		}
 	}
 
+	/**
+	 * It the hyperlinks of the file to its metadata
+	 * 
+	 * @throws UnableToAddHyperLinkException
+	 */
 
-	private void addHyperlink() throws UnableToAddHyperLinkException{
-		try{
+	private void addHyperlink() throws UnableToAddHyperLinkException {
+		try {
 			ArrayList<Hyperlink> hyperlinkList = tempDirHandler.getHyperlink();
-			addMetaData(MetaDataHyperlink.ATTR,new MetaDataHyperlink(hyperlinkList));
-		}catch(Exception e){
+			addMetadata(MetadataHyperlink.ATTR, new MetadataHyperlink(hyperlinkList));
+		} catch (Exception e) {
 			throw new UnableToAddHyperLinkException(getFileName());
 		}
 	}
 
 	/**
 	 * This function saves the changes made to the odf file
+	 * 
 	 * @throws UnableToSaveChangesException
 	 */
 	public void saveChange() throws UnableToSaveChangesException {
 		try {
 			odf.save(getPath().toString());
-		}catch(Exception e){
+		} catch (Exception e) {
 			throw new UnableToSaveChangesException(getFileName());
 		}
 	}
 
-	/**
-	* It gives a JSON reprensentation of the odf file.
- 	* @return A JSONObject
- 	*/
+	@Override
 	public JSONObject toJonObject() throws UnableToConvertToJsonFormatException {
 		try {
 			JSONObject odfFileJson = super.toJonObject();
 			JSONArray metadataArray = new JSONArray();
-			Collection<String> keys = metaDataHM.keySet();
-			for(String key: keys){
-				metadataArray.put(metaDataHM.get(key).toJson());
+			Collection<String> keys = metadata.keySet();
+			for (String key : keys) {
+				metadataArray.put(metadata.get(key).toJson());
 			}
-			odfFileJson.put(METADATAS, metadataArray);
+			odfFileJson.put(METADATA, metadataArray);
 			return odfFileJson;
-		}catch(UnableToConvertToJsonFormatException e){
-			throw new  UnableToConvertToJsonFormatException(getFileName());
+		} catch (UnableToConvertToJsonFormatException e) {
+			throw new UnableToConvertToJsonFormatException(getFileName());
 		}
 	}
 
 }
-
-
-
-
-
-
-
-
-
-

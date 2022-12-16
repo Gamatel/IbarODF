@@ -1,4 +1,4 @@
-package ibarodf.core.meta;
+package ibarodf.core.meta.object;
 
 import org.json.JSONObject;
 
@@ -24,6 +24,10 @@ public class Hyperlink {
         this.visitedStyleName = visitedStyleName;
     }
 
+    /**
+     * Returns a Json representation of a hyperlink
+     * @return Json Object representing a hyperlink 
+     */
     public JSONObject toJson(){
         JSONObject hyperLinkJson = new JSONObject();
         hyperLinkJson.put(TYPE, type);

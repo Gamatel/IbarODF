@@ -10,23 +10,32 @@ import ibarodf.core.meta.exception.ReadOnlyMetaException;
 
 import java.text.ParseException;
 
-public class MetaDataCreationDate extends MetaDataXML {
+public class MetadataCreationDate extends MetadataXML {
 	public final static String ATTR = "CreationDate";
 	public final static String CREATION_DATE = ATTR;
 
 	private final static String DATE_FORMAT = "dd/MM/yyyy HH:mm:ss";
 	public final static SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat(DATE_FORMAT);
 
-	public MetaDataCreationDate(final OdfOfficeMeta meta, final String value) {
+	public MetadataCreationDate(final OdfOfficeMeta meta, final String value) {
 		super(meta, ATTR, value);
 	}
 
+	@Override
 	public void setValue(final String value) throws ParseException, ReadOnlyMetaException {
 		GregorianCalendar creationDate = parseStringToCalendar(value);
 		getMeta().setCreationDate(creationDate);
 		super.setValue(value);
 	}
 
+	/**
+	 * It takes a string, parses it to a date, then takes the date and creates a new GregorianCalendar
+	 * object with the date's values
+	 * 
+	 * @param dateString "2016-01-01T00:00:00.000Z"
+	 * @return A GregorianCalendar object.
+	 * @deprecated
+	 */
 	private static GregorianCalendar parseStringToCalendar(final String dateString) throws ParseException {
 		Date creationDate = DATE_FORMATTER.parse(dateString);
 		final int day = creationDate.getDate();
@@ -40,6 +49,12 @@ public class MetaDataCreationDate extends MetaDataXML {
 		return new GregorianCalendar(years, mouth, day, hrs, min, sec);
 	}
 
+	/**
+	 * It takes a Calendar object and returns a String in the format "dd/mm/yyyy hh:mm:ss"
+	 * 
+	 * @param date The date to be formatted.
+	 * @return A string with the date and time in the format dd/mm/yyyy hh:mm:ss
+	 */
 	public static String CalendarToFormattedString(final Calendar date) {
 		final int day = date.get(GregorianCalendar.DAY_OF_MONTH);
 		final int mouth = date.get(GregorianCalendar.MONTH) + 1; // get(GregorianCalendar.MONTH) give value from 0 to 11 and not 1 to 12

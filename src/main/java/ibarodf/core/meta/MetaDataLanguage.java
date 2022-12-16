@@ -5,13 +5,14 @@ import org.odftoolkit.odfdom.incubator.meta.OdfOfficeMeta;
 
 import ibarodf.core.meta.exception.ReadOnlyMetaException;
 
-public class MetaDataLanguage extends MetaDataXML {
+public class MetadataLanguage extends MetadataXML {
 	public final static String ATTR = "Language";
 
-	public MetaDataLanguage(OdfOfficeMeta meta, String value) {
+	public MetadataLanguage(OdfOfficeMeta meta, String value) {
 		super(meta, ATTR, value);
 	}
 
+	@Override
 	public void setValue(String value) throws ParseException, ReadOnlyMetaException {
 		getMeta().setLanguage(value);
 		super.setValue(value);

@@ -6,6 +6,10 @@ import org.json.JSONObject;
 
 import ibarodf.core.meta.exception.UnableToConvertToJsonFormatException;
 
+/**
+ * Wrong File is responsible for instantiation of the files 
+ * that have met a probleme during the contruction of a directory.
+ */
 public class WrongFile extends RegularFile {
     private String errorMessage;
     public final static String ERRORMESSAGE = "Error Message"; 
@@ -20,6 +24,7 @@ public class WrongFile extends RegularFile {
         this(path, DEFAULT_ERROR_MESSAGE); 
     }
 
+    @Override
     public JSONObject toJonObject() throws UnableToConvertToJsonFormatException{
         JSONObject jsonWrongOdfFile = super.toJonObject();
         jsonWrongOdfFile.put(ERRORMESSAGE, errorMessage);

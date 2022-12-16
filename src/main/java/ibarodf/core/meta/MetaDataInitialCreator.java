@@ -5,19 +5,15 @@ import org.odftoolkit.odfdom.incubator.meta.OdfOfficeMeta;
 
 import ibarodf.core.meta.exception.ReadOnlyMetaException;
 
-public class MetaDataInitialCreator extends MetaDataXML {
+public class MetadataInitialCreator extends MetadataXML {
 	public final static String ATTR = "InitialCreator";
 	public final static String INITIALCREATOR = ATTR;
 
-	public MetaDataInitialCreator(OdfOfficeMeta meta){
+	public MetadataInitialCreator(OdfOfficeMeta meta){
 		super(meta, ATTR, meta.getInitialCreator());
-		try{
-			if(getValue() == null){
-				setValue("No Initial Creator");
-			}
-		}catch(Exception e){}
 	}
 
+	@Override
 	public void setValue(String value) throws ParseException, ReadOnlyMetaException {
 		getMeta().setInitialCreator(value);
 		super.setValue(value);

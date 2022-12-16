@@ -1,4 +1,4 @@
-package ibarodf.core.meta;
+package ibarodf.core.meta.object;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -36,6 +36,10 @@ public class Picture {
         widgth = bufferedImage.getWidth();
     }
 
+    /**
+     * returns a JSONObject that contains the informations about the Pictures
+     *  @return A JSONObject that correponds to the representation of a Pictures
+     */
     public JSONObject toJson(){
         JSONObject pictureJson = new JSONObject();
         pictureJson.put(PATH ,picturePath);

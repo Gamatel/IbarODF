@@ -7,6 +7,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import ibarodf.core.IbarOdfCore;
@@ -24,13 +25,15 @@ public  class Directory extends RegularFile {
     private final ArrayList<RegularFile> regularFiles = new ArrayList<>();
     private final ArrayList<WrongFile> wrongFiles = new ArrayList<>();
     private final boolean isRecursif;
+    
     private int numberOfSubDirectories = 0;
     private int numberOfRegularFiles = 0;
     private int numberOfOdfFiles = 0;
     private int numberOfWrongFiles = 0;
     private int totalNumberOfFile=0;
 
-    //Json Key
+    
+    // Json Keys
     public static final String SUBDIRECTORIES = "Directories";
     public static final String REGULAR_FILES = "Regular files";
     public static final String ODF_FILES = "Odf files";
@@ -39,25 +42,30 @@ public  class Directory extends RegularFile {
     public static final String TOTAL_NUMBER_OF_FILES = "Total";
 
     
-    public Directory(final Path path, boolean isRecursif) throws UnableToAddAllFilesException{
+    public Directory(Path path, boolean isRecursif) throws UnableToAddAllFilesException{
         super(path);
         this.isRecursif = isRecursif;
         try {
-            ArrayList<Path> filesPath = getSubFilesPathFromDirectory(path);
+            ArrayList<Path>filesPath = getSubFilesPathFromDirectory(path);
             addFiles(filesPath);
-        }catch(final Exception e){
+        }catch(Exception e){
             throw new UnableToAddAllFilesException(getFileName());
         }
     }
 
-    public Directory(final Path path) throws UnableToAddAllFilesException{
+    public Directory(Path path) throws UnableToAddAllFilesException{
         this(path, false);
     }
 
 
-    private void addFiles(final ArrayList<Path> filesPath) throws UnableToAddAllFilesException{
+    /**
+     * It takes an ArrayList of Paths, and for each path, it checks if it's a directory, an ODF file, or a
+     * regular file, and adds it to the appropriate ArrayList
+     * @param filesPath ArrayList of files Path
+     */
+    private void addFiles(ArrayList<Path> filesPath){
         Iterator<Path> pathIterator = filesPath.iterator();
-        Path currentPath;
+        Path currentPath; 
         while(pathIterator.hasNext()){
             totalNumberOfFile++;
             currentPath = pathIterator.next();
@@ -76,41 +84,45 @@ public  class Directory extends RegularFile {
                     regularFiles.add(new RegularFile(currentPath));
                     numberOfRegularFiles++;
                 }
-            // }catch(IOException | ZipException | EmptyOdfFileException | UnableToAddMetadataException e){
             }catch(Exception e){
                 if(e.getMessage().isEmpty()){
                     wrongFiles.add(new WrongFile(currentPath));
                 }else{
                     wrongFiles.add(new WrongFile(currentPath, e.getMessage()));
+                    numberOfWrongFiles++;
                 }
-                numberOfWrongFiles++;
             }
-            /* }catch(Exception e){
-                throw new UnableToAddAllFilesException(getFileName());
-            } */
         }
     }
 
     /**
-     * Get the children of a directory
+     * This function gets the children of a directory
      * @param directoryPath The path of the directory to be searched
-     * @return A list of Path objects.
+     * @return A list of Path corresponding to the children of the search directory.
      */
-    public static ArrayList<Path> getSubFilesPathFromDirectory(final Path directoryPath){
-        final ArrayList<Path> filesPath = new ArrayList<>();
-        final File directory = new File(directoryPath.toString());
-        final String[] textPath = directory.list();
-        final String separator = IbarOdfCore.getCurrentSystemSeparator();
+    public static ArrayList<Path> getSubFilesPathFromDirectory(Path directoryPath) throws FileNotFoundException{
+        ArrayList<Path> filesPath = new ArrayList<Path>();
+        File directory = new File(directoryPath.toString());
+        String[] textPath = directory.list();
+        String separator = IbarOdfCore.getCurrentSystemSeparator();
+        Path childPath;
         try{
-            for(final String currentPath : textPath){ 
-                filesPath.add(IbarOdfCore.stringToPath(directoryPath +separator+currentPath));
+            for(String currentPath : textPath){ 
+                childPath = IbarOdfCore.stringToPath(directoryPath +separator+currentPath);
+                if(childPath.toFile().canExecute()){
+                    filesPath.add(childPath);
+                }
             } 
-        }catch(final Exception e){
+        }catch(Exception e){
             System.err.println(e.getMessage());
         }   
-        return filesPath;
+        return filesPath; 
     }
 
+  /**
+   * It creates a JSONArray containing the informations regarding the current directory.
+   * @return A JSONArray object.
+   */
     private JSONArray informationFileToJson(){
         JSONArray infos = new JSONArray();
         infos.put((new JSONObject()).put(SUBDIRECTORIES, numberOfSubDirectories));
@@ -121,10 +133,7 @@ public  class Directory extends RegularFile {
         return infos;
     }
 
-    /**
-     * Returns a JSON representation of the directory. 
-     * @return A JSONObject
-     */
+    @Override
     public JSONObject toJonObject() throws UnableToConvertToJsonFormatException{  
         try {
             final JSONObject directoryJson = super.toJonObject();

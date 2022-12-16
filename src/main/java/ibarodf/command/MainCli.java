@@ -16,6 +16,12 @@ import ibarodf.exception.UnableToMakeAskedChangesException;
 
 public class MainCli {
     
+    /**
+     * It asks the user to enter a new title, subject, keyword and comment, to change the description of
+     * an ODF file
+     * 
+     * @param filePath The path of the ODF file to be modified.
+     */
     public static void changeTheDescription(Path filePath) throws UnableToChangeTheDescriptionOfTheFileException{
         try{
             String newTitle, newSubject, newKeyword, newComment;     
@@ -35,6 +41,12 @@ public class MainCli {
         }
     }
 
+    /**
+     *  It displays metadata about either a file or a directory
+     * 
+     * @param command The command that was given to the program.
+     * @param filePath The path to the file or directory
+     */
     public static void displayMetadata(Command command, Path filePath) throws UnableToDisplayInformationAboutTheFile{
         try{ 
             switch(command){
@@ -45,12 +57,14 @@ public class MainCli {
                     PrettyResult.prettyOdfFile(IbarOdfCore.odfFileToJson(filePath));
                     break;
                 case DISPLAY_THE_META_DATA_OF_ODF_FILES_IN_A_DIRECTORY:
-                    // System.out.println(AbstractIbarOdfCore.directoryToJson(filePath));
+                    // System.out.println(IbarOdfCore.directoryToJson(filePath, true));
                     PrettyResult.prettyDirectory(IbarOdfCore.directoryToJson(filePath));
+                    // IbarOdfCore.directoryToJson(filePath, true);
                     break;
                     case DISPLAY_THE_META_DATA_OF_ODF_FILES_IN_A_DIRECTORY_RECURSIVELY:
-                    // System.out.println(AbstractIbarOdfCore.directoryToJson(filePath));
+                    // System.out.println(IbarOdfCore.directoryToJson(filePath, true));
                     PrettyResult.prettyDirectory(IbarOdfCore.directoryToJson(filePath, true)); 
+                    // IbarOdfCore.directoryToJson(filePath, true);
                     break;
                 default:
                     System.err.println("Error : Wasn't asking to display information about "+ filePath.getFileName());
@@ -61,6 +75,13 @@ public class MainCli {
     } 
 
 
+    /**
+     * It changes the asked metadata of an ODF file
+     * 
+     * @param command The command to execute.
+     * @param filePath The path to the file you want to change the metadata of.
+     * @param newValue The new value to be set
+     */
     public static void changeMetadata(Command command, Path filePath, String newValue) throws UnableToMakeAskedChangesException{    
         try{
             switch(command){
@@ -87,6 +108,9 @@ public class MainCli {
         }
     }
 
+    /**
+     * It reads the help file and prints it to the console
+     */
     public static void help(){
 		try{
 			String separator = IbarOdfCore.getCurrentSystemSeparator();
@@ -100,7 +124,6 @@ public class MainCli {
 			System.err.println("Sorry, cannot reach the help manual.");
 		}
 	}
-
 
     public static void main(String[] args){
         CommandTranslator askedActionToPerform = new CommandTranslator(args);

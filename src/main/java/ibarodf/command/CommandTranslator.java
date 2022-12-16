@@ -7,6 +7,9 @@ import java.nio.file.Files;
 import ibarodf.core.IbarOdfCore;
 
 
+/**
+ * It takes a command line argument and returns the corresponding command
+ */
 
 public class CommandTranslator {
     private final String[] command;
@@ -30,19 +33,43 @@ public class CommandTranslator {
         this.command = command;
     }
 
+/**
+ * `isAskingForHelp` returns true if the command is `Command.DISPLAY_HELP` and false otherwise
+ * 
+ * @param command The command that the user has entered.
+ * @return A boolean value.
+ */
     public static boolean isAskingForHelp(Command command){
         return command == Command.DISPLAY_HELP;
     }
     
+    /**
+     * Returns true if the user ask to display informations and false otherwise
+     * 
+     * @param command The command that the user has chosen to execute.
+     * @return The method is returning a boolean value.
+     */
     public static boolean isAskingToDisplayMetadata(Command command){
         return command == Command.DISPLAY_THE_META_DATA_A_FILE||command == Command.DISPLAY_THE_META_DATA_OF_AN_ODF_FILE
         ||command == Command.DISPLAY_THE_META_DATA_OF_ODF_FILES_IN_A_DIRECTORY|| command == Command.DISPLAY_THE_META_DATA_OF_ODF_FILES_IN_A_DIRECTORY_RECURSIVELY;
     }
     
+    /**
+     * This function returns true if the command is asking to change the description of an ODF file.
+     * 
+     * @param command The command that the user wants to execute.
+     * @return A boolean value.
+     */
     public static boolean isAskingToChangeTheDescriptionOfAnOdfFile(Command command){
         return command == Command.CHANGE_THE_DESCRIPTION_OF_AN_ODF_FILE;
     }
 
+    /**
+     * It returns true if the command is asking to change the metadata of an ODF file
+     * 
+     * @param command The command that the user wants to execute.
+     * @return The method is returning a boolean value.
+     */
     public static boolean isAskingToChangeMetadataOnOdfFile(Command command){
         return command == Command.CHANGE_THE_COMMENTS_OF_AN_ODF_FILE || command == Command.CHANGE_THE_CREATOR_OF_AN_ODF_FILE
         || command == Command.CHANGE_THE_KEYWORDS_TO_AN_ODF_FILE || command == Command.CHANGE_THE_SUBJECT_OF_AN_ODF_FILE ||command == Command.CHANGE_THE_TITLE_OF_AN_ODF_FILE;
@@ -179,6 +206,5 @@ public class CommandTranslator {
             throw new UnallowedCommandException("unknown command.");
         }return askedCommand;
     }
-
     
 }

@@ -37,7 +37,6 @@ public abstract class AbstractGenericFile {
 
     /**
      * This function returns the Mime Type a file
-     * 
      * @return The Mime Type variable is being returned.
      */
     public String getMimeType(){
@@ -46,31 +45,31 @@ public abstract class AbstractGenericFile {
 
     /**
      * This function returns the path of the file
-     * 
-     * @return The path is being returned.
+     * @return The File path
      */
     public Path getPath(){
         return path;
     }
 
     /**
-     * This function returns the file name of the file that is being read
-     * 
+     * This function returns the file name of the file
      * @return The file name.
      */
     public String getFileName(){
         return fileName;
     }
 
+    /**
+     * This function returns the size in Ko of the file
+     * @return The size of the file.
+     */
     public long getSize(){
         return size; 
     }
 
-
     /**
      * It returns the MIME type of the file, or "Directory" if the file is a
      * directory
-     * 
      * @return The MIME type of the file.
      */
     private String initMIMEType(){
@@ -85,14 +84,11 @@ public abstract class AbstractGenericFile {
         }
     } 
 
-
-
-
     /**
      * Returns a JSON representation of the file.
-     * 
      * @return A JSONObject
-     */
+     * @throws UnableToConvertToJsonFormatException
+     */ 
     public JSONObject toJonObject() throws UnableToConvertToJsonFormatException{
         JSONObject genericFile = new JSONObject();
         genericFile.put(PATH, path);

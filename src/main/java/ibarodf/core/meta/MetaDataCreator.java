@@ -6,19 +6,15 @@ import ibarodf.core.meta.exception.ReadOnlyMetaException;
 
 import java.text.ParseException;
 
-public class MetaDataCreator extends MetaDataXML {
+public class MetadataCreator extends MetadataXML {
 	public final static String ATTR = "Creator";
 	public final static String CREATOR = ATTR;
 
-	public MetaDataCreator(OdfOfficeMeta meta) {
+	public MetadataCreator(OdfOfficeMeta meta) {
 		super(meta, ATTR, meta.getCreator());
-		try{
-			if(getValue() == null){
-				setValue("No Creator");
-			}
-		}catch(Exception e){}
 	}
 
+	@Override
 	public void setValue(String value) throws ParseException, ReadOnlyMetaException {
 		getMeta().setCreator(value);
 		super.setValue(value);

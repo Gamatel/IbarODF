@@ -2,10 +2,10 @@ package ibarodf.core.meta;
 
 import org.odftoolkit.odfdom.incubator.meta.OdfOfficeMeta;
 
-public class MetaDataXML extends AbstractMetaData {
+public class MetadataXML extends AbstractMetadata {
 	private final OdfOfficeMeta meta;
 
-	public MetaDataXML(OdfOfficeMeta meta, String attribut, Object value) {
+	public MetadataXML(OdfOfficeMeta meta, String attribut, Object value) {
 		super(attribut, value);
 		this.meta = meta;
 	}

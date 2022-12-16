@@ -1,9 +1,9 @@
 package ibarodf.core.meta;
 
 
-public class AbstractMetaDataOdf extends AbstractMetaData{
+public class AbstractMetadataOdf extends AbstractMetadata{
 
-    public AbstractMetaDataOdf(String attribut, Object value){
+    public AbstractMetadataOdf(String attribut, Object value){
         super(attribut, value);
     }
 
