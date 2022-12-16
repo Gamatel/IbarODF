@@ -9,12 +9,12 @@ public class MainWindow extends JFrame {
 
    public MainWindow() {
       super("IbarODF");
+       setSize(new Dimension(500,500));
+       setVisible(true);
+       setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
-	  setJMenuBar(new MenuBar());
-	  add(new TreeStructurePanel(), BorderLayout.WEST);
+	  add(new ToolBar(), BorderLayout.NORTH);
+	  add(new TreeStructurePanel(new Dimension(500, 800)), BorderLayout.WEST);
 	  add(new MetaDataPanel(), BorderLayout.CENTER);
-      setSize(new Dimension(500,500));
-      setVisible(true);
-      setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
    }
 }
