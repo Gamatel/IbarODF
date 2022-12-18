@@ -12,12 +12,13 @@ import org.json.JSONObject;
 import org.odftoolkit.odfdom.incubator.meta.OdfMetaDocumentStatistic;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 
 public class MetadataStats extends MetadataXML {
-	public final static String ATTR = "Statistic";
+	public final static String ATTR = "Statistics";
 
 	// Json key
-	public final static String STATISTICS = "Statistics";
+	public final static String STATISTICS = ATTR;
 	public final static String CELLCOUNT = "cellCount";
 	public final static String CHARACTERCOUNT = "characterCount";
 	public final static String DRAWNCOUNT = "drawnCount";
@@ -77,9 +78,16 @@ public class MetadataStats extends MetadataXML {
 	public JSONObject toJson() {
 		HashMap<String, Integer> statisticHashMap = (HashMap<String, Integer>) getValue();
 		Collection<String> statisticKey = statisticHashMap.keySet();
+		Iterator<String> statisticsIt = statisticKey.iterator();
+		String currentKey;
+		JSONObject statToAdd;
 		JSONArray statisticJsonArray = new JSONArray();
-		for (String key : statisticKey) {
-			statisticJsonArray.put((new JSONObject()).put(key, statisticHashMap.get(key)));
+		while(statisticsIt.hasNext()) {
+			currentKey =  statisticsIt.next();
+			statToAdd = (new JSONObject()).put(currentKey,statisticHashMap.get(currentKey));
+			if(!statToAdd.isNull(currentKey)){
+				statisticJsonArray.put(statToAdd);
+			}
 		}
 		return (new JSONObject()).put(STATISTICS, statisticJsonArray);
 	}

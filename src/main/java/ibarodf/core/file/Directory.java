@@ -139,13 +139,13 @@ public  class Directory extends RegularFile {
    * It creates a JSONArray containing the informations regarding the current directory.
    * @return A JSONArray object.
    */
-    private JSONArray informationFileToJson(){
-        JSONArray infos = new JSONArray();
-        infos.put((new JSONObject()).put(SUBDIRECTORIES, numberOfSubDirectories));
-        infos.put((new JSONObject()).put(REGULAR_FILES, numberOfRegularFiles));
-        infos.put((new JSONObject()).put(ODF_FILES, numberOfOdfFiles));
-        infos.put((new JSONObject()).put(WRONG_FILES, numberOfWrongFiles));
-        infos.put((new JSONObject()).put(TOTAL_NUMBER_OF_FILES, totalNumberOfFile));
+    private JSONObject informationFileToJson(){
+        JSONObject infos = new JSONObject();
+        infos.put(SUBDIRECTORIES, numberOfSubDirectories);
+        infos.put(REGULAR_FILES, numberOfRegularFiles);
+        infos.put(ODF_FILES, numberOfOdfFiles);
+        infos.put(WRONG_FILES, numberOfWrongFiles);
+        infos.put(TOTAL_NUMBER_OF_FILES, totalNumberOfFile);
         return infos;
     }
 
@@ -188,7 +188,5 @@ public  class Directory extends RegularFile {
             throw new UnableToConvertToJsonFormatException(getFileName());
         }
     }
-
-    //TODO : erreur
     
 }

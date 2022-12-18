@@ -2,7 +2,7 @@ package ibarodf.core.meta.object;
 
 import org.json.JSONObject;
 
-public class Hyperlink {
+public class Hyperlink extends JSONObject {
 
     public final String reference;
     public final String type;

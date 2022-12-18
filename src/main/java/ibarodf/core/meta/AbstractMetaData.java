@@ -1,15 +1,8 @@
 package ibarodf.core.meta;
-
-import java.lang.reflect.Array;
 import java.text.ParseException;
-import java.util.List;
 
 import org.json.JSONObject;
 
-import com.github.andrewoma.dexx.collection.ArrayList;
-
-import ibarodf.core.file.RegularFile;
-import ibarodf.core.file.WrongFile;
 import ibarodf.core.meta.exception.ReadOnlyMetaException;
 import ibarodf.core.meta.exception.UnableToConvertToJsonFormatException;
 

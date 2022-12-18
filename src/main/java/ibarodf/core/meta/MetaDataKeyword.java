@@ -9,9 +9,9 @@ import org.odftoolkit.odfdom.incubator.meta.OdfOfficeMeta;
 import ibarodf.core.meta.exception.UnableToConvertToJsonFormatException;
 
 public class MetadataKeyword extends MetadataXML{
-    public final static String ATTR = "Keyword";
+    public final static String ATTR = "Keywords";
     //Json Key
-    public final static String KEYWORDS = "Keywords";
+    public final static String KEYWORDS = ATTR;
 
     public MetadataKeyword(OdfOfficeMeta meta, List<String> value ) throws Exception{
         super(meta, ATTR, value);
@@ -57,7 +57,6 @@ public class MetadataKeyword extends MetadataXML{
             keywordArray.put(keywords);
             return (new JSONObject()).put(KEYWORDS, keywords);
         }catch(ClassCastException e){
-            System.err.println(e.getLocalizedMessage());
             throw new UnableToConvertToJsonFormatException(ATTR);
         }
     }

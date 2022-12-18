@@ -27,11 +27,14 @@ public class MetadataHyperlink extends AbstractMetadataOdf {
     public JSONObject toJson() throws UnableToConvertToJsonFormatException{
         try {
             ArrayList<Hyperlink> hyperlinkArray = (ArrayList<Hyperlink>)getValue();
-            JSONArray hyperlinkJson = new JSONArray();
-            for(Hyperlink hyperlink : hyperlinkArray ){
-                hyperlinkJson.put(hyperlink.toJson());
+            if(hyperlinkArray.size()!=0){
+                JSONArray hyperlinkJson = new JSONArray();
+                for(Hyperlink hyperlink : hyperlinkArray ){
+                    hyperlinkJson.put(hyperlink.toJson());
+                }
+                return new JSONObject().put(HYPERLINKS, hyperlinkJson);
             }
-            return (new JSONObject()).put(HYPERLINKS, hyperlinkJson);
+            return new JSONObject();
         }catch(Exception e){
             throw new UnableToConvertToJsonFormatException(ATTR);
         }

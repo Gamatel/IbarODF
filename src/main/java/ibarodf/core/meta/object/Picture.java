@@ -12,7 +12,7 @@ import org.json.JSONObject;
 
 import ibarodf.core.meta.exception.UnableToReachPicture;
 
-public class Picture {
+public class Picture extends JSONObject {
     private final Path picturePath;
     private final long size;
     private final int heigth;

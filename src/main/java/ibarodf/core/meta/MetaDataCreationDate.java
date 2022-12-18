@@ -11,7 +11,7 @@ import ibarodf.core.meta.exception.ReadOnlyMetaException;
 import java.text.ParseException;
 
 public class MetadataCreationDate extends MetadataXML {
-	public final static String ATTR = "CreationDate";
+	public final static String ATTR = "Creation Date";
 	public final static String CREATION_DATE = ATTR;
 
 	private final static String DATE_FORMAT = "dd/MM/yyyy HH:mm:ss";

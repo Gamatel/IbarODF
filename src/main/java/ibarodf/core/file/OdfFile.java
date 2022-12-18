@@ -53,6 +53,7 @@ public class OdfFile extends RegularFile {
 
 	// Json Key
 	public static final String METADATA = "Metadata";
+	public static final String HAVE_THESE_METADATA = "Have ";
 
 	public OdfFile(Path path) throws IOException, ZipException, EmptyOdfFileException, UnableToLoadOdfDocumentException,UnableToAddMetadataException, FileNotFoundException{
 		super(path);
@@ -261,12 +262,19 @@ public class OdfFile extends RegularFile {
 	public JSONObject toJonObject() throws UnableToConvertToJsonFormatException {
 		try {
 			JSONObject odfFileJson = super.toJonObject();
+			JSONArray metadataKeys = new JSONArray();
 			JSONArray metadataArray = new JSONArray();
 			Collection<String> keys = metadata.keySet();
+			JSONObject objectToAdd;
 			for (String key : keys) {
-				metadataArray.put(metadata.get(key).toJson());
+				objectToAdd = metadata.get(key).toJson();
+				if(!objectToAdd.isEmpty()){
+					metadataArray.put(objectToAdd);
+					metadataKeys.put(key);
+				}
 			}
 			odfFileJson.put(METADATA, metadataArray);
+			odfFileJson.put(HAVE_THESE_METADATA, metadataKeys);
 			return odfFileJson;
 		} catch (UnableToConvertToJsonFormatException e) {
 			System.err.println(e.getLocalizedMessage());

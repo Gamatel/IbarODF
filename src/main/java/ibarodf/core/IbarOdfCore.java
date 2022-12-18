@@ -7,14 +7,10 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.List;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
-import com.github.andrewoma.dexx.collection.HashMap;
 
-import ibarodf.core.file.AbstractGenericFile;
 import ibarodf.core.file.Directory;
 import ibarodf.core.file.OdfFile;
 import ibarodf.core.file.RegularFile;
@@ -226,88 +222,5 @@ public abstract class IbarOdfCore {
 		return file.toJonObject();
 
 	}
-
-
-
-
-
-
-
-
-	//Start JSON PARSER
-
-	//ABOUT ABTRACT GENERIC FILES 
-	public static Object getPath(JSONObject abstractGenericFile){
-		return abstractGenericFile.get(AbstractGenericFile.PATH);
-	}
-
-	public static Object getMimeType(JSONObject abstractGenericFile){
-		return abstractGenericFile.get(AbstractGenericFile.MIME_TYPE);
-	}
-
-	public static Object getSize(JSONObject abstractGenericFile){
-		return abstractGenericFile.get(AbstractGenericFile.SIZE);
-	}
-
-	public static Object getFileName(JSONObject abstractGenericFile){
-		return abstractGenericFile.get(AbstractGenericFile.FILE_NAME);
-	}
-	
-	
-	
-	
-	
-	
-	
-	
-	//ABOUT DIRECTORY
-	private static JSONArray getDirectoryJsonChildrenByType(JSONObject JsonDirectory, String type){
-		return JsonDirectory.getJSONArray(type);
-	}
-
-	public static JSONArray getOdfFiles(JSONObject jsonDirectory){
-		return getDirectoryJsonChildrenByType(jsonDirectory, Directory.ODF_FILES);
-	} 
-
-	public static JSONArray getRegularFiles(JSONObject jsonDirectory){
-		return getDirectoryJsonChildrenByType(jsonDirectory, Directory.REGULAR_FILES);
-	} 
-
-	public static JSONArray getSubDirectories(JSONObject jsonDirectory){
-		return getDirectoryJsonChildrenByType(jsonDirectory, Directory.SUBDIRECTORIES);
-		
-	} 
-	public static JSONArray getWrongFiles(JSONObject jsonDirectory){
-		return getDirectoryJsonChildrenByType(jsonDirectory, Directory.WRONG_FILES);
-	} 
-
-	public static boolean isADirectory(JSONObject abstractGenericFile){
-		return getMimeType(abstractGenericFile).equals(AbstractGenericFile.TYPE_DIRECTORY);
-	} 
-
-	private static HashMap<Object,Object> getDirectoryInformatiosByType(JSONObject jsonDirectory){
-		JSONArray jsonInformations = jsonDirectory.getJSONArray(Directory.INFORMATIONS);
-		HashMap<Object,Object> informationsHashMap = new HashMap<Object,Object>();
-		JSONObject currentObject; 
-		String currentInformation;
-		for(int index=0, indexMax = jsonInformations.length(); index<indexMax; index++){
-			currentObject = jsonInformations.getJSONObject(index);
-			currentInformation =  Directory.ALL_INFORMATIONS[index];
-			informationsHashMap.put( currentInformation , currentObject.get(currentInformation));
-		} 
-		return informationsHashMap;
-	} 
-
-	//ABOUT ODF Files
-
-
-
-
-
-
-
-
-
-
 
 }

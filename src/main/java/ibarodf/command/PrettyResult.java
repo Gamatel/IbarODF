@@ -2,20 +2,25 @@ package ibarodf.command;
 
 import java.nio.file.Path;
 import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import javax.json.JsonException;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
-import ibarodf.core.file.AbstractGenericFile;
+import ibarodf.core.IbarOdfResultParser;
 import ibarodf.core.file.Directory;
-import ibarodf.core.file.OdfFile;
 import ibarodf.core.file.RegularFile;
 import ibarodf.core.file.WrongFile;
 import ibarodf.core.meta.MetadataHyperlink;
 import ibarodf.core.meta.MetadataOdfPictures;
 import ibarodf.core.meta.MetadataStats;
+import ibarodf.core.meta.MetadataThumbnail;
+import ibarodf.core.meta.exception.NoSuchMetadataException;
 import ibarodf.core.meta.object.Picture;
 
 public abstract class PrettyResult {
@@ -63,20 +68,31 @@ public abstract class PrettyResult {
      *
      * @param directory the JSONObject to display
      * @param depth     the depth of the directory in the tree
+     * @throws NoSuchMetadataException
+     * @throws JSONException
      */
-    public static void prettyDirectory(JSONObject directory, int depth) {
+    public static void prettyDirectory(JSONObject directory, int depth) throws JSONException, NoSuchMetadataException {
         try {
             ligne(depth);
-            print(directory.get(Directory.FILE_NAME).toString(), depth);
+            print(IbarOdfResultParser.getFileName(directory), depth);
             ligne(depth);
-            displayRegularFiles(directory, depth + 1);
-            displayOdfFiles(directory, depth + 1);
+            displayRegularFiles(IbarOdfResultParser.getRegularFiles(directory), depth + 1);
+            displayOdfFiles(IbarOdfResultParser.getOdfFiles(directory), depth + 1);
             displaySubDirectories(directory, depth + 1);
-            displayWrongFiles(directory, depth + 1);
-            prettyInformations(directory, depth);
+            displayWrongFiles(IbarOdfResultParser.getWrongFiles(directory), depth + 1);
+            prettyEndDirectory(directory, depth); 
         } catch (JsonException e) {
         }
     }
+
+
+
+    private static void prettyEndDirectory(JSONObject jsonDirectory, int depth){
+        ligne(depth);
+        prettyPrint("In" +  IbarOdfResultParser.getFileName(jsonDirectory), depth);
+        prettyInformations(jsonDirectory, depth);
+        ligne(depth);
+    } 
 
     /**
      * It takes a JSONObject representing a directory, and an integer representing
@@ -88,12 +104,11 @@ public abstract class PrettyResult {
      *                      the regular files.
      * @param depth         the depth of the directory in the tree
      */
-    private static void displayRegularFiles(JSONObject jsonDirectory, int depth) {
-        JSONArray jsonRegularFiles = jsonDirectory.getJSONArray(Directory.REGULAR_FILES);
+    private static void displayRegularFiles(JSONArray jsonRegularFiles, int depth) {
         JSONObject currentJsonObject;
         for (int index = 0, indexMax = jsonRegularFiles.length(); index < indexMax; index++) {
             currentJsonObject = jsonRegularFiles.getJSONObject(index);
-            if (currentJsonObject.get(AbstractGenericFile.MIME_TYPE).equals(AbstractGenericFile.TYPE_DIRECTORY)) {
+            if (IbarOdfResultParser.isDirectory(currentJsonObject)) {
                 prettyClosedDirectory(currentJsonObject, depth);
             } else {
                 prettyFile(currentJsonObject, depth);
@@ -111,9 +126,10 @@ public abstract class PrettyResult {
      * @param jsonDirectory The JSONObject that represents the directory containing
      *                      the odf files
      * @param depth         the depth of the directory in the tree
+     * @throws NoSuchMetadataException
+     * @throws JSONException
      */
-    private static void displayOdfFiles(JSONObject jsonDirectory, int depth) {
-        JSONArray jsonOdfFiles = jsonDirectory.getJSONArray(Directory.ODF_FILES);
+    private static void displayOdfFiles(JSONArray jsonOdfFiles, int depth) throws JSONException, NoSuchMetadataException {
         for (int index = 0, indexMax = jsonOdfFiles.length(); index < indexMax; index++) {
             prettyOdfFile(jsonOdfFiles.getJSONObject(index), depth);
             System.out.println("\n");
@@ -126,16 +142,17 @@ public abstract class PrettyResult {
      * @param jsonDirectory The JSONObject that represents the directory you want to
      *                      display.
      * @param depth         The depth of the directory.
+     * @throws NoSuchMetadataException
+     * @throws JSONException
      */
-    private static void displaySubDirectories(JSONObject jsonDirectory, int depth) {
+    private static void displaySubDirectories(JSONObject jsonDirectory, int depth) throws JSONException, NoSuchMetadataException {
         JSONArray jsonDirectories = jsonDirectory.getJSONArray(Directory.SUBDIRECTORIES);
         for (int index = 0, indexMax = jsonDirectories.length(); index < indexMax; index++) {
             prettyDirectory(jsonDirectories.getJSONObject(index), depth);
         }
     }
 
-    private static void displayWrongFiles(JSONObject jsonDirectory, int depth) {
-        JSONArray jsonWrongFiles = jsonDirectory.getJSONArray(Directory.WRONG_FILES);
+    private static void displayWrongFiles(JSONArray jsonWrongFiles, int depth) {
         int numberOfWrongFiles = jsonWrongFiles.length();
         if (numberOfWrongFiles > 0) {
             ligne("/!\\", PrettyResult.DEFAULT_LINE_SIZE_FOR_PRETTY_PRINT / 3, depth);
@@ -146,7 +163,7 @@ public abstract class PrettyResult {
         }
     }
 
-    public static void prettyDirectory(JSONObject directory) {
+    public static void prettyDirectory(JSONObject directory) throws JSONException, NoSuchMetadataException {
         prettyDirectory(directory, 0);
     }
 
@@ -159,12 +176,9 @@ public abstract class PrettyResult {
      * @param depth the depth of the file in the tree
      */
     private static void prettyFile(JSONObject file, int depth) {
-        try {
-            prettyPrint(RegularFile.FILE_NAME, file.get(RegularFile.FILE_NAME), depth);
-            prettyPrint(RegularFile.MIME_TYPE, file.get(RegularFile.MIME_TYPE), depth);
-            prettyPrint(RegularFile.SIZE, file.get(RegularFile.SIZE), depth);
-        } catch (JsonException e) {
-        }
+        prettyPrint(RegularFile.FILE_NAME, IbarOdfResultParser.getFileName(file), depth);
+        prettyPrint(RegularFile.MIME_TYPE, IbarOdfResultParser.getMimeType(file), depth);
+        prettyPrint(RegularFile.SIZE, IbarOdfResultParser.getSize(file), depth);
     }
 
     public static void prettyFile(JSONObject file) {
@@ -180,12 +194,12 @@ public abstract class PrettyResult {
      */
     private static void prettyWrongFile(JSONObject jsonWrongFile, int depth) {
         prettyPrint(Directory.WRONG_FILES, depth);
-        if(jsonWrongFile.get(AbstractGenericFile.MIME_TYPE).equals(AbstractGenericFile.TYPE_DIRECTORY)){
+        if(IbarOdfResultParser.isDirectory(jsonWrongFile)){
             prettyClosedDirectory(jsonWrongFile, depth+1);
         }else{
             prettyFile(jsonWrongFile, depth+1);
         }
-        prettyPrint(WrongFile.ERRORMESSAGE, jsonWrongFile.get(WrongFile.ERRORMESSAGE), depth + 1);
+        prettyPrint(WrongFile.ERRORMESSAGE, IbarOdfResultParser.getWrongFileErrorMessage(jsonWrongFile), depth + 1);
 
     }
 
@@ -194,18 +208,18 @@ public abstract class PrettyResult {
      * 
      * @param odfFile The JSONObject that represents the ODF file.
      * @param depth   the depth of the JSONObject in the JSONObject tree.
+     * @throws NoSuchMetadataException
      */
 
-    private static void prettyOdfFile(JSONObject odfFile, int depth) {
+    private static void prettyOdfFile(JSONObject odfFile, int depth) throws NoSuchMetadataException {
         try {
             prettyFile(odfFile, depth);
-            JSONArray metaJsonArray = odfFile.getJSONArray(OdfFile.METADATA);
-            prettyMetadata(metaJsonArray, depth);
+            prettyMetadata(odfFile, depth);
         } catch (JsonException e) {
         }
     }
 
-    public static void prettyOdfFile(JSONObject odfFile) {
+    public static void prettyOdfFile(JSONObject odfFile) throws NoSuchMetadataException {
         prettyOdfFile(odfFile, 0);
     }
 
@@ -247,32 +261,31 @@ public abstract class PrettyResult {
      * @param metadataJsonArray the metadata of the odf file
      * @param depth             the depth in the file tree of the file
      */
-    private static void prettyMetadata(JSONArray metadataJsonArray, int depth) {
-        JSONObject currentMeta = new JSONObject();
-        Collection<String> typeMeta;
-        for (int indexArray = 0, indexMaxArray = metadataJsonArray.length(); indexArray < indexMaxArray; indexArray++) {
-            currentMeta = metadataJsonArray.getJSONObject(indexArray);
-            typeMeta = currentMeta.keySet();
-            for (String meta : typeMeta) {
-                switch (meta) {
-                    case MetadataHyperlink.HYPERLINKS:
-                        prettyPrint(MetadataHyperlink.HYPERLINKS, depth);
-                        prettyHyperlink(currentMeta, depth + 1);
-                        break;
-                    case MetadataOdfPictures.PICTURES:
-                        prettyPrint(MetadataOdfPictures.PICTURES, depth);
-                        prettyPicture(currentMeta, depth + 1);
-                        break;
-                    case MetadataStats.STATISTICS:
-                        prettyPrint(MetadataStats.STATISTICS, depth);
-                        prettyStatistique(currentMeta, depth + 1);
-                        break;
-                    default:
-                        prettyObject(currentMeta, depth);
-
-                }
+    private static void prettyMetadata(JSONObject odfFile, int depth) throws NoSuchMetadataException{
+        List<Object> currentMetadata = IbarOdfResultParser.getCurrentOdfMetadat(odfFile);
+        Iterator<Object> currentMetadataIt = currentMetadata.iterator();
+        Object currentMeta;
+        while(currentMetadataIt.hasNext()){    
+            currentMeta = currentMetadataIt.next();
+            if(IbarOdfResultParser.isHyperlink(currentMeta)){
+                prettyHyperlink(IbarOdfResultParser.getHyperlink(odfFile), depth);
+            }else if(IbarOdfResultParser.isPictures(currentMeta)){
+                prettyPicture(IbarOdfResultParser.getPictures(odfFile), depth);
+            }else if(IbarOdfResultParser.isStatistics(currentMeta)){
+                prettyStatistique(IbarOdfResultParser.getStatistics(odfFile), depth);
+            }else if(IbarOdfResultParser.isThumbnail(currentMeta)){
+                prettyThumbnail(odfFile, depth); 
+            }else{
+                prettyObject(IbarOdfResultParser.getMetadataByType(odfFile, currentMeta.toString()), depth);
             }
         }
+    }
+
+
+
+    public static void prettyThumbnail(JSONObject OdfFile, int depth) throws NoSuchMetadataException{
+        Path thumbnailPath = IbarOdfResultParser.getThumbnail(OdfFile);
+        prettyPrint(MetadataThumbnail.THUMBNAIL,thumbnailPath, depth);
     }
 
     /**
@@ -281,8 +294,7 @@ public abstract class PrettyResult {
      * @param hyperlinkJson The JSONObject that contains the hyperlink information.
      * @param depth         the depth of the current object in the JSON tree
      */
-    private static void prettyHyperlink(JSONObject hyperlinkJson, int depth) {
-        JSONArray hyperlinksArray = hyperlinkJson.getJSONArray(MetadataHyperlink.HYPERLINKS);
+    private static void prettyHyperlink(JSONArray hyperlinksArray, int depth) {
         JSONObject currentLink;
         int lengthArray = hyperlinksArray.length();
         for (int index = 0; index < lengthArray; index++) {
@@ -314,8 +326,11 @@ public abstract class PrettyResult {
      */
     private static void prettyObject(JSONObject jsonObject, int depth) {
         Collection<String> attributsObject = jsonObject.keySet();
-        for (String attribut : attributsObject) {
-            prettyPrint(attribut, jsonObject.get(attribut), depth);
+        Iterator<String> attributIt = attributsObject.iterator();
+        String currentAttribut; 
+        while(attributIt.hasNext()) {
+            currentAttribut = attributIt.next();
+            prettyPrint(currentAttribut, jsonObject.get(currentAttribut), depth);
         }
     }
 
@@ -328,16 +343,16 @@ public abstract class PrettyResult {
      * @param depth       the depth of the current ODF file in the tree.
      */
 
-    private static void prettyPicture(JSONObject pictureJson, int depth) {
-        JSONArray pictureArray = pictureJson.getJSONArray(MetadataOdfPictures.PICTURES);
+    private static void prettyPicture(JSONArray Pictures, int depth) {
+        prettyPrint(MetadataOdfPictures.PICTURES, depth);
         JSONObject currentPicture;
         Path picturePath;
-        int lengthArray = pictureArray.length();
+        int lengthArray = Pictures.length();
         for (int index = 0; index < lengthArray; index++) {
-            currentPicture = pictureArray.getJSONObject(index);
+            currentPicture = Pictures.getJSONObject(index);
             picturePath = (Path) currentPicture.get(Picture.PATH);
-            prettyPrint(MetadataOdfPictures.PICTURES + picturePath.getFileName(), depth);
-            prettyObject(currentPicture, depth + 1);
+            prettyPrint(MetadataOdfPictures.PICTURES + picturePath.getFileName(), depth+1);
+            prettyObject(currentPicture, depth + 2);
         }
     }
 
@@ -350,15 +365,12 @@ public abstract class PrettyResult {
      * @param directoryJson the JSONObject that contains the informations
      * @param depth         the depth of the directory
      */
-    private static void prettyInformations(JSONObject directoryJson, int depth) {
-        ligne(depth);
-        String endMessage = "In " + directoryJson.get(Directory.FILE_NAME);
-        prettyPrint(endMessage, depth);
-        JSONArray informations = directoryJson.getJSONArray(Directory.INFORMATIONS);
-        for (int index = 0, indexMax = informations.length(); index < indexMax; index++) {
-            prettyObject(informations.getJSONObject(index), depth + 1);
-        }
-        ligne(depth);
+    private static void prettyInformations(JSONObject directory, int depth) {
+        prettyPrint(Directory.SUBDIRECTORIES, IbarOdfResultParser.getNumberOfSubDirectories(directory), depth+1);
+        prettyPrint(Directory.REGULAR_FILES, IbarOdfResultParser.getNumberOfRegularFile(directory), depth+1);
+        prettyPrint(Directory.ODF_FILES, IbarOdfResultParser.getNumberOfOdfFiles(directory), depth+1);
+        prettyPrint(Directory.WRONG_FILES, IbarOdfResultParser.getNumberOfWrongFiles(directory), depth+1);
+        prettyPrint(Directory.TOTAL_NUMBER_OF_FILES, IbarOdfResultParser.getTotalNumberOfFiles(directory), depth);
     }
 
     /**
@@ -370,14 +382,22 @@ public abstract class PrettyResult {
      * @param metadataJsonArray The JSONObject that contains the metadata.
      * @param depth             the depth of the current ODF file in the file system
      */
-    private static void prettyStatistique(JSONObject metadataJsonArray, int depth) {
-        JSONArray statArray = metadataJsonArray.getJSONArray(MetadataStats.STATISTICS);
+    private static void prettyStatistique(JSONArray metadataJsonArray, int depth) {
+        prettyPrint(MetadataStats.STATISTICS,depth);
         JSONObject currentStat;
-        for (int index = 0, indexMax = statArray.length(); index < indexMax; index++) {
-            currentStat = statArray.getJSONObject(index);
-            prettyObject(currentStat, depth);
+        for (int index = 0, indexMax = metadataJsonArray.length(); index < indexMax; index++) {
+            currentStat = metadataJsonArray.getJSONObject(index);
+           prettyObject(currentStat, depth+1);
         }
 
     }
+
+
+    
+
+
+
+
+
 
 }
