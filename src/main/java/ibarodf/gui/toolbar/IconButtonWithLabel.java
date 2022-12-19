@@ -1,4 +1,4 @@
-package ibarodf.gui.menubar;
+package ibarodf.gui.toolbar;
 
 import java.awt.Dimension;
 import javax.swing.JButton;

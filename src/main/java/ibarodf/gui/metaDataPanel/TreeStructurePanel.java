@@ -1,4 +1,4 @@
-package ibarodf.gui;
+package ibarodf.gui.metaDataPanel;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;

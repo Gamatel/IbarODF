@@ -1,13 +1,13 @@
-package ibarodf.gui;
+package ibarodf.gui.metaDataPanel;
 
 import javax.swing.JTable;
 import javax.swing.JScrollPane;
 
 
-public class MetaDataPanel extends JScrollPane {
+public class TablePanel extends JScrollPane {
 	final String[] header = {"Nom", "Prenom", "Sexe"};
 
-	public MetaDataPanel() {
+	public TablePanel() {
 		super();
 
 		Object[][] data = {
