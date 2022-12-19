@@ -225,8 +225,7 @@ public abstract class PrettyResult {
 
     /**
      * It prints the key and value of a JSON object, with a tabulation that depends
-     * on the depth of the
-     * object
+     * on the depth of the object
      * 
      * @param key   The key of the JSON object
      * @param value The value of the key.
@@ -267,20 +266,19 @@ public abstract class PrettyResult {
         Object currentMeta;
         while(currentMetadataIt.hasNext()){    
             currentMeta = currentMetadataIt.next();
-            if(IbarOdfResultParser.isHyperlink(currentMeta)){
+            if(IbarOdfResultParser.isHyperlinkKey(currentMeta)){
                 prettyHyperlink(IbarOdfResultParser.getHyperlink(odfFile), depth);
-            }else if(IbarOdfResultParser.isPictures(currentMeta)){
+            }else if(IbarOdfResultParser.isPicturesKey(currentMeta)){
                 prettyPicture(IbarOdfResultParser.getPictures(odfFile), depth);
-            }else if(IbarOdfResultParser.isStatistics(currentMeta)){
+            }else if(IbarOdfResultParser.isStatisticsKey(currentMeta)){
                 prettyStatistique(IbarOdfResultParser.getStatistics(odfFile), depth);
-            }else if(IbarOdfResultParser.isThumbnail(currentMeta)){
+            }else if(IbarOdfResultParser.isThumbnailKey(currentMeta)){
                 prettyThumbnail(odfFile, depth); 
             }else{
                 prettyObject(IbarOdfResultParser.getMetadataByType(odfFile, currentMeta.toString()), depth);
             }
         }
     }
-
 
 
     public static void prettyThumbnail(JSONObject OdfFile, int depth) throws NoSuchMetadataException{
