@@ -1,11 +1,16 @@
 package ibarodf.gui.toolbar;
 
+import java.awt.Color;
+
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JToolBar;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 
 public class ToolBar extends JToolBar {
+	private final Color bgColor = new Color(156, 39, 176);
+
 	public ToolBar() {
 		super();
 		setLayout(new FlowLayout(FlowLayout.LEFT));
@@ -21,5 +26,12 @@ public class ToolBar extends JToolBar {
 
 		add(btnFileOpen);
 		add(btnDirOpen);
+
+		setInitialDesign();
+	}
+
+	private void setInitialDesign() {
+		setBackground(bgColor);
+		setBorder(BorderFactory.createEmptyBorder());
 	}
 }
