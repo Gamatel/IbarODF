@@ -4,8 +4,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 
+import ibarodf.command.exception.UnallowedCommandException;
 import ibarodf.core.IbarOdfCore;
-import ibarodf.core.file.UnrecognizableTypeFileException;
+import ibarodf.core.file.exception.UnrecognizableTypeFileException;
 
 
 /**
@@ -170,7 +171,7 @@ public class CommandTranslator {
     }
 
     private boolean isValidLength() throws UnallowedCommandException{
-        if(command.length ==0 || command.length >=4){
+        if(command.length ==0 || command.length >4){
             throw new UnallowedCommandException("Illegal argument");
         }if(command.length == 1 && !isAskingForHelp()){
             throw new UnallowedCommandException("Unknown command");

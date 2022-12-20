@@ -4,7 +4,7 @@ import java.nio.file.Path;
 
 import org.json.JSONObject;
 
-import ibarodf.core.meta.exception.UnableToConvertToJsonFormatException;
+import ibarodf.core.metadata.exception.UnableToConvertToJsonFormatException;
 
 /**
  * Wrong File is responsible for instantiation of the files 

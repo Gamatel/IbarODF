@@ -1,11 +1,11 @@
-package ibarodf.core.meta;
+package ibarodf.core.metadata;
 
 import java.text.ParseException;
 import org.odftoolkit.odfdom.incubator.meta.OdfOfficeMeta;
 
-import ibarodf.core.meta.exception.ReadOnlyMetaException;
+import ibarodf.core.metadata.exception.ReadOnlyMetaException;
 
-public class MetadataSubject extends MetadataXML {
+public class MetadataSubject extends AbstractMetadataXML {
 	public final static String ATTR = "Subject";
 	public final static String SUBJECT = ATTR;
 

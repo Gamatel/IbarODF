@@ -1,4 +1,4 @@
-package ibarodf.core.meta.object;
+package ibarodf.core.metadata.object;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -10,7 +10,7 @@ import javax.imageio.ImageIO;
 
 import org.json.JSONObject;
 
-import ibarodf.core.meta.exception.UnableToReachPicture;
+import ibarodf.core.metadata.exception.UnableToReachPicture;
 
 public class Picture extends JSONObject {
     private final Path picturePath;

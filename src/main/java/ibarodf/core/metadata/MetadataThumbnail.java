@@ -1,10 +1,10 @@
-package ibarodf.core.meta;
+package ibarodf.core.metadata;
 
 
 import java.nio.file.Path;
 import java.text.ParseException;
 
-import ibarodf.core.meta.exception.ReadOnlyMetaException;
+import ibarodf.core.metadata.exception.ReadOnlyMetaException;
 
 
 public class MetadataThumbnail extends AbstractMetadataOdf {

@@ -1,4 +1,4 @@
-package ibarodf.core.meta;
+package ibarodf.core.metadata;
 
 
 public class AbstractMetadataOdf extends AbstractMetadata{

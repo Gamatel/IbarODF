@@ -17,12 +17,12 @@ import org.w3c.dom.NodeList;
 import ibarodf.core.IbarOdfCore;
 import ibarodf.core.file.exception.EmptyOdfFileException;
 import ibarodf.core.file.exception.UnableToReachHyperlinkException;
-import ibarodf.core.meta.MetadataHyperlink;
-import ibarodf.core.meta.exception.NoContentException;
-import ibarodf.core.meta.exception.NoPictureException;
-import ibarodf.core.meta.exception.UnableToReachPicture;
-import ibarodf.core.meta.object.Hyperlink;
-import ibarodf.core.meta.object.Picture;
+import ibarodf.core.metadata.MetadataHyperlink;
+import ibarodf.core.metadata.exception.NoContentException;
+import ibarodf.core.metadata.exception.NoPictureException;
+import ibarodf.core.metadata.exception.UnableToReachPicture;
+import ibarodf.core.metadata.object.Hyperlink;
+import ibarodf.core.metadata.object.Picture;
 import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
 

@@ -1,4 +1,4 @@
-package ibarodf.core.meta.exception;
+package ibarodf.core.metadata.exception;
 
 public class NoSuchMetadataException extends Exception {
     public NoSuchMetadataException(Object object, String type){

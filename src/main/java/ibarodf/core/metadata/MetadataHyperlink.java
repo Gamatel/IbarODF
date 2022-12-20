@@ -1,12 +1,12 @@
-package ibarodf.core.meta;
+package ibarodf.core.metadata;
 
 import java.util.ArrayList;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import ibarodf.core.meta.exception.UnableToConvertToJsonFormatException;
-import ibarodf.core.meta.object.Hyperlink;
+import ibarodf.core.metadata.exception.UnableToConvertToJsonFormatException;
+import ibarodf.core.metadata.object.Hyperlink;
 
 public class MetadataHyperlink extends AbstractMetadataOdf {
     public final static String ATTR = "Hyperlinks";

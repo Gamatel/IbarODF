@@ -1,11 +1,11 @@
-package ibarodf.core.meta;
+package ibarodf.core.metadata;
 
 import java.lang.Integer;
 import java.text.ParseException;
 import org.odftoolkit.odfdom.incubator.meta.OdfOfficeMeta;
 
-import ibarodf.core.meta.exception.NoStatisticsException;
-import ibarodf.core.meta.exception.ReadOnlyMetaException;
+import ibarodf.core.metadata.exception.NoStatisticsException;
+import ibarodf.core.metadata.exception.ReadOnlyMetaException;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -14,7 +14,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 
-public class MetadataStats extends MetadataXML {
+public class MetadataStats extends AbstractMetadataXML {
 	public final static String ATTR = "Statistics";
 
 	// Json key

@@ -1,4 +1,4 @@
-package ibarodf.core.meta.exception;
+package ibarodf.core.metadata.exception;
 
 import java.nio.file.Path;
 

@@ -14,13 +14,13 @@ import org.json.JSONObject;
 import ibarodf.core.file.Directory;
 import ibarodf.core.file.OdfFile;
 import ibarodf.core.file.RegularFile;
-import ibarodf.core.file.UnrecognizableTypeFileException;
-import ibarodf.core.meta.MetadataComment;
-import ibarodf.core.meta.MetadataCreator;
-import ibarodf.core.meta.MetadataKeyword;
-import ibarodf.core.meta.MetadataSubject;
-import ibarodf.core.meta.MetadataTitle;
-import ibarodf.core.meta.exception.UnableToConvertToJsonFormatException;
+import ibarodf.core.file.exception.UnrecognizableTypeFileException;
+import ibarodf.core.metadata.MetadataComment;
+import ibarodf.core.metadata.MetadataCreator;
+import ibarodf.core.metadata.MetadataKeyword;
+import ibarodf.core.metadata.MetadataSubject;
+import ibarodf.core.metadata.MetadataTitle;
+import ibarodf.core.metadata.exception.UnableToConvertToJsonFormatException;
 
 /**
  * It's a class that contains static methods that allows you : 
@@ -42,7 +42,6 @@ public abstract class IbarOdfCore {
 			file.setMetaData(description[index], newValues.get(index));
 		}
 		file.saveChange();
-		System.out.println("Description changed!");
 	}
 
 	/**

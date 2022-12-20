@@ -1,4 +1,4 @@
-package ibarodf.core.meta.exception;
+package ibarodf.core.metadata.exception;
 
 public class ReadOnlyMetaException extends Exception {
 	public ReadOnlyMetaException(String attribut) {

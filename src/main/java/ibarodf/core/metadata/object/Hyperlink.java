@@ -1,4 +1,4 @@
-package ibarodf.core.meta.object;
+package ibarodf.core.metadata.object;
 
 import org.json.JSONObject;
 

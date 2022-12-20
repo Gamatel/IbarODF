@@ -1,10 +1,10 @@
-package ibarodf.core.meta;
+package ibarodf.core.metadata;
 import java.text.ParseException;
 
 import org.json.JSONObject;
 
-import ibarodf.core.meta.exception.ReadOnlyMetaException;
-import ibarodf.core.meta.exception.UnableToConvertToJsonFormatException;
+import ibarodf.core.metadata.exception.ReadOnlyMetaException;
+import ibarodf.core.metadata.exception.UnableToConvertToJsonFormatException;
 
 /**
  * This class is an abstract class that represents a metadata
@@ -21,7 +21,7 @@ public abstract class AbstractMetadata {
 
 	/**
 	 * This function retuns a String that correspond to the type of the metadata
-	 * @see {@link ibarodf.core.meta to see all types of metadata}
+	 * @see {@link ibarodf.core.metadata to see all types of metadata}
 	 * @return returns the type of the metadata
 	 */
 	public String getAttribut() {

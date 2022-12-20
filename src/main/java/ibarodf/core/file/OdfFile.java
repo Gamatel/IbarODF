@@ -15,18 +15,7 @@ import org.odftoolkit.odfdom.dom.OdfMetaDom;
 import org.odftoolkit.odfdom.incubator.meta.OdfOfficeMeta;
 import java.text.ParseException;
 
-import ibarodf.core.meta.MetadataTitle;
-import ibarodf.core.meta.MetadataThumbnail;
-import ibarodf.core.meta.exception.NoPictureException;
-import ibarodf.core.meta.exception.UnableToConvertToJsonFormatException;
-import ibarodf.core.meta.object.Hyperlink;
-import ibarodf.core.meta.object.Picture;
 import net.lingala.zip4j.exception.ZipException;
-import ibarodf.core.meta.MetadataCreator;
-import ibarodf.core.meta.MetadataHyperlink;
-import ibarodf.core.meta.MetadataInitialCreator;
-import ibarodf.core.meta.MetadataKeyword;
-import ibarodf.core.meta.MetadataOdfPictures;
 import ibarodf.core.file.exception.UnableToAddMetadataException;
 import ibarodf.core.file.exception.UnableToAddHyperLinkException;
 import ibarodf.core.file.exception.UnableToAddKeywordException;
@@ -35,12 +24,23 @@ import ibarodf.core.file.exception.UnableToAddStatisticsException;
 import ibarodf.core.file.exception.UnableToAddThumbnailException;
 import ibarodf.core.file.exception.UnableToLoadOdfDocumentException;
 import ibarodf.core.file.exception.UnableToSaveChangesException;
+import ibarodf.core.metadata.AbstractMetadata;
+import ibarodf.core.metadata.MetadataComment;
+import ibarodf.core.metadata.MetadataCreationDate;
+import ibarodf.core.metadata.MetadataCreator;
+import ibarodf.core.metadata.MetadataHyperlink;
+import ibarodf.core.metadata.MetadataInitialCreator;
+import ibarodf.core.metadata.MetadataKeyword;
+import ibarodf.core.metadata.MetadataOdfPictures;
+import ibarodf.core.metadata.MetadataStats;
+import ibarodf.core.metadata.MetadataSubject;
+import ibarodf.core.metadata.MetadataThumbnail;
+import ibarodf.core.metadata.MetadataTitle;
+import ibarodf.core.metadata.exception.NoPictureException;
+import ibarodf.core.metadata.exception.UnableToConvertToJsonFormatException;
+import ibarodf.core.metadata.object.Hyperlink;
+import ibarodf.core.metadata.object.Picture;
 import ibarodf.core.file.exception.EmptyOdfFileException;
-import ibarodf.core.meta.AbstractMetadata;
-import ibarodf.core.meta.MetadataComment;
-import ibarodf.core.meta.MetadataCreationDate;
-import ibarodf.core.meta.MetadataStats;
-import ibarodf.core.meta.MetadataSubject;
 
 /**
  * The class OdfFile is a subclass of RegularFile. This stores the main metadata of Odf files
@@ -117,7 +117,7 @@ public class OdfFile extends RegularFile {
 	public void setMetaData(final String attribut, final String value) throws ParseException {
 		try {
 			metadata.get(attribut).setValue(value);
-		} catch (ibarodf.core.meta.exception.ReadOnlyMetaException e) {
+		} catch (ibarodf.core.metadata.exception.ReadOnlyMetaException e) {
 			throw new RuntimeException(e);
 		}
 	}

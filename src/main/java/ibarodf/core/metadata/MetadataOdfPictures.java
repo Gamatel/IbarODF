@@ -1,12 +1,12 @@
-package ibarodf.core.meta;
+package ibarodf.core.metadata;
 
 import java.util.ArrayList;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import ibarodf.core.meta.exception.UnableToConvertToJsonFormatException;
-import ibarodf.core.meta.object.Picture;
+import ibarodf.core.metadata.exception.UnableToConvertToJsonFormatException;
+import ibarodf.core.metadata.object.Picture;
 
 
 public class MetadataOdfPictures extends AbstractMetadataOdf {

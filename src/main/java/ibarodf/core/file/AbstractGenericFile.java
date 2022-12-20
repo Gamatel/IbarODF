@@ -6,7 +6,7 @@ import java.nio.file.Path;
 import org.json.JSONObject;
 
 import ibarodf.core.IbarOdfCore;
-import ibarodf.core.meta.exception.UnableToConvertToJsonFormatException;
+import ibarodf.core.metadata.exception.UnableToConvertToJsonFormatException;
 
 
 /**

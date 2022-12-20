@@ -1,29 +1,32 @@
 package ibarodf.core;
 
 import java.nio.file.Path;
+import java.util.Iterator;
 import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.github.andrewoma.dexx.collection.Map;
+
 import ibarodf.core.file.AbstractGenericFile;
 import ibarodf.core.file.Directory;
 import ibarodf.core.file.OdfFile;
 import ibarodf.core.file.WrongFile;
-import ibarodf.core.meta.MetadataComment;
-import ibarodf.core.meta.MetadataCreationDate;
-import ibarodf.core.meta.MetadataCreator;
-import ibarodf.core.meta.MetadataHyperlink;
-import ibarodf.core.meta.MetadataInitialCreator;
-import ibarodf.core.meta.MetadataKeyword;
-import ibarodf.core.meta.MetadataOdfPictures;
-import ibarodf.core.meta.MetadataStats;
-import ibarodf.core.meta.MetadataSubject;
-import ibarodf.core.meta.MetadataThumbnail;
-import ibarodf.core.meta.MetadataTitle;
-import ibarodf.core.meta.exception.NoSuchMetadataException;
-import ibarodf.core.meta.object.Hyperlink;
-import ibarodf.core.meta.object.Picture;
+import ibarodf.core.metadata.MetadataComment;
+import ibarodf.core.metadata.MetadataCreationDate;
+import ibarodf.core.metadata.MetadataCreator;
+import ibarodf.core.metadata.MetadataHyperlink;
+import ibarodf.core.metadata.MetadataInitialCreator;
+import ibarodf.core.metadata.MetadataKeyword;
+import ibarodf.core.metadata.MetadataOdfPictures;
+import ibarodf.core.metadata.MetadataStats;
+import ibarodf.core.metadata.MetadataSubject;
+import ibarodf.core.metadata.MetadataThumbnail;
+import ibarodf.core.metadata.MetadataTitle;
+import ibarodf.core.metadata.exception.NoSuchMetadataException;
+import ibarodf.core.metadata.object.Hyperlink;
+import ibarodf.core.metadata.object.Picture;
 
 /**
  * This class is used to parse the JSONObject returned by the IbarOdfResultParser
@@ -129,7 +132,7 @@ public abstract class IbarOdfResultParser {
      * @param jsonObject The ODF file.
      * @return A list of objects.
      */
-    public static List<Object> getCurrentOdfMetadat(JSONObject jsonObject){
+    public static List<Object> getCurrentOdfMetadata(JSONObject jsonObject){
         return jsonObject.getJSONArray(OdfFile.HAVE_THESE_METADATA).toList();
     }
 
@@ -174,7 +177,7 @@ public abstract class IbarOdfResultParser {
      * @param odfFile The JSONObject that contains the metadata
      * @return The initial creator of the document.
      */
-    public static String getInitialgetCreator(JSONObject odfFile) throws NoSuchMetadataException {
+    public static String getInitialCreator(JSONObject odfFile) throws NoSuchMetadataException {
         return getMetadataByType(odfFile, MetadataInitialCreator.INITIAL_CREATOR)
                 .getString(MetadataInitialCreator.INITIAL_CREATOR);
     }
@@ -216,7 +219,7 @@ public abstract class IbarOdfResultParser {
      * @param odfFile The JSONObject that contains the metadata
      * @return A Path object.
      */
-    public static Path getThumbnail(JSONObject odfFile)throws NoSuchMetadataException{
+    public static Path getThumbnailPath(JSONObject odfFile)throws NoSuchMetadataException{
         return (Path)getMetadataByType(odfFile, MetadataThumbnail.THUMBNAIL).get(MetadataThumbnail.THUMBNAIL);
     }
 
@@ -226,7 +229,7 @@ public abstract class IbarOdfResultParser {
      * @param odfFile The JSONObject that contains the metadata
      * @return A list of keywords.
      */
-    public static List<Object> getKeywords(JSONObject odfFile) throws NoSuchMetadataException {
+    public static List<Object> getKeywordsList(JSONObject odfFile) throws NoSuchMetadataException {
         return getMetadataByType(odfFile, MetadataKeyword.KEYWORDS).getJSONArray(MetadataKeyword.KEYWORDS).toList();
     }
 
@@ -239,13 +242,14 @@ public abstract class IbarOdfResultParser {
      * @param odfFile The JSONObject that represents the ODF file.
      * @return A JSONArray of statistics.
      */
-    public static JSONArray getStatistics(JSONObject odfFile) throws NoSuchMetadataException {
+    public static JSONArray getJsonArrayOfStatistics(JSONObject odfFile) throws NoSuchMetadataException {
         try{
             return getMetadataByType(odfFile, MetadataStats.STATISTICS).getJSONArray(MetadataStats.STATISTICS);
         }catch(Exception e){
             throw new NoSuchMetadataException(odfFile, MetadataStats.STATISTICS);
         }
     }
+
 
     /**
      * This function returns a JSONArray of all the hyperlinks in the document
@@ -403,7 +407,7 @@ public abstract class IbarOdfResultParser {
 
 
     /**
-     * It checks if the object is a keyword
+     * It checks if the object is the key for keyword
      * 
      * @param object The object to check.
      * @return A boolean

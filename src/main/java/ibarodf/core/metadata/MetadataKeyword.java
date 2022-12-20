@@ -1,4 +1,4 @@
-package ibarodf.core.meta;
+package ibarodf.core.metadata;
 
 import java.util.List;
 
@@ -6,9 +6,9 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.odftoolkit.odfdom.incubator.meta.OdfOfficeMeta;
 
-import ibarodf.core.meta.exception.UnableToConvertToJsonFormatException;
+import ibarodf.core.metadata.exception.UnableToConvertToJsonFormatException;
 
-public class MetadataKeyword extends MetadataXML{
+public class MetadataKeyword extends AbstractMetadataXML{
     public final static String ATTR = "Keywords";
     //Json Key
     public final static String KEYWORDS = ATTR;

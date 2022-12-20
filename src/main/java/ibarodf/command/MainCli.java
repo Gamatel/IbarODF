@@ -9,6 +9,7 @@ import java.nio.file.Path;
 import java.util.Scanner;
 
 import ibarodf.command.CommandTranslator.Command;
+import ibarodf.command.exception.UnallowedCommandException;
 import ibarodf.core.IbarOdfCore;
 import ibarodf.exception.UnableToChangeTheDescriptionOfTheFileException;
 import ibarodf.exception.UnableToDisplayInformationAboutTheFile;
@@ -24,6 +25,7 @@ public class MainCli {
      */
     public static void changeTheDescription(Path filePath) throws UnableToChangeTheDescriptionOfTheFileException{
         try{
+            PrettyResult.ligne();
             String newTitle, newSubject, newKeyword, newComment;     
             Scanner scanEntry = new Scanner(System.in);
             System.out.println("Enter the new title");
@@ -35,7 +37,9 @@ public class MainCli {
             System.out.println("Enter the new comment");
             newComment = scanEntry.nextLine();
             scanEntry.close();
+            PrettyResult.ligne();
             IbarOdfCore.changeTheDescriptionOfAnOdtFile(filePath, newTitle, newSubject, newKeyword, newComment);
+            System.out.println("Description changed!");
         }catch(Exception e){
             throw new UnableToChangeTheDescriptionOfTheFileException(filePath);
         }
@@ -52,10 +56,14 @@ public class MainCli {
         try{ 
             switch(command){
                 case DISPLAY_THE_META_DATA_A_FILE:
+                    PrettyResult.ligne();
                     PrettyResult.prettyFile(IbarOdfCore.RegularFileToJson(filePath));
+                    PrettyResult.ligne();
                     break;
                 case DISPLAY_THE_META_DATA_OF_AN_ODF_FILE: 
+                    PrettyResult.ligne();
                     PrettyResult.prettyOdfFile(IbarOdfCore.odfFileToJson(filePath));
+                    PrettyResult.ligne();
                     break;
                 case DISPLAY_THE_META_DATA_OF_ODF_FILES_IN_A_DIRECTORY:
                     // System.out.println(IbarOdfCore.directoryToJson(filePath, true));
@@ -90,18 +98,23 @@ public class MainCli {
             switch(command){
                 case CHANGE_THE_TITLE_OF_AN_ODF_FILE:
                     IbarOdfCore.changeTheTitleOfAnOdfFile(filePath, newValue);
+                    System.out.println("Title changed!");
                     break;
                 case CHANGE_THE_SUBJECT_OF_AN_ODF_FILE:
                     IbarOdfCore.changeTheSubjectOfAnOdfFile(filePath, newValue);
+                    System.out.println("Subject changed!");
                     break; 
                 case CHANGE_THE_KEYWORDS_TO_AN_ODF_FILE:
                     IbarOdfCore.changeTheKeywordsOfAnOdfFile(filePath, newValue);
+                    System.out.println("Keywords changed!");
                     break;
                 case CHANGE_THE_COMMENTS_OF_AN_ODF_FILE:
                     IbarOdfCore.changeTheCommentsOfAnOdfFile(filePath, newValue);
+                    System.out.println("Comments changed!");
                     break; 
                 case CHANGE_THE_CREATOR_OF_AN_ODF_FILE:
                     IbarOdfCore.changeTheCreatorOfAnOdfFile(filePath,newValue);
+                    System.out.println("Creator changed!");
                     break; 
                 default :
                     System.err.println("Error : Wasn't asking to make any change on "+ filePath.getFileName());

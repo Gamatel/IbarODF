@@ -1,4 +1,4 @@
-package ibarodf.core.meta;
+package ibarodf.core.metadata;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -6,11 +6,11 @@ import java.util.Date;
 import java.text.SimpleDateFormat; 
 import org.odftoolkit.odfdom.incubator.meta.OdfOfficeMeta;
 
-import ibarodf.core.meta.exception.ReadOnlyMetaException;
+import ibarodf.core.metadata.exception.ReadOnlyMetaException;
 
 import java.text.ParseException;
 
-public class MetadataCreationDate extends MetadataXML {
+public class MetadataCreationDate extends AbstractMetadataXML {
 	public final static String ATTR = "Creation Date";
 	public final static String CREATION_DATE = ATTR;
 

@@ -4,7 +4,6 @@ import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import javax.json.JsonException;
 
@@ -16,17 +15,17 @@ import ibarodf.core.IbarOdfResultParser;
 import ibarodf.core.file.Directory;
 import ibarodf.core.file.RegularFile;
 import ibarodf.core.file.WrongFile;
-import ibarodf.core.meta.MetadataHyperlink;
-import ibarodf.core.meta.MetadataOdfPictures;
-import ibarodf.core.meta.MetadataStats;
-import ibarodf.core.meta.MetadataThumbnail;
-import ibarodf.core.meta.exception.NoSuchMetadataException;
-import ibarodf.core.meta.object.Picture;
+import ibarodf.core.metadata.MetadataHyperlink;
+import ibarodf.core.metadata.MetadataOdfPictures;
+import ibarodf.core.metadata.MetadataStats;
+import ibarodf.core.metadata.MetadataThumbnail;
+import ibarodf.core.metadata.exception.NoSuchMetadataException;
+import ibarodf.core.metadata.object.Picture;
 
 public abstract class PrettyResult {
     public static final int DEFAULT_LINE_SIZE_FOR_PRETTY_PRINT = 100;
     public static final String DEFAULT_LINE_SYMBOLE_FOR_PRETTY_PRINT = "-";
-    public static final String CLOSED_DIR = "SubSirectory";
+    public static final String CLOSED_DIR = "Sub Directory";
 
     private static String properTabulation(int numberOfTab) {
         StringBuilder tabulation = new StringBuilder();
@@ -89,7 +88,7 @@ public abstract class PrettyResult {
 
     private static void prettyEndDirectory(JSONObject jsonDirectory, int depth){
         ligne(depth);
-        prettyPrint("In" +  IbarOdfResultParser.getFileName(jsonDirectory), depth);
+        prettyPrint("In " +  IbarOdfResultParser.getFileName(jsonDirectory), depth);
         prettyInformations(jsonDirectory, depth);
         ligne(depth);
     } 
@@ -148,7 +147,7 @@ public abstract class PrettyResult {
     private static void displaySubDirectories(JSONObject jsonDirectory, int depth) throws JSONException, NoSuchMetadataException {
         JSONArray jsonDirectories = jsonDirectory.getJSONArray(Directory.SUBDIRECTORIES);
         for (int index = 0, indexMax = jsonDirectories.length(); index < indexMax; index++) {
-            prettyDirectory(jsonDirectories.getJSONObject(index), depth);
+            prettyDirectory(jsonDirectories.getJSONObject(index), depth+1);
         }
     }
 
@@ -261,7 +260,7 @@ public abstract class PrettyResult {
      * @param depth             the depth in the file tree of the file
      */
     private static void prettyMetadata(JSONObject odfFile, int depth) throws NoSuchMetadataException{
-        List<Object> currentMetadata = IbarOdfResultParser.getCurrentOdfMetadat(odfFile);
+        List<Object> currentMetadata = IbarOdfResultParser.getCurrentOdfMetadata(odfFile);
         Iterator<Object> currentMetadataIt = currentMetadata.iterator();
         Object currentMeta;
         while(currentMetadataIt.hasNext()){    
@@ -271,7 +270,7 @@ public abstract class PrettyResult {
             }else if(IbarOdfResultParser.isPicturesKey(currentMeta)){
                 prettyPicture(IbarOdfResultParser.getPictures(odfFile), depth);
             }else if(IbarOdfResultParser.isStatisticsKey(currentMeta)){
-                prettyStatistique(IbarOdfResultParser.getStatistics(odfFile), depth);
+                prettyStatistique(IbarOdfResultParser.getJsonArrayOfStatistics(odfFile), depth);
             }else if(IbarOdfResultParser.isThumbnailKey(currentMeta)){
                 prettyThumbnail(odfFile, depth); 
             }else{
@@ -282,7 +281,7 @@ public abstract class PrettyResult {
 
 
     public static void prettyThumbnail(JSONObject OdfFile, int depth) throws NoSuchMetadataException{
-        Path thumbnailPath = IbarOdfResultParser.getThumbnail(OdfFile);
+        Path thumbnailPath = IbarOdfResultParser.getThumbnailPath(OdfFile);
         prettyPrint(MetadataThumbnail.THUMBNAIL,thumbnailPath, depth);
     }
 
@@ -309,9 +308,9 @@ public abstract class PrettyResult {
      * @param depth           the depth of the directory in the tree
      */
     private static void prettyClosedDirectory(JSONObject closedDirectory, int depth) {
-        ligne(depth + 1);
-        prettyPrint(PrettyResult.CLOSED_DIR, closedDirectory.get(Directory.FILE_NAME), depth + 1);
-        ligne(depth + 1);
+        ligne(depth);
+        prettyPrint(PrettyResult.CLOSED_DIR, closedDirectory.get(Directory.FILE_NAME), depth);
+        ligne(depth);
     }
 
     /**

@@ -15,7 +15,8 @@ import ibarodf.core.IbarOdfCore;
 import ibarodf.core.file.exception.EmptyOdfFileException;
 import ibarodf.core.file.exception.UnableToAddMetadataException;
 import ibarodf.core.file.exception.UnableToLoadOdfDocumentException;
-import ibarodf.core.meta.exception.UnableToConvertToJsonFormatException;
+import ibarodf.core.file.exception.UnrecognizableTypeFileException;
+import ibarodf.core.metadata.exception.UnableToConvertToJsonFormatException;
 import net.lingala.zip4j.exception.ZipException;
 
 /**

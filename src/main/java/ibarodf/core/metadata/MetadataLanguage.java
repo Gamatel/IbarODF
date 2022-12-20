@@ -1,11 +1,11 @@
-package ibarodf.core.meta;
+package ibarodf.core.metadata;
 
 import java.text.ParseException;
 import org.odftoolkit.odfdom.incubator.meta.OdfOfficeMeta;
 
-import ibarodf.core.meta.exception.ReadOnlyMetaException;
+import ibarodf.core.metadata.exception.ReadOnlyMetaException;
 
-public class MetadataLanguage extends MetadataXML {
+public class MetadataLanguage extends AbstractMetadataXML {
 	public final static String ATTR = "Language";
 
 	public MetadataLanguage(OdfOfficeMeta meta, String value) {
