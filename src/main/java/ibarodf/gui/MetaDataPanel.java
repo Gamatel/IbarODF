@@ -1,4 +1,6 @@
-package ibarodf.gui.metaDataPanel;
+package ibarodf.gui;
+
+import ibarodf.gui.table.TablePanel;
 
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;

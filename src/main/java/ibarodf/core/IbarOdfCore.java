@@ -23,7 +23,7 @@ import ibarodf.core.metadata.MetadataTitle;
 import ibarodf.core.metadata.exception.UnableToConvertToJsonFormatException;
 
 /**
- * It's a class that contains static methods that allows you : 
+ * It's a class that contains static methods that allows you :
  * <ol>
  * <li>to visualise all the main metadata of an Odf file and to change the ones that are setable
  * (such as its title, subject, keywords, creator, description...)</li>
@@ -42,13 +42,12 @@ public abstract class IbarOdfCore {
 			file.setMetaData(description[index], newValues.get(index));
 		}
 		file.saveChange();
-		System.out.println("Description changed!");
 	}
 
 	/**
 	 * It takes a file path, and four strings, and changes the title, subject, keywords, and comments of
 	 * the file.
-	 * 
+	 *
 	 * @param filePath The path to the file you want to change the description of.
 	 * @param newTitle The new title of the document.
 	 * @param newSubject The new subject of the document.
@@ -68,7 +67,7 @@ public abstract class IbarOdfCore {
 
 	/**
 	 * It takes a string, checks if it's a valid file path, and returns a normalized absolute path
-	 * 
+	 *
 	 * @param filePath The path to the file you want to read.
 	 * @return A Path object
 	 */
@@ -80,10 +79,10 @@ public abstract class IbarOdfCore {
 		return file.toPath().toAbsolutePath().normalize();
 	}
 
-	
+
 	/**
 	 * It returns the MIME type of a file
-	 * 
+	 *
 	 * @param filePath The path to the file you want to check.
 	 * @return The file type of the file at the given path.
 	 */
@@ -94,14 +93,14 @@ public abstract class IbarOdfCore {
 		}
 		return type;
 	}
-	
+
 	public static String fileType(String filePath) throws IOException, UnrecognizableTypeFileException {
 		return fileType(IbarOdfCore.stringToPath(filePath));
 	}
 
 	/**
 	 * It returns true if the file is an ODF file, and false otherwise
-	 * 
+	 *
 	 * @param filePath The path to the file you want to check.
 	 * @return A boolean value.
 	 */
@@ -114,12 +113,12 @@ public abstract class IbarOdfCore {
 	}
 
 	public static boolean isAnOdfFile(Path filePath) throws UnrecognizableTypeFileException, IOException{
-		return isAnOdfFile(filePath.toString()); 
+		return isAnOdfFile(filePath.toString());
 	}
 
 	/**
 	 * It returns the system separator of the current system
-	 * 
+	 *
 	 * @return The current system separator.
 	 */
 	public static String getCurrentSystemSeparator() {
@@ -129,11 +128,11 @@ public abstract class IbarOdfCore {
 
 	/**
 	 * This function changes the title of the file
-	 * 
+	 *
 	 * @param path The path to the ODF file.
 	 * @param newTitle The new title of the file.
 	 */
- 	public static void changeTheTitleOfAnOdfFile(Path path, String newTitle) throws Exception {
+	public static void changeTheTitleOfAnOdfFile(Path path, String newTitle) throws Exception {
 		OdfFile file = new OdfFile(path);
 		file.setMetaData(MetadataTitle.ATTR, newTitle);
 		file.saveChange();
@@ -142,10 +141,10 @@ public abstract class IbarOdfCore {
 
 	/**
 	 * this function changes the subject of an ODF file.
-	 * 
+	 *
 	 * @param path The path to the ODF file.
 	 * @param newSubject The new subject you want to set.
-	*/
+	 */
 	public static void changeTheSubjectOfAnOdfFile(Path path, String newSubject) throws Exception {
 		OdfFile file = new OdfFile(path);
 		file.setMetaData(MetadataSubject.ATTR, newSubject);
@@ -185,7 +184,7 @@ public abstract class IbarOdfCore {
 		file.saveChange();
 	}
 	/**
-	 * It takes a directory path and a boolean, and returns a JSON object 
+	 * It takes a directory path and a boolean, and returns a JSON object
 	 * that corresponds to the Json representation of a directory
 	 * @param directoryPath The path to the directory you want to convert to JSON.
 	 * @param recursif if true, the directory will be scanned recursively.
@@ -202,7 +201,7 @@ public abstract class IbarOdfCore {
 
 	/**
 	 * This function takes a path to an ODF file and returns a JSON object that represents the file
-	 * 
+	 *
 	 * @param path The path to the ODF file.
 	 * @return A JSONObject
 	 */
@@ -213,7 +212,7 @@ public abstract class IbarOdfCore {
 
 	/**
 	 * This function takes a path to a file and returns a JSONObject that represents the file
-	 * 
+	 *
 	 * @param path The path to the file you want to convert to JSON.
 	 * @return A JSONObject
 	 */

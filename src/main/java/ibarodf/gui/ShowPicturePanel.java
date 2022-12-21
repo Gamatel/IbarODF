@@ -1,4 +1,4 @@
-package ibarodf.gui.metaDataPanel;
+package ibarodf.gui;
 
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
