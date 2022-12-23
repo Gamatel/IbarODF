@@ -1,4 +1,4 @@
-package ibarodf.gui;
+package ibarodf.gui.palette;
 
 import java.awt.Color;
 
