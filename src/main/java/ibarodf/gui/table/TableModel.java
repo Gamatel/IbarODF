@@ -1,28 +1,35 @@
 package ibarodf.gui.table;
 
+import ibarodf.core.IbarOdfCore;
+import ibarodf.core.metadata.exception.NoSuchMetadataException;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
+import javax.swing.JOptionPane;
 import javax.swing.table.AbstractTableModel;
-import java.util.Map;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.ArrayList;
+import java.io.File;
+import java.util.*;
+
+import ibarodf.core.IbarOdfResultParser;
 
 public class TableModel extends AbstractTableModel {
-    private static final String HEADER_COLUMNS_NAMES1 = "Propriété"; 
+    private static final String HEADER_COLUMNS_NAMES1 = "Propriété";
     private static final String HEADER_COLUMNS_NAMES2 = "Valeur";
     private static final String[] HEADER_COLUMNS_NAMES = {HEADER_COLUMNS_NAMES1, HEADER_COLUMNS_NAMES2};
-    private static final String[] MODIFIABLE_PROPERTIES = {"Title", "Creator", "Subject", "Comment", "Keywords"};
+    private static final String[] MODIFIABLE_PROPERTIES = {PropsName.PROPS_TITLE, PropsName.PROPS_CREATOR, PropsName.PROPS_SUBJECT, PropsName.PROPS_COMMENT, PropsName.PROPS_KEYWORDS};
+    private static final String[] PROPS_REGULAR_FILE = {PropsName.PROPS_FILE_NAME,PropsName.PROPS_MIMETYPE, PropsName.PROPS_SIZE};
     private static final int NB_ROW_DEFAULT = 9;
+    private final static int COLUMN_COUNT = 2;
+    private final static int LABEL_COLUMN = 0;
     private final Map<String, String> propertiesHM = new LinkedHashMap<>();
     private final Map<String, String> labelTextHM = new HashMap<>();
     private final ArrayList<String> columnProp = new ArrayList<>();
     private final ArrayList<String> columnLabels = new ArrayList<>();
     private final ArrayList<String> columnValue = new ArrayList<>();
     private final JSONObject dataJson;
-    private final static int COLUMN_COUNT = 2;
-    private final static int LABEL_COLUMN = 0;
+    private final Set<String> propsRegularFileSet = new HashSet<>();
+    private boolean isAnOdfFile;
+    private File path;
 
     public TableModel() {
         super();
@@ -31,58 +38,105 @@ public class TableModel extends AbstractTableModel {
         fillingWithBlankRow();
     }
 
-    public TableModel(JSONObject dataJson) {
+    public TableModel(JSONObject dataJson, boolean isAnOdfFile) {
         super();
         this.dataJson = dataJson;
+        this.isAnOdfFile = isAnOdfFile;
+        this.path = new File((String) IbarOdfResultParser.getPath(dataJson));
 
+        Collections.addAll(propsRegularFileSet, PROPS_REGULAR_FILE);
         initProperties();
         initLabels();
-        loadJsonToProperties();
-        loadPropertiesToColumns();
+
+
+        if (propertiesHM.containsKey(PropsName.PROPS_STATS))
+            loadStatsJsonToProperties();
+        if (propertiesHM.containsKey(PropsName.PROPS_HYPERLINKS))
+            loadHyperTextJsonToProperties();
+
+        if (isAnOdfFile)
+            loadPropertiesToColumnsForOdf();
+        else
+            loadPropertiesToColumnsForRegular();
+
         fillingWithBlankRow();
     }
 
     private void initProperties() {
-        propertiesHM.put(PropsName.PROPS_MIMETYPE, "");
-        propertiesHM.put(PropsName.PROPS_TITLE, "");
-        propertiesHM.put(PropsName.PROPS_INITIALCREATOR, "");
-        propertiesHM.put(PropsName.PROPS_CREATOR, "");
-        propertiesHM.put(PropsName.PROPS_SUBJECT, "");
-        propertiesHM.put(PropsName.PROPS_COMMENT, "");
-        propertiesHM.put(PropsName.PROPS_KEYWORDS, "");
-        propertiesHM.put(PropsName.PROPS_HYPERLINKS, "");
-        propertiesHM.put(PropsName.PROPS_CREATIONDATE, "");
 
-        propertiesHM.put(PropsName.PROPS_STATS, "");
-        propertiesHM.put(PropsName.PROPS_STATS_CELL_COUNT, "");
-        propertiesHM.put(PropsName.PROPS_STATS_CHARACTER_COUNT, "");
-        propertiesHM.put(PropsName.PROPS_STATS_DRAWN_COUNT, "");
-        propertiesHM.put(PropsName.PROPS_STATS_FRAME_COUNT, "");
-        propertiesHM.put(PropsName.PROPS_STATS_IMAGE_COUNT, "");
-        propertiesHM.put(PropsName.PROPS_STATS_NONWHITESPACECHARACTER_COUNT, "");
-        propertiesHM.put(PropsName.PROPS_STATS_OBJECT_COUNT, "");
-        propertiesHM.put(PropsName.PROPS_STATS_OLEOBJECT_COUNT, "");
-        propertiesHM.put(PropsName.PROPS_STATS_PAGE_COUNT, "");
-        propertiesHM.put(PropsName.PROPS_STATS_PARAGRAPH_COUNT, "");
-        propertiesHM.put(PropsName.PROPS_STATS_ROW_COUNT, "");
-        propertiesHM.put(PropsName.PROPS_STATS_SENTENCE_COUNT, "");
-        propertiesHM.put(PropsName.PROPS_STATS_SYLLABLE_COUNT, "");
-        propertiesHM.put(PropsName.PROPS_STATS_TABLE_COUNT, "");
-        propertiesHM.put(PropsName.PROPS_STATS_WORD_COUNT, "");
+        propertiesHM.put(PropsName.PROPS_FILE_NAME, IbarOdfResultParser.getFileName(dataJson));
+        propertiesHM.put(PropsName.PROPS_SIZE, String.valueOf(IbarOdfResultParser.getSize(dataJson)));
+        propertiesHM.put(PropsName.PROPS_MIMETYPE, IbarOdfResultParser.getMimeType(dataJson));
+
+       if (isAnOdfFile) {
+           try {
+               propertiesHM.put(PropsName.PROPS_TITLE, IbarOdfResultParser.getTitle(dataJson));
+           } catch (NoSuchMetadataException e) {
+               propertiesHM.put(PropsName.PROPS_TITLE, "");
+           }
+
+           try {
+               propertiesHM.put(PropsName.PROPS_INITIAL_CREATOR, IbarOdfResultParser.getInitialCreator(dataJson));
+           } catch (NoSuchMetadataException e) {
+               propertiesHM.put(PropsName.PROPS_INITIAL_CREATOR, "");
+           }
+           try {
+               propertiesHM.put(PropsName.PROPS_CREATOR, IbarOdfResultParser.getCreator(dataJson));
+           } catch (NoSuchMetadataException e) {
+               propertiesHM.put(PropsName.PROPS_CREATOR, "");
+           }
+
+           try {
+               propertiesHM.put(PropsName.PROPS_SUBJECT, IbarOdfResultParser.getSubject(dataJson));
+           } catch (NoSuchMetadataException e) {
+               propertiesHM.put(PropsName.PROPS_SUBJECT, "");
+           }
+
+           try {
+               propertiesHM.put(PropsName.PROPS_COMMENT, IbarOdfResultParser.getComments(dataJson));
+           } catch (NoSuchMetadataException e) {
+               propertiesHM.put(PropsName.PROPS_COMMENT, "");
+           }
+
+           try {
+               propertiesHM.put(PropsName.PROPS_KEYWORDS, IbarOdfResultParser.getKeywordsList(dataJson).toString());
+           } catch (NoSuchMetadataException e) {
+               propertiesHM.put(PropsName.PROPS_KEYWORDS, "");
+           }
+
+           try {
+               propertiesHM.put(PropsName.PROPS_CREATION_DATE, IbarOdfResultParser.getCreationDate(dataJson));
+           } catch (NoSuchMetadataException e) {
+               propertiesHM.put(PropsName.PROPS_CREATION_DATE, "");
+           }
+
+           try {
+               propertiesHM.put(PropsName.PROPS_HYPERLINKS, IbarOdfResultParser.getHyperlink(dataJson).toString());
+           } catch (NoSuchMetadataException e) {
+               propertiesHM.put(PropsName.PROPS_HYPERLINKS, "");
+           }
+
+           try {
+               propertiesHM.put(PropsName.PROPS_STATS, IbarOdfResultParser.getJsonArrayOfStatistics(dataJson).toString());
+           } catch (NoSuchMetadataException e) {
+               propertiesHM.put(PropsName.PROPS_STATS, "");
+           }
+       }
     }
 
     private void initLabels() {
+        labelTextHM.put(PropsName.PROPS_FILE_NAME, "Nom du fichier");
+        labelTextHM.put(PropsName.PROPS_SIZE, "Taille du fichier en ko");
         labelTextHM.put(PropsName.PROPS_MIMETYPE, "MIME type");
         labelTextHM.put(PropsName.PROPS_TITLE, "Titre");
-        labelTextHM.put(PropsName.PROPS_INITIALCREATOR, "Créateur initial");
+        labelTextHM.put(PropsName.PROPS_INITIAL_CREATOR, "Créateur initial");
         labelTextHM.put(PropsName.PROPS_CREATOR, "Créateur");
         labelTextHM.put(PropsName.PROPS_SUBJECT, "Sujet");
         labelTextHM.put(PropsName.PROPS_COMMENT, "Commentaire");
         labelTextHM.put(PropsName.PROPS_KEYWORDS, "Mots clés");
-        labelTextHM.put(PropsName.PROPS_HYPERLINKS, "Hyper liens");
-        labelTextHM.put(PropsName.PROPS_CREATIONDATE, "Date de création");
+        labelTextHM.put(PropsName.PROPS_HYPERLINKS_REFERENCE, "Hyper liens");
+        labelTextHM.put(PropsName.PROPS_CREATION_DATE, "Date de création");
 
-        labelTextHM.put(PropsName.PROPS_STATS, "Statistiques");
         labelTextHM.put(PropsName.PROPS_STATS_CELL_COUNT, "Nombre de cellules");
         labelTextHM.put(PropsName.PROPS_STATS_CHARACTER_COUNT, "Nombre de charactère");
         labelTextHM.put(PropsName.PROPS_STATS_DRAWN_COUNT, "Nombre de dessins");
@@ -100,43 +154,52 @@ public class TableModel extends AbstractTableModel {
         labelTextHM.put(PropsName.PROPS_STATS_WORD_COUNT, "Nombre de mots");
     }
 
-    private void loadJsonToProperties() {
-        Collection<String> propertiesKeys = propertiesHM.keySet();
-        boolean propsContainStats = !dataJson.isNull(PropsName.PROPS_STATS);
-
-        if (!dataJson.isEmpty()) {
-            for(String key:propertiesKeys){
-                if (!dataJson.isNull(key))
-                    propertiesHM.put(key, dataJson.getString(key));
-            }
-        }
-
-        if (propsContainStats)
-            loadStatsJsonToProperties();
-    }
-
     private void loadStatsJsonToProperties() {
         String statsJsonStr = propertiesHM.get(PropsName.PROPS_STATS);
-        JSONObject statsJson = new JSONObject(statsJsonStr);
-        Collection<String> propertiesKeys = propertiesHM.keySet();
+        JSONArray statsJsonArray = new JSONArray(statsJsonStr);
 
-        for(String key:propertiesKeys){
-            if (!statsJson.isNull(key))
-                propertiesHM.put(key, statsJson.getString(key));
+        int i = 0;
+        while (!statsJsonArray.isNull(i)) {
+           JSONObject statJsonObj = statsJsonArray.getJSONObject(i);
+           Set<String> keys = statJsonObj.keySet();
+
+           for(String key: keys) {
+               propertiesHM.put(key, statJsonObj.getNumber(key).toString());
+           }
+
+           i++;
         }
+
+        propertiesHM.put(PropsName.PROPS_STATS,"");
     }
 
-    private void loadPropertiesToColumns() {
+    private void loadHyperTextJsonToProperties() {
+        String hyperLinksJsonStr = propertiesHM.get(PropsName.PROPS_HYPERLINKS);
+        JSONArray hyperLinksJsonArray = new JSONArray(hyperLinksJsonStr);
+        StringBuilder hyperLinksBuffer = new StringBuilder();
+
+        int i = 0;
+        while (!hyperLinksJsonArray.isNull(i)) {
+            JSONObject hyperLinksJsonObj = hyperLinksJsonArray.getJSONObject(i);
+            String currentHyperLinks = hyperLinksJsonObj.getString(PropsName.PROPS_HYPERLINKS_REFERENCE);
+            hyperLinksBuffer.append(currentHyperLinks).append("\n\n");
+
+            i++;
+        }
+
+        propertiesHM.put(PropsName.PROPS_HYPERLINKS_REFERENCE, hyperLinksBuffer.toString());
+        propertiesHM.put(PropsName.PROPS_HYPERLINKS,"");
+    }
+
+    private void loadPropertiesToColumnsForOdf() {
         Collection<String> propertiesKeys = propertiesHM.keySet();
 
         for(String key:propertiesKeys){
             String value = propertiesHM.get(key);
-            boolean isValueNull = value.equals("");
-            System.out.println(value);
+            String labelText = labelTextHM.get(key);
+            boolean isLabelNull = labelText == null;
 
-            if (!isValueNull) {
-                String labelText = labelTextHM.get(key);
-
+            if (!isLabelNull) {
                 columnProp.add(key);
                 columnLabels.add(labelText);
                 columnValue.add(value);
@@ -144,6 +207,16 @@ public class TableModel extends AbstractTableModel {
         }
     }
 
+    private void loadPropertiesToColumnsForRegular() {
+        for(String key:propsRegularFileSet){
+            String value = propertiesHM.get(key);
+            String labelText = labelTextHM.get(key);
+
+            columnProp.add(key);
+            columnLabels.add(labelText);
+            columnValue.add(value);
+        }
+    }
 
    void fillingWithBlankRow() {
         int nbRow = columnLabels.size();
@@ -169,8 +242,6 @@ public class TableModel extends AbstractTableModel {
 
         String prop = columnProp.get(row);
 
-        System.out.println(isPropModifiable(prop));
-
         return isPropModifiable(prop);
     }
 
@@ -195,15 +266,23 @@ public class TableModel extends AbstractTableModel {
     public String getColumnName(int column) {
         return HEADER_COLUMNS_NAMES[column];
     }
-// @Override
-   // public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-   //     super.setValueAt(aValue, rowIndex, columnIndex);
-   //     String prop = (String) getValueAt(rowIndex, LABEL_COLUMN);
-   //
-   //    switch (prop) {
-   //        case MODIFIABLE_PROPERTIES[0]:
-   //            IbarODFCore.
-   //
-   //    }
-   // }
+    @Override
+    public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+        super.setValueAt(aValue, rowIndex, columnIndex);
+        String prop = columnProp.get(rowIndex);
+        String newValue = (String) aValue;
+        columnValue.set(rowIndex, newValue);
+
+        try {
+            switch (prop) {
+                case PropsName.PROPS_TITLE -> IbarOdfCore.changeTheTitleOfAnOdfFile(path.toPath(), newValue);
+                case PropsName.PROPS_CREATOR -> IbarOdfCore.changeTheCreatorOfAnOdfFile(path.toPath(), newValue);
+                case PropsName.PROPS_SUBJECT -> IbarOdfCore.changeTheSubjectOfAnOdfFile(path.toPath(), newValue);
+                case PropsName.PROPS_COMMENT -> IbarOdfCore.changeTheCommentsOfAnOdfFile(path.toPath(), newValue);
+                case PropsName.PROPS_KEYWORDS -> IbarOdfCore.changeTheKeywordsOfAnOdfFile(path.toPath(), newValue);
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Welcome to Swing!");
+        }
+    }
 }

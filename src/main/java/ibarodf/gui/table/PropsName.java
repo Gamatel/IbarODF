@@ -1,7 +1,6 @@
 package ibarodf.gui.table;
 
 import ibarodf.core.file.AbstractGenericFile;
-import ibarodf.core.file.OdfFile;
 import ibarodf.core.metadata.MetadataComment;
 import ibarodf.core.metadata.MetadataCreationDate;
 import ibarodf.core.metadata.MetadataCreator;
@@ -11,17 +10,20 @@ import ibarodf.core.metadata.MetadataKeyword;
 import ibarodf.core.metadata.MetadataStats;
 import ibarodf.core.metadata.MetadataSubject;
 import ibarodf.core.metadata.MetadataTitle;
+import ibarodf.core.metadata.object.Hyperlink;
 
 public class PropsName {
+    public static final String PROPS_FILE_NAME = AbstractGenericFile.FILE_NAME;
     public static final String PROPS_MIMETYPE = AbstractGenericFile.MIME_TYPE;
+    public static final String PROPS_SIZE = AbstractGenericFile.SIZE;
     public static final String PROPS_TITLE = MetadataTitle.TITLE;
-    public static final String PROPS_INITIALCREATOR = MetadataInitialCreator.INITIAL_CREATOR;
+    public static final String PROPS_INITIAL_CREATOR = MetadataInitialCreator.INITIAL_CREATOR;
     public static final String PROPS_CREATOR = MetadataCreator.CREATOR;
     public static final String PROPS_SUBJECT = MetadataSubject.SUBJECT;
     public static final String PROPS_COMMENT = MetadataComment.COMMENTS;
-    public static final String PROPS_KEYWORDS = MetadataKeyword.KEYWORDS;
-    public static final String PROPS_HYPERLINKS = MetadataHyperlink.HYPERLINKS;
-    public static final String PROPS_CREATIONDATE = MetadataCreationDate.CREATION_DATE;
+    public static final String PROPS_KEYWORDS =  MetadataKeyword.KEYWORDS;
+    public static final String PROPS_HYPERLINKS =  MetadataHyperlink.HYPERLINKS;
+    public static final String PROPS_CREATION_DATE =  MetadataCreationDate.CREATION_DATE;
 
     public static final String PROPS_STATS = MetadataStats.STATISTICS;
     public static final String PROPS_STATS_CELL_COUNT = MetadataStats.CELL_COUNT;
@@ -39,4 +41,5 @@ public class PropsName {
     public static final String PROPS_STATS_SYLLABLE_COUNT = MetadataStats.SYLLABLE_COUNT;
     public static final String PROPS_STATS_TABLE_COUNT = MetadataStats.TABLE_COUNT;
     public static final String PROPS_STATS_WORD_COUNT = MetadataStats.WORD_COUNT;
+    public static final String PROPS_HYPERLINKS_REFERENCE = Hyperlink.REFERENCE;
 }

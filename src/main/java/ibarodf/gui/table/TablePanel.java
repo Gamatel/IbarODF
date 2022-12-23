@@ -23,7 +23,7 @@ public class TablePanel extends JScrollPane {
 	public TablePanel() {
 		super();
 
-		table = new JTable(new TableModel(new JSONObject("{Title: \"Bonjour\"}")));
+		table = new JTable(new TableModel(new JSONObject("{\"Path\":\"/home/alexandre/Bureau/test/test.odt\",\"Metadata\":[{\"Title\":\"Je Suis le nouveau titre\"},{\"Subject\":\"Je Suis un sujet très intéréssant\"},{\"Keywords\":[]},{\"Hyperlinks\":[{\"Visited Style Name\":\"Visited_20_Internet_20_Link\",\"Type\":\"simple\",\"Reference\":\"https://www.google.com/\",\"Style Name\":\"Internet_20_link\"},{\"Visited Style Name\":\"Visited_20_Internet_20_Link\",\"Type\":\"simple\",\"Reference\":\"https://www.cyu.fr/\",\"Style Name\":\"Internet_20_link\"}]},{\"Creation Date\":\"21/11/2022 14:58:49\"},{\"Statistics\":[{\"imageCount\":2},{\"objectCount\":0},{\"pageCount\":1},{\"wordCount\":14},{\"tableCount\":0},{\"nonWhitespaceCharacterCount\":49},{\"characterCount\":61},{\"paragraphCount\":3}]},{\"Thumbnail\":\"/tmp/IBARODF4788630234301104754/Thumbnails/thumbnail.png\"}],\"Mime Type\":\"application/vnd.oasis.opendocument.text\",\"File Name\":\"test.odt\",\"Have \":[\"Title\",\"Subject\",\"Keywords\",\"Hyperlinks\",\"Creation Date\",\"Statistics\",\"Thumbnail\"],\"Size (Ko)\":48}\n"), true));
 
 		setInitialDesign();
 		setColumnsDesign();
