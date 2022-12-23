@@ -25,7 +25,7 @@ public class IconButtonWithLabel extends JButton implements MouseListener{
 
 	}
 
-	public IconButtonWithLabel(String labelText, ImageIcon icon, Dimension preferredSize) {
+	public IconButtonWithLabel(String labelText, ImageIcon icon,  Dimension preferredSize) {
 		this(labelText, icon);
 		setPreferredSize(preferredSize);
 	}

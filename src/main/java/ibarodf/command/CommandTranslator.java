@@ -12,6 +12,9 @@ import ibarodf.core.file.exception.UnrecognizableTypeFileException;
 /**
  * It takes a command line argument and returns the corresponding command
  */
+/**
+ * It takes a command line argument and returns the corresponding command
+ */
 
 public class CommandTranslator {
     private final String[] command;
@@ -30,6 +33,7 @@ public class CommandTranslator {
         DISPLAY_THE_META_DATA_OF_ODF_FILES_IN_A_DIRECTORY_RECURSIVELY
     
     }   
+
 
     public CommandTranslator(String[] command){
         this.command = command;
@@ -76,7 +80,6 @@ public class CommandTranslator {
         return command == Command.CHANGE_THE_COMMENTS_OF_AN_ODF_FILE || command == Command.CHANGE_THE_CREATOR_OF_AN_ODF_FILE
         || command == Command.CHANGE_THE_KEYWORDS_TO_AN_ODF_FILE || command == Command.CHANGE_THE_SUBJECT_OF_AN_ODF_FILE ||command == Command.CHANGE_THE_TITLE_OF_AN_ODF_FILE;
     }
-
    
     private boolean isAskingForHelp(){
         return command.length == 1 && ((command[0].equals("-h") || command[0].equals("--help"))); 
@@ -99,11 +102,13 @@ public class CommandTranslator {
         ((command[2].equals("-r")|| command[2].equals("--recursively")));
     }
 
+
     
     private boolean isAskingToOperateOnAFile(){
         return command.length >= 2 && command.length <= 4  && ((command[0].equals("-f") || command[0].equals("--file")));
     }
     
+
     private boolean isAskingToChangeASpecificMetadataOfAFile(){
         return command.length == 4 && isAskingToOperateOnAFile();
     }
@@ -171,7 +176,7 @@ public class CommandTranslator {
     }
 
     private boolean isValidLength() throws UnallowedCommandException{
-        if(command.length ==0 || command.length >=4){
+        if(command.length ==0 || command.length >4){
             throw new UnallowedCommandException("Illegal argument");
         }if(command.length == 1 && !isAskingForHelp()){
             throw new UnallowedCommandException("Unknown command");

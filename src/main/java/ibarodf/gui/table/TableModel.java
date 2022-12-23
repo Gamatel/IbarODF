@@ -10,7 +10,9 @@ import java.util.LinkedHashMap;
 import java.util.ArrayList;
 
 public class TableModel extends AbstractTableModel {
-    private static final String[] HEADER_COLUMNS_NAMES = {"Propriété", "Valeur"};
+    private static final String HEADER_COLUMNS_NAMES1 = "Propriété"; 
+    private static final String HEADER_COLUMNS_NAMES2 = "Valeur";
+    private static final String[] HEADER_COLUMNS_NAMES = {HEADER_COLUMNS_NAMES1, HEADER_COLUMNS_NAMES2};
     private static final String[] MODIFIABLE_PROPERTIES = {"Title", "Creator", "Subject", "Comment", "Keywords"};
     private static final int NB_ROW_DEFAULT = 9;
     private final Map<String, String> propertiesHM = new LinkedHashMap<>();

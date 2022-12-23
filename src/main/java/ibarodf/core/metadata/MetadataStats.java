@@ -19,21 +19,21 @@ public class MetadataStats extends AbstractMetadataXML {
 
 	// Json key
 	public final static String STATISTICS = ATTR;
-	public final static String CELLCOUNT = "cellCount";
-	public final static String CHARACTERCOUNT = "characterCount";
-	public final static String DRAWNCOUNT = "drawnCount";
-	public final static String FRAMECOUNT = "frameCount";
-	public final static String IMAGECOUNT = "imageCount";
-	public final static String NONWHITESPACECHARACTERCOUNT = "nonWhitespaceCharacterCount";
-	public final static String OBJECTCOUNT = "objectCount";
-	public final static String OLEOBJECTCOUNT = "oleObjectCount";
-	public final static String PAGECOUNT = "pageCount";
-	public final static String PARAGRAPHCOUNT = "paragraphCount";
-	public final static String ROWCOUNT = "rowCount";
-	public final static String SENTENCECOUNT = "sentenceCount";
-	public final static String SYLLABLECOUNT = "syllableCount";
-	public final static String TABLECOUNT = "tableCount";
-	public final static String WORDCOUNT = "wordCount";
+	public final static String CELL_COUNT = "cell Count";
+	public final static String CHARACTER_COUNT = "character Count";
+	public final static String DRAWN_COUNT = "drawn Count";
+	public final static String FRAME_COUNT = "frame Count";
+	public final static String IMAGE_COUNT = "image Count";
+	public final static String NON_WHITE_SPACE_CHARACTER_COUNT = "Non White Space Character Count";
+	public final static String OBJECT_COUNT = "Object Count";
+	public final static String OLE_OBJECT_COUNT = "Ole Object Count";
+	public final static String PAGE_COUNT = "Page Count";
+	public final static String PARAGRAPH_COUNT = "Paragraph Count";
+	public final static String ROW_COUNT = "Row Count";
+	public final static String SENTENCE_COUNT = "Sentence Count";
+	public final static String SYLLABLE_COUNT = "Syllable Count";
+	public final static String TABLE_COUNT = "Table Count";
+	public final static String WORD_COUNT = "Word Count";
 
 	public MetadataStats(OdfOfficeMeta meta, HashMap<String, Integer> value) {
 		super(meta, ATTR, value);
@@ -45,29 +45,31 @@ public class MetadataStats extends AbstractMetadataXML {
 	}
 
 	/**
-	 * It takes an OdfOfficeMeta object and returns a HashMap of the document statistics
+	 * It takes an OdfOfficeMeta object and returns a HashMap of the document
+	 * statistics
 	 * 
-	 * @param meta The OdfOfficeMeta object that you want to get the statistics from.
+	 * @param meta The OdfOfficeMeta object that you want to get the statistics
+	 *             from.
 	 * @return A HashMap of the statistics of the document.
 	 */
 	public static HashMap<String, Integer> getStatistics(OdfOfficeMeta meta) throws NoStatisticsException {
 		OdfMetaDocumentStatistic stats = meta.getDocumentStatistic();
 		HashMap<String, Integer> hwStats = new HashMap<String, Integer>();
-		hwStats.put(CELLCOUNT, stats.getCellCount());
-		hwStats.put(CHARACTERCOUNT, stats.getCharacterCount());
-		hwStats.put(DRAWNCOUNT, stats.getDrawCount());
-		hwStats.put(FRAMECOUNT, stats.getFrameCount());
-		hwStats.put(IMAGECOUNT, stats.getImageCount());
-		hwStats.put(NONWHITESPACECHARACTERCOUNT, stats.getNonWhitespaceCharacterCount());
-		hwStats.put(OBJECTCOUNT, stats.getObjectCount());
-		hwStats.put(OLEOBJECTCOUNT, stats.getOleObjectCount());
-		hwStats.put(PAGECOUNT, stats.getPageCount());
-		hwStats.put(PARAGRAPHCOUNT, stats.getParagraphCount());
-		hwStats.put(ROWCOUNT, stats.getRowCount());
-		hwStats.put(SENTENCECOUNT, stats.getSentenceCount());
-		hwStats.put(SYLLABLECOUNT, stats.getSyllableCount());
-		hwStats.put(TABLECOUNT, stats.getTableCount());
-		hwStats.put(WORDCOUNT, stats.getWordCount());
+		hwStats.put(CELL_COUNT, stats.getCellCount());
+		hwStats.put(CHARACTER_COUNT, stats.getCharacterCount());
+		hwStats.put(DRAWN_COUNT, stats.getDrawCount());
+		hwStats.put(FRAME_COUNT, stats.getFrameCount());
+		hwStats.put(IMAGE_COUNT, stats.getImageCount());
+		hwStats.put(NON_WHITE_SPACE_CHARACTER_COUNT, stats.getNonWhitespaceCharacterCount());
+		hwStats.put(OBJECT_COUNT, stats.getObjectCount());
+		hwStats.put(OLE_OBJECT_COUNT, stats.getOleObjectCount());
+		hwStats.put(PAGE_COUNT, stats.getPageCount());
+		hwStats.put(PARAGRAPH_COUNT, stats.getParagraphCount());
+		hwStats.put(ROW_COUNT, stats.getRowCount());
+		hwStats.put(SENTENCE_COUNT, stats.getSentenceCount());
+		hwStats.put(SYLLABLE_COUNT, stats.getSyllableCount());
+		hwStats.put(TABLE_COUNT, stats.getTableCount());
+		hwStats.put(WORD_COUNT, stats.getWordCount());
 		if (hwStats.isEmpty()) {
 			throw new NoStatisticsException();
 		}
@@ -82,10 +84,10 @@ public class MetadataStats extends AbstractMetadataXML {
 		String currentKey;
 		JSONObject statToAdd;
 		JSONArray statisticJsonArray = new JSONArray();
-		while(statisticsIt.hasNext()) {
-			currentKey =  statisticsIt.next();
-			statToAdd = (new JSONObject()).put(currentKey,statisticHashMap.get(currentKey));
-			if(!statToAdd.isNull(currentKey)){
+		while (statisticsIt.hasNext()) {
+			currentKey = statisticsIt.next();
+			statToAdd = (new JSONObject()).put(currentKey, statisticHashMap.get(currentKey));
+			if (!statToAdd.isNull(currentKey)) {
 				statisticJsonArray.put(statToAdd);
 			}
 		}

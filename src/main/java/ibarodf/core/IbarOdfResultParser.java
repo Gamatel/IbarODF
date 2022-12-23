@@ -1,13 +1,11 @@
 package ibarodf.core;
 
 import java.nio.file.Path;
-import java.util.Iterator;
 import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import com.github.andrewoma.dexx.collection.Map;
 
 import ibarodf.core.file.AbstractGenericFile;
 import ibarodf.core.file.Directory;
@@ -75,6 +73,12 @@ public abstract class IbarOdfResultParser {
     */
     public static boolean isDirectory(JSONObject genericFile){
         return getMimeType(genericFile).equals(AbstractGenericFile.TYPE_DIRECTORY);
+    }
+
+    public static boolean isOdfFile(JSONObject regularFile){
+        String type = getMimeType(regularFile);
+        return !type.equals("application/vnd.oasis.opendocument.formula") && !type.equals("application/vnd.oasis.opendocument.text-template")
+        && type.contains("application/vnd.oasis.opendocument");
     }
 
     /**

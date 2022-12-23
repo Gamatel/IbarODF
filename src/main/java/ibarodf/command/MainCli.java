@@ -5,8 +5,12 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.file.Path;
+import java.util.Iterator;
 import java.util.Scanner;
+import java.util.stream.Stream;
 
 import ibarodf.command.CommandTranslator.Command;
 import ibarodf.command.exception.UnallowedCommandException;
@@ -39,6 +43,7 @@ public class MainCli {
             scanEntry.close();
             PrettyResult.ligne();
             IbarOdfCore.changeTheDescriptionOfAnOdtFile(filePath, newTitle, newSubject, newKeyword, newComment);
+            System.out.println("Description changed!");
         }catch(Exception e){
             throw new UnableToChangeTheDescriptionOfTheFileException(filePath);
         }
@@ -56,16 +61,18 @@ public class MainCli {
             switch(command){
                 case DISPLAY_THE_META_DATA_A_FILE:
                     PrettyResult.ligne();
+                    // System.out.println(IbarOdfCore.RegularFileToJson(filePath));
                     PrettyResult.prettyFile(IbarOdfCore.RegularFileToJson(filePath));
                     PrettyResult.ligne();
                     break;
                 case DISPLAY_THE_META_DATA_OF_AN_ODF_FILE: 
                     PrettyResult.ligne();
+                    // System.out.println(IbarOdfCore.odfFileToJson(filePath));
                     PrettyResult.prettyOdfFile(IbarOdfCore.odfFileToJson(filePath));
                     PrettyResult.ligne();
                     break;
                 case DISPLAY_THE_META_DATA_OF_ODF_FILES_IN_A_DIRECTORY:
-                    // System.out.println(IbarOdfCore.directoryToJson(filePath, true));
+                    // System.out.println(IbarOdfCore.directoryToJson(filePath));
                     PrettyResult.prettyDirectory(IbarOdfCore.directoryToJson(filePath));
                     // IbarOdfCore.directoryToJson(filePath, true);
                     break;
@@ -97,18 +104,23 @@ public class MainCli {
             switch(command){
                 case CHANGE_THE_TITLE_OF_AN_ODF_FILE:
                     IbarOdfCore.changeTheTitleOfAnOdfFile(filePath, newValue);
+                    System.out.println("Title changed!");
                     break;
                 case CHANGE_THE_SUBJECT_OF_AN_ODF_FILE:
                     IbarOdfCore.changeTheSubjectOfAnOdfFile(filePath, newValue);
+                    System.out.println("Subject changed!");
                     break; 
                 case CHANGE_THE_KEYWORDS_TO_AN_ODF_FILE:
                     IbarOdfCore.changeTheKeywordsOfAnOdfFile(filePath, newValue);
+                    System.out.println("Keywords changed!");
                     break;
                 case CHANGE_THE_COMMENTS_OF_AN_ODF_FILE:
                     IbarOdfCore.changeTheCommentsOfAnOdfFile(filePath, newValue);
+                    System.out.println("Comments changed!");
                     break; 
                 case CHANGE_THE_CREATOR_OF_AN_ODF_FILE:
                     IbarOdfCore.changeTheCreatorOfAnOdfFile(filePath,newValue);
+                    System.out.println("Creator changed!");
                     break; 
                 default :
                     System.err.println("Error : Wasn't asking to make any change on "+ filePath.getFileName());
@@ -123,14 +135,14 @@ public class MainCli {
      */
     public static void help(){
 		try{
-			String separator = IbarOdfCore.getCurrentSystemSeparator();
-            BufferedReader helpReader = new BufferedReader(new FileReader(new File("ressources" + separator +"help.txt")));
+            BufferedReader helpReader = new BufferedReader(new FileReader(new File("src/main/resources/help.txt")));
 			String line;
 			while((line = helpReader.readLine()) != null){
 				System.out.println(line);
 			} 
 			helpReader.close();
-		}catch(IOException e){
+		}catch(Exception e){
+            System.err.println(e.getMessage());
 			System.err.println("Sorry, cannot reach the help manual.");
 		}
 	}

@@ -4,7 +4,6 @@ import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import javax.json.JsonException;
 
@@ -382,10 +381,8 @@ public abstract class PrettyResult {
      */
     private static void prettyStatistique(JSONArray metadataJsonArray, int depth) {
         prettyPrint(MetadataStats.STATISTICS,depth);
-        JSONObject currentStat;
         for (int index = 0, indexMax = metadataJsonArray.length(); index < indexMax; index++) {
-            currentStat = metadataJsonArray.getJSONObject(index);
-           prettyObject(currentStat, depth+1);
+            print(metadataJsonArray.get(index).toString(), depth+1);
         }
 
     }
