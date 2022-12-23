@@ -81,8 +81,6 @@ public class TreeStructurePanel extends JScrollPane {
 		setBackground(Color.BLUE);
 		setRootAsADirectory(path);
 		tree = new JTree(root);
-		tree.setPreferredSize(preferredSize);
-
 		tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 		tree.addTreeSelectionListener(new SelectionListener());
 		setViewportView(tree);
