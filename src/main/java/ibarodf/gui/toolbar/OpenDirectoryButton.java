@@ -19,6 +19,7 @@ public class OpenDirectoryButton extends IconButtonWithLabel {
     private final static String DIALOG_FRAME_MESSAGE = " Entrer le chemin absolu du dossier "; 
     private String directoryToOpenPath; 
     private TreeStructurePanel treeToPerformActionOn;
+    public final static ImageIcon IMAGE_BUTTON = new ImageIcon("src/main/resources/icons/new_folder.png");
 
     public OpenDirectoryButton(Dimension dimension, TreeStructurePanel treeToPerformActionOn){
         super( BUTTON_LABEL,  IMAGE_BUTTON , dimension);
@@ -33,7 +34,6 @@ public class OpenDirectoryButton extends IconButtonWithLabel {
     }
 
 
-    public final static ImageIcon IMAGE_BUTTON = new ImageIcon("src/main/resources/icons/new_folder.png");
 
     public void refreshTreePanel(){
         try{

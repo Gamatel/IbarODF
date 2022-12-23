@@ -22,22 +22,20 @@ import java.io.FileNotFoundException;
 import java.nio.file.Path;
 
 public class TreeStructurePanel extends JScrollPane {
-	public final static String TO_DELETE = ".";
+	public final static String CURRENT_DIRECTORY = ".";
 
 	private JTree tree;
 	private DefaultMutableTreeNode root;
 	private JSONObject directory;
 	private String pathText;
 	private final Dimension preferedSize;
-	private JSONObject currentFileJson;
+	private MetaDataPanel metadataPanel; 
 
-	public TreeStructurePanel(Dimension preferredSize) {
+	public TreeStructurePanel(Dimension preferredSize, MetaDataPanel metadataPanel) {
 		this(preferredSize, defaultRoot());
+		this.metadataPanel = metadataPanel;
 	}
 
-	public JSONObject getCurrentFileJson() {
-		return currentFileJson;
-	}
 
 	public void setRootAsADirectory(String path){
 		try{
@@ -119,7 +117,7 @@ public class TreeStructurePanel extends JScrollPane {
 			subDirectoryNode = new DefaultMutableTreeNode(IbarOdfResultParser.getFileName(currentRegularFile)); 
 			root.add(subDirectoryNode);
 			if(IbarOdfResultParser.isDirectory(currentRegularFile)){
-				subDirectoryNode.add(new DefaultMutableTreeNode(TO_DELETE));
+				subDirectoryNode.add(new DefaultMutableTreeNode(CURRENT_DIRECTORY));
 			}
 		}
 	}
@@ -173,12 +171,15 @@ public class TreeStructurePanel extends JScrollPane {
 			try {
 				Path currentNodePath = IbarOdfCore.stringToPath(currentPath);
 				if(selectedNode.isLeaf()) {
-					currentFileJson = IbarOdfCore.RegularFileToJson(currentNodePath);
+					JSONObject currentFileJson = IbarOdfCore.RegularFileToJson(currentNodePath);
 					if(IbarOdfResultParser.isOdfFile(currentFileJson)){
 						currentFileJson = IbarOdfCore.odfFileToJson(currentNodePath);
 					}else if(IbarOdfResultParser.isDirectory(currentFileJson)){
 						currentFileJson = IbarOdfCore.directoryToJson(currentNodePath);
 					}
+					metadataPanel.setDataInTable(currentFileJson);
+					metadataPanel.setImgInPicturePanel(currentFileJson);
+				
 				}else{
 					JSONObject currentSubDirectory = IbarOdfCore.directoryToJson(currentNodePath);
 					fillTreeWithRegularFiles(selectedNode, IbarOdfResultParser.getRegularFiles(currentSubDirectory));
@@ -189,6 +190,6 @@ public class TreeStructurePanel extends JScrollPane {
 				JOptionPane.showMessageDialog(getParent(), currentPath+" does not exist or is inaccessible!" ,"Can't access",JOptionPane.ERROR_MESSAGE);
 			}
 		}
-	}	
 
+	}
 }

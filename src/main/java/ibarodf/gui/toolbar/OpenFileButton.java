@@ -4,7 +4,6 @@ import java.awt.event.MouseEvent;
 import java.nio.file.Path;
 
 import javax.swing.ImageIcon;
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import ibarodf.core.IbarOdfCore;

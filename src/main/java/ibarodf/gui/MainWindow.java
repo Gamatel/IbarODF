@@ -21,25 +21,14 @@ public class MainWindow extends JFrame {
 		setSize(new Dimension(1000,1000));
 		setVisible(true);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		init_window(); 
+	}
 
-		init_window();
-
-		filesTree.getTree().addTreeSelectionListener(treeSelectionEvent -> {
-			JSONObject dataJson = filesTree.getCurrentFileJson();
-
-			if (dataJson != null) {
-				metadataPanel.setDataInTable(dataJson);
-				metadataPanel.setImgInPicturePanel(dataJson);
-			}
-		});
-
-
-   }
 
    private void init_window() {
-	   ToolBar treeModifierBar = new ToolBar(filesTree);
-	   filesTree = new TreeStructurePanel(new Dimension(TREE_STRUCTURE_WIDTH, TREE_STRUCTURE_HEIGHT));
 	   metadataPanel = new MetaDataPanel();
+	   filesTree = new TreeStructurePanel(new Dimension(TREE_STRUCTURE_WIDTH, TREE_STRUCTURE_HEIGHT),metadataPanel );
+	   ToolBar treeModifierBar = new ToolBar(filesTree);
 
 	   add(treeModifierBar, BorderLayout.NORTH);
 	   add(metadataPanel, BorderLayout.CENTER);
