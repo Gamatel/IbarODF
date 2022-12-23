@@ -50,8 +50,7 @@ public class MainCli {
     }
 
     /**
-     *  It displays metadata about either a file or a directory
-     * 
+     *  It displays metadata about either a file or a directory *
      * @param command The command that was given to the program.
      * @param filePath The path to the file or directory
      * @throws FileNotFoundException

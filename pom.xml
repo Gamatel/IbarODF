@@ -101,22 +101,22 @@
 				<version>3.0.0</version>
 			</plugin>
 
-			<!-- CONFIGURATION DU .JAR ET DU MANIFEST -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<configuration>
-					<archive>
-						<manifest>
-							<mainClass>ibarodf.MainCli</mainClass>
-						</manifest>
-					</archive>
-					<descriptorRefs>
-						<descriptorRef>jar-with-dependencies</descriptorRef>
-					</descriptorRefs>
-				</configuration>
-			</plugin>
-		</plugins>
-	</pluginManagement>
-</build>
+		<!-- CONFIGURATION DU .JAR ET DU MANIFEST -->
+          <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-assembly-plugin</artifactId>
+              <configuration>
+                  <archive>
+                      <manifest>
+                          <mainClass>ibarodf.command.MainCli</mainClass>
+                      </manifest>
+                  </archive>
+                  <descriptorRefs>
+                      <descriptorRef>jar-with-dependencies</descriptorRef>
+                  </descriptorRefs>
+              </configuration>
+          </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
 </project>

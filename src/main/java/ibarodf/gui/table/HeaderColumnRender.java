@@ -5,11 +5,9 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Dimension;
 
 public class HeaderColumnRender extends DefaultTableCellRenderer {
 	private final Color bg, fg;
-	private static final Dimension cellDimension = new Dimension( 425, 50);
 
 	public HeaderColumnRender(Color bg, Color fg) {
 		super();

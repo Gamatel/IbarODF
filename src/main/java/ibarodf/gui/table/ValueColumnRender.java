@@ -5,7 +5,6 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Dimension;
 
 public class ValueColumnRender extends DefaultTableCellRenderer {
     private final Color bg, fg;

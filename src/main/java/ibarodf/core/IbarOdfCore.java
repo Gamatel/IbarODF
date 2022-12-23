@@ -56,7 +56,7 @@ public abstract class IbarOdfCore {
 	 * @throws Exception
 	 */
 	public static void changeTheDescriptionOfAnOdtFile(Path filePath, String newTitle, String newSubject, String newKeywords, String newComments) throws Exception {
-		ArrayList<String> newValues = new ArrayList<String>();
+		ArrayList<String> newValues = new ArrayList<>();
 		newValues.add(newTitle);
 		newValues.add(newSubject);
 		newValues.add(newKeywords);
@@ -133,6 +133,7 @@ public abstract class IbarOdfCore {
 	 * @param newTitle The new title of the file.
 	 */
  	public static void changeTheTitleOfAnOdfFile(Path path, String newTitle) throws Exception {
+ 	public static void changeTheTitleOfAnOdfFile(Path path, String newTitle) throws Exception {
 		OdfFile file = new OdfFile(path);
 		file.setMetaData(MetadataTitle.ATTR, newTitle);
 		file.saveChange();
@@ -144,6 +145,7 @@ public abstract class IbarOdfCore {
 	 * 
 	 * @param path The path to the ODF file.
 	 * @param newSubject The new subject you want to set.
+	*/
 	*/
 	public static void changeTheSubjectOfAnOdfFile(Path path, String newSubject) throws Exception {
 		OdfFile file = new OdfFile(path);
@@ -221,5 +223,4 @@ public abstract class IbarOdfCore {
 		return file.toJonObject();
 
 	}
-
 }
