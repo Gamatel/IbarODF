@@ -8,6 +8,7 @@ import org.json.JSONObject;
 import javax.swing.JOptionPane;
 import javax.swing.table.AbstractTableModel;
 import java.io.File;
+import java.nio.file.Path;
 import java.util.*;
 
 import ibarodf.core.IbarOdfResultParser;
@@ -35,14 +36,15 @@ public class TableModel extends AbstractTableModel {
         super();
         this.dataJson = new JSONObject("{}");
 
+        Collections.addAll(propsRegularFileSet, PROPS_REGULAR_FILE);
         fillingWithBlankRow();
     }
 
-    public TableModel(JSONObject dataJson, boolean isAnOdfFile) {
+    public TableModel(JSONObject dataJson) {
         super();
         this.dataJson = dataJson;
-        this.isAnOdfFile = isAnOdfFile;
-        this.path = new File((String) IbarOdfResultParser.getPath(dataJson));
+        this.isAnOdfFile = IbarOdfResultParser.isOdfFile(dataJson);
+        this.path = new File(((Path) IbarOdfResultParser.getPath(dataJson)).toUri());
 
         Collections.addAll(propsRegularFileSet, PROPS_REGULAR_FILE);
         initProperties();

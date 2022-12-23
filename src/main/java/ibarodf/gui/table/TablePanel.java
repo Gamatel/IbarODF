@@ -1,12 +1,13 @@
 package ibarodf.gui.table;
 
-import ibarodf.gui.ColorPalette;
-import ibarodf.gui.FontPalette;
+import ibarodf.gui.palette.ColorPalette;
+import ibarodf.gui.palette.FontPalette;
 import org.json.JSONObject;
 
 import javax.swing.BorderFactory;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.SwingUtilities;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumn;
 import java.awt.Color;
@@ -23,7 +24,7 @@ public class TablePanel extends JScrollPane {
 	public TablePanel() {
 		super();
 
-		table = new JTable(new TableModel(new JSONObject("{\"Path\":\"/home/alexandre/Bureau/test/test.odt\",\"Metadata\":[{\"Title\":\"Je Suis le nouveau titre\"},{\"Subject\":\"Je Suis un sujet très intéréssant\"},{\"Keywords\":[]},{\"Hyperlinks\":[{\"Visited Style Name\":\"Visited_20_Internet_20_Link\",\"Type\":\"simple\",\"Reference\":\"https://www.google.com/\",\"Style Name\":\"Internet_20_link\"},{\"Visited Style Name\":\"Visited_20_Internet_20_Link\",\"Type\":\"simple\",\"Reference\":\"https://www.cyu.fr/\",\"Style Name\":\"Internet_20_link\"}]},{\"Creation Date\":\"21/11/2022 14:58:49\"},{\"Statistics\":[{\"imageCount\":2},{\"objectCount\":0},{\"pageCount\":1},{\"wordCount\":14},{\"tableCount\":0},{\"nonWhitespaceCharacterCount\":49},{\"characterCount\":61},{\"paragraphCount\":3}]},{\"Thumbnail\":\"/tmp/IBARODF4788630234301104754/Thumbnails/thumbnail.png\"}],\"Mime Type\":\"application/vnd.oasis.opendocument.text\",\"File Name\":\"test.odt\",\"Have \":[\"Title\",\"Subject\",\"Keywords\",\"Hyperlinks\",\"Creation Date\",\"Statistics\",\"Thumbnail\"],\"Size (Ko)\":48}\n"), true));
+		table = new JTable(new TableModel());
 
 		setInitialDesign();
 		setColumnsDesign();
@@ -60,4 +61,12 @@ public class TablePanel extends JScrollPane {
 		header.setBorder(BorderFactory.createEmptyBorder());
 		header.setFont(FontPalette.TABLE_FONT_HEADER);
 	}
+
+	public void setModel(JSONObject dataJson) {
+		TableModel model = new TableModel(dataJson);
+		table.setModel(model);
+		System.out.println("JE SUIS LA" + dataJson.toString());
+		SwingUtilities.updateComponentTreeUI(table);
+	}
+
 }

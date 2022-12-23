@@ -9,7 +9,7 @@ import javax.swing.JButton;
 import javax.swing.ImageIcon;
 import javax.swing.SwingConstants;
 
-import ibarodf.gui.ColorPalette;
+import ibarodf.gui.palette.ColorPalette;
 
 public class IconButtonWithLabel extends JButton implements MouseListener{
 	private final Color bgColor = ColorPalette.MAIN_COLOR;	

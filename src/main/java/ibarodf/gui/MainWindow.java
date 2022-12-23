@@ -1,6 +1,7 @@
 package ibarodf.gui;
 
 import ibarodf.gui.toolbar.ToolBar;
+import org.json.JSONObject;
 
 import javax.swing.JFrame;
 import java.awt.BorderLayout;
@@ -13,20 +14,35 @@ public class MainWindow extends JFrame {
 	public final static int TREE_STRUCTURE_WIDTH = 500;
 	public final static int TREE_STRUCTURE_HEIGHT = 800;
 
-	final Dimension OVERVIEW_SIZE = new Dimension( OVERVIEW_SIZE_WIDTH, OVERVIEW_SIZE_HEIGHT);
+	private TreeStructurePanel filesTree;
+	private MetaDataPanel metadataPanel;
 	public MainWindow() {
 		super("IbarODF");
 		setSize(new Dimension(1000,1000));
 		setVisible(true);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		try{
-			TreeStructurePanel filesTree = new TreeStructurePanel(new Dimension(TREE_STRUCTURE_WIDTH, TREE_STRUCTURE_HEIGHT)); 
-			ToolBar treeModifierBar = new ToolBar(filesTree);
-			add(treeModifierBar, BorderLayout.NORTH);
-			add(filesTree, BorderLayout.WEST);
-		}catch(Exception e){
-			System.err.println(e.getMessage());
-		}
-		add(new MetaDataPanel(), BorderLayout.CENTER);
+
+		init_window();
+
+		filesTree.getTree().addTreeSelectionListener(treeSelectionEvent -> {
+			JSONObject dataJson = filesTree.getCurrentFileJson();
+
+			if (dataJson != null) {
+				metadataPanel.setDataInTable(dataJson);
+				metadataPanel.setImgInPicturePanel(dataJson);
+			}
+		});
+
+
+   }
+
+   private void init_window() {
+	   ToolBar treeModifierBar = new ToolBar(filesTree);
+	   filesTree = new TreeStructurePanel(new Dimension(TREE_STRUCTURE_WIDTH, TREE_STRUCTURE_HEIGHT));
+	   metadataPanel = new MetaDataPanel();
+
+	   add(treeModifierBar, BorderLayout.NORTH);
+	   add(metadataPanel, BorderLayout.CENTER);
+	   add(filesTree, BorderLayout.WEST);
    }
 }
