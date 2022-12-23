@@ -46,6 +46,7 @@ public class OpenFileButton extends IconButtonWithLabel{
         }catch(CurrentFileIsADirectory e){
             JOptionPane.showMessageDialog(getParent(),e.getMessage() ,"Wrong Button!",JOptionPane.ERROR_MESSAGE);
         }catch(Exception e){
+            System.err.println(e.getLocalizedMessage());
             JOptionPane.showMessageDialog(getParent(), fileToOpenPath +" does not exist or is inaccessible!" ,"Can't access",JOptionPane.ERROR_MESSAGE);
         }
     }

@@ -26,8 +26,8 @@ public class TreeStructurePanel extends JScrollPane {
 
 	JTree tree;
 	DefaultMutableTreeNode root;
-	JSONObject directory;
-	String pathText;
+	JSONObject currentFile;
+	String currentPathText;
 	Dimension preferedSize;
 
 
@@ -39,10 +39,12 @@ public class TreeStructurePanel extends JScrollPane {
 
 	public void setRootAsADirectory(String path){
 		try{
-			pathText = path;
+			currentPathText = path;
 			Path currentPath = IbarOdfCore.stringToPath(path);
-			directory = IbarOdfCore.directoryToJson(currentPath);
+			currentFile = IbarOdfCore.directoryToJson(currentPath);
 			root = new DefaultMutableTreeNode(currentPath.getFileName());
+			displayRoot(root);
+			fillTreeStructure();
 		}catch(FileNotFoundException | UnableToConvertToJsonFormatException e){
 			System.err.println(e.getMessage());
 		}
@@ -50,14 +52,14 @@ public class TreeStructurePanel extends JScrollPane {
 
 
 	public void setRootAsFile(String path) throws Exception{
-		pathText = path;
+		currentPathText = path;
 		Path currentPath = IbarOdfCore.stringToPath(path);
-		directory = IbarOdfCore.RegularFileToJson(currentPath);
+		currentFile = IbarOdfCore.RegularFileToJson(currentPath);
 		root = new DefaultMutableTreeNode(currentPath.getFileName());
+		displayRoot(root);
 	}
 
 	public void refresh(String path) throws Exception{
-		Dimension pastDimension = preferedSize; 
 		Path newRootPath = IbarOdfCore.stringToPath(path);
 		JSONObject newRoot = IbarOdfCore.RegularFileToJson(newRootPath);
 		if(IbarOdfResultParser.isDirectory(newRoot)){
@@ -65,14 +67,14 @@ public class TreeStructurePanel extends JScrollPane {
 		}else{
 			setRootAsFile(path);
 		}
+	}
+
+	public void displayRoot(DefaultMutableTreeNode root){
 		tree = new JTree(root);
-		tree.setPreferredSize(pastDimension);
 		tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 		tree.addTreeSelectionListener(new SelectionListener());
 		setViewportView(tree);
-		fillTreeStructure();
 	}
-
 
 	public TreeStructurePanel(Dimension preferredSize, String path){
 		super();
@@ -84,7 +86,6 @@ public class TreeStructurePanel extends JScrollPane {
 		tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 		tree.addTreeSelectionListener(new SelectionListener());
 		setViewportView(tree);
-		fillTreeStructure();
 	}
 
 
@@ -93,12 +94,10 @@ public class TreeStructurePanel extends JScrollPane {
 		return listRoot[0].toString();
 	}
 
-
-
 	public void fillTreeStructure() {
-		fillTreeWithRegularFiles(root, IbarOdfResultParser.getRegularFiles(directory));
-		fillTreeWithOdfFiles(root,IbarOdfResultParser.getOdfFiles(directory));
-		fillTreeWithWrongFiles(root,IbarOdfResultParser.getWrongFiles(directory));
+		fillTreeWithRegularFiles(root, IbarOdfResultParser.getRegularFiles(currentFile));
+		fillTreeWithOdfFiles(root,IbarOdfResultParser.getOdfFiles(currentFile));
+		fillTreeWithWrongFiles(root,IbarOdfResultParser.getWrongFiles(currentFile));
 		DefaultTreeModel model = (DefaultTreeModel)tree.getModel();
 		model.reload(root);
 	}
@@ -148,9 +147,9 @@ public class TreeStructurePanel extends JScrollPane {
 	}
 
 	private StringBuilder rootName(String separator){
-		StringBuilder racine = new StringBuilder(pathText);
-		if(pathText.endsWith(separator)){
-			racine.deleteCharAt(pathText.length()-1);
+		StringBuilder racine = new StringBuilder(currentPathText);
+		if(currentPathText.endsWith(separator)){
+			racine.deleteCharAt(currentPathText.length()-1);
 		}
 		return racine;
 	}
