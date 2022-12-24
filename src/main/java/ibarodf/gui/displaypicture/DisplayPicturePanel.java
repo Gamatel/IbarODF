@@ -73,4 +73,5 @@ public class DisplayPicturePanel extends JPanel {
             button.setEnabled(false);
         }
     }
+
 }

@@ -467,6 +467,15 @@ public abstract class IbarOdfResultParser {
         return wrongFile.getString(WrongFile.ERRORMESSAGE); 
     }
 
+    public static boolean haveMetadataType(JSONObject jsonOdfFile, String type){
+        try{
+            getMetadataByType(jsonOdfFile, type);
+            return true;
+        }catch(NoSuchMetadataException e){
+            return false;
+        }
+    }
+
 
 
 }

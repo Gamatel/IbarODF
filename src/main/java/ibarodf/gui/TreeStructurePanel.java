@@ -177,6 +177,7 @@ public class TreeStructurePanel extends JScrollPane {
 					}else if(IbarOdfResultParser.isDirectory(currentFileJson)){
 						currentFileJson = IbarOdfCore.directoryToJson(currentNodePath);
 					}
+					System.out.println(currentFileJson);
 					metadataPanel.setDataInTable(currentFileJson);
 					metadataPanel.setImgInPicturePanel(currentFileJson);
 				

@@ -37,10 +37,10 @@ public class DisplayPictureTabbedPanel extends JTabbedPane {
             File fileImg = new File(imgPath);
             ImageIcon imgIcon = new ImageIcon(imgPath);
             String labelText1 = fileImg.getName();
-            String labelText2 = "Afficher l'image " + i;
+            String labelText2 = "Afficher l'image " + (i+1);
             DisplayPicturePanel imgPanel = new DisplayPicturePanel(labelText1, labelText2, imgIcon, imgDim);
 
-            add(imgPanel, "image " + i);
+            add(imgPanel, "image " + (i+1));
             i++;
         }
     }

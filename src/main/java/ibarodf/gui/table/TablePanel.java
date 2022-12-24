@@ -65,7 +65,6 @@ public class TablePanel extends JScrollPane {
 	public void setModel(JSONObject dataJson) {
 		TableModel model = new TableModel(dataJson);
 		table.setModel(model);
-		System.out.println("JE SUIS LA" + dataJson.toString());
 		SwingUtilities.updateComponentTreeUI(table);
 	}
 

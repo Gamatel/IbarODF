@@ -1,6 +1,7 @@
 package ibarodf.gui.table;
 
 import ibarodf.core.file.AbstractGenericFile;
+import ibarodf.core.file.Directory;
 import ibarodf.core.metadata.MetadataComment;
 import ibarodf.core.metadata.MetadataCreationDate;
 import ibarodf.core.metadata.MetadataCreator;
@@ -24,6 +25,13 @@ public class PropsName {
     public static final String PROPS_KEYWORDS =  MetadataKeyword.KEYWORDS;
     public static final String PROPS_HYPERLINKS =  MetadataHyperlink.HYPERLINKS;
     public static final String PROPS_CREATION_DATE =  MetadataCreationDate.CREATION_DATE;
+
+    public static final String PROPS_NUMBER_OF_SUBDIRECTORY =  Directory.SUBDIRECTORIES;
+    public static final String PROPS_NUMBER_OF_REGULAR_FILES =  Directory.REGULAR_FILES;
+    public static final String PROPS_NUMBER_OF_ODF_FILES =  Directory.ODF_FILES;
+    public static final String PROPS_NUMBER_OF_WRONG_FILES =  Directory.WRONG_FILES;
+    public static final String PROPS_TOTAL_NUMBER_OF_FILE =  Directory.TOTAL_NUMBER_OF_FILES;
+
 
     public static final String PROPS_STATS = MetadataStats.STATISTICS;
     public static final String PROPS_STATS_CELL_COUNT = MetadataStats.CELL_COUNT;

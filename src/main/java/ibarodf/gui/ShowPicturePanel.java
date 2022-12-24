@@ -47,16 +47,16 @@ public class ShowPicturePanel extends JPanel {
         overviewPanel.setImage(thumbnails);
     }
 
-    private void loadFileImg(JSONObject dataJson) throws NoSuchMetadataException {
+    private void loadFileImg(JSONObject dataJson){
         try {
             if (isAnOdfFile) {
-                Set<String> picturePathSet = getPicturePathSet(dataJson); // TODO l'erreur des images est provoquée ici, à résoudre
+                Set<String> picturePathSet = getPicturePathSet(dataJson);
                 odfImgPanel.loadSetImg(picturePathSet);
             } else {
                 odfImgPanel.loadSetImg(null);
             }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        } catch (NoSuchMetadataException e) {
+            odfImgPanel.loadSetImg(null);
         }
     }
 

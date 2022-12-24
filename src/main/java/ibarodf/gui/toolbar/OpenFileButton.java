@@ -9,11 +9,10 @@ import javax.swing.JOptionPane;
 import ibarodf.core.IbarOdfCore;
 import ibarodf.gui.TreeStructurePanel;
 import ibarodf.gui.toolbar.exception.CurrentFileIsADirectory;
-import ibarodf.gui.toolbar.popup.PopUpField;
 
 public class OpenFileButton extends IconButtonWithLabel{
     private final static String BUTTON_LABEL = "Ouvrir un fichier"; 
-    private final static String DIALOG_FRAME_MESSAGE = "Entrer le chemin absolue du fichier"; 
+    private final static String DIALOG_FRAME_MESSAGE = "Entrer le chemin absolu du fichier"; 
     private String fileToOpenPath;  
     private TreeStructurePanel treeToPerformActionOn;
 
@@ -28,9 +27,10 @@ public class OpenFileButton extends IconButtonWithLabel{
 
     public void mouseClicked(MouseEvent e){
         super.mouseClicked(e);
-        PopUpField enterFilePath = new PopUpField(DIALOG_FRAME_MESSAGE);
-        fileToOpenPath = enterFilePath.getEnteredValue();
-        refreshTreePanel();
+        fileToOpenPath = JOptionPane.showInputDialog(getParent(), DIALOG_FRAME_MESSAGE);
+        if(fileToOpenPath !=null){
+            refreshTreePanel();
+        }
     }
 
     public void refreshTreePanel(){

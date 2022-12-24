@@ -19,7 +19,6 @@ public class IconButtonWithLabel extends JButton implements MouseListener{
 		super(labelText);
 		this.setIcon(icon);
 		setHorizontalAlignment(SwingConstants.LEFT);
-
 		setInitialDesign();
 		addMouseListener(this);
 
