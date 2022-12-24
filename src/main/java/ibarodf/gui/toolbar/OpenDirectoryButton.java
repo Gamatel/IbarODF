@@ -9,6 +9,7 @@ import ibarodf.gui.TreeStructurePanel;
 import ibarodf.gui.toolbar.exception.CurrentDirectoryIsAFile;
 
 import java.awt.event.MouseEvent;
+import java.io.File;
 import java.nio.file.Path;
 
 public class OpenDirectoryButton extends IconButtonWithLabel {
@@ -43,9 +44,13 @@ public class OpenDirectoryButton extends IconButtonWithLabel {
             }
         }catch(CurrentDirectoryIsAFile e){
             JOptionPane.showMessageDialog(getParent(), e.getMessage() ,"Wrong Button!",JOptionPane.ERROR_MESSAGE);
-
         }catch(Exception e){
-            JOptionPane.showMessageDialog(getParent(), directoryToOpenPath+" does not exist or is inaccessible!" ,"Can't access",JOptionPane.ERROR_MESSAGE);
+            File wrongFile= new File(directoryToOpenPath);
+            if(wrongFile.exists()){
+                JOptionPane.showMessageDialog(getParent(), "Accès réfuser à "+wrongFile.getName() ,"ERROR",JOptionPane.ERROR_MESSAGE);
+            }else{
+                JOptionPane.showMessageDialog(getParent(), "Le fichier "+ directoryToOpenPath +" n'existe pas" ,"ERROR",JOptionPane.ERROR_MESSAGE);
+            }
         }
     }
 

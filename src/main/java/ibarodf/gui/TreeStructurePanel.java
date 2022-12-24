@@ -65,7 +65,7 @@ public class TreeStructurePanel extends JScrollPane {
 			setRootAsFile(path);
 		}
 		tree = new JTree(root);
-		tree.setPreferredSize(preferedSize);
+		//tree.setPreferredSize(preferedSize); COUPE L'ARBRE SINON
 		tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 		tree.addTreeSelectionListener(new SelectionListener());
 		setViewportView(tree);
@@ -80,8 +80,7 @@ public class TreeStructurePanel extends JScrollPane {
 		setBackground(Color.BLUE);
 		setRootAsADirectory(path);
 		tree = new JTree(root);
-		tree.setPreferredSize(preferredSize);
-
+		//tree.setPreferredSize(preferredSize); COUPE L'ARBRE SINON
 		tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 		tree.addTreeSelectionListener(new SelectionListener());
 		setViewportView(tree);
@@ -188,7 +187,7 @@ public class TreeStructurePanel extends JScrollPane {
 					fillTreeWithWrongFiles(selectedNode,IbarOdfResultParser.getWrongFiles(currentSubDirectory));
 				}
 			}catch(Exception e){
-				JOptionPane.showMessageDialog(getParent(), currentPath+" does not exist or is inaccessible!" ,"Can't access",JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(getParent(), "Accès refusé à "+ pathComponent + "!","ERREUR",JOptionPane.ERROR_MESSAGE);
 			}
 		}
 

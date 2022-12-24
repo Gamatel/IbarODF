@@ -1,6 +1,7 @@
 package ibarodf.gui.toolbar;
 import java.awt.Dimension;
 import java.awt.event.MouseEvent;
+import java.io.File;
 import java.nio.file.Path;
 
 import javax.swing.ImageIcon;
@@ -41,12 +42,15 @@ public class OpenFileButton extends IconButtonWithLabel{
             }else{
                 throw new CurrentFileIsADirectory(newRootPath);
             }
-
         }catch(CurrentFileIsADirectory e){
             JOptionPane.showMessageDialog(getParent(),e.getMessage() ,"Wrong Button!",JOptionPane.ERROR_MESSAGE);
         }catch(Exception e){
-            System.err.println(e.getLocalizedMessage());
-            JOptionPane.showMessageDialog(getParent(), fileToOpenPath +" does not exist or is inaccessible!" ,"Can't access",JOptionPane.ERROR_MESSAGE);
+            File wrongFile= new File(fileToOpenPath);
+            if(wrongFile.exists()){
+                JOptionPane.showMessageDialog(getParent(), "Accès réfuser à "+wrongFile.getName() ,"ERROR",JOptionPane.ERROR_MESSAGE);
+            }else{
+                JOptionPane.showMessageDialog(getParent(), "Le fichier "+ fileToOpenPath +" n'existe pas" ,"ERROR",JOptionPane.ERROR_MESSAGE);
+            }
         }
     }
 }
