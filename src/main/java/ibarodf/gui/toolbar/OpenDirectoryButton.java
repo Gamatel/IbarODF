@@ -1,6 +1,8 @@
 package ibarodf.gui.toolbar;
 
+import ibarodf.ResourceLoader;
 import ibarodf.core.IbarOdfCore;
+import ibarodf.gui.OptionPane;
 import ibarodf.gui.TreeStructurePanel;
 import ibarodf.gui.toolbar.exception.CurrentDirectoryIsAFile;
 
@@ -9,6 +11,7 @@ import javax.swing.JOptionPane;
 import java.awt.Dimension;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Path;
 
 /**
@@ -19,7 +22,15 @@ public class OpenDirectoryButton extends IconButtonWithLabel {
     private final static String DIALOG_FRAME_MESSAGE = " Entrer le chemin absolu du dossier "; 
     private String directoryToOpenPath; 
     private final TreeStructurePanel treeToPerformActionOn;
-    public final static ImageIcon IMAGE_BUTTON = new ImageIcon("src/main/resources/icons/new_folder.png");
+    public static ImageIcon IMAGE_BUTTON;
+
+    static {
+        try {
+            IMAGE_BUTTON = ResourceLoader.loadImgFromResource("icons/new_folder.png");
+        } catch (IOException e) {
+            OptionPane.alertError(null, ResourceLoader.MSG_ERROR);
+        }
+    }
 
     public OpenDirectoryButton(Dimension dimension, TreeStructurePanel treeToPerformActionOn){
         super( BUTTON_LABEL,  IMAGE_BUTTON , dimension);

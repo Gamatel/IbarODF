@@ -1,23 +1,18 @@
-package ibarodf.command;
+package ibarodf;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.file.Path;
-import java.util.Iterator;
-import java.util.Scanner;
-import java.util.stream.Stream;
-
+import ibarodf.command.CommandTranslator;
 import ibarodf.command.CommandTranslator.Command;
+import ibarodf.command.PrettyResult;
 import ibarodf.command.exception.UnallowedCommandException;
 import ibarodf.core.IbarOdfCore;
 import ibarodf.exception.UnableToChangeTheDescriptionOfTheFileException;
 import ibarodf.exception.UnableToDisplayInformationAboutTheFile;
 import ibarodf.exception.UnableToMakeAskedChangesException;
+
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.nio.file.Path;
+import java.util.Scanner;
 
 public class MainCli {
     
@@ -134,7 +129,7 @@ public class MainCli {
      */
     public static void help(){
 		try{
-            BufferedReader helpReader = new BufferedReader(new FileReader(new File("src/main/resources/help.txt")));
+            BufferedReader helpReader = new BufferedReader(ResourceLoader.loadTextFromResource("help.txt"));
 			String line;
 			while((line = helpReader.readLine()) != null){
 				System.out.println(line);

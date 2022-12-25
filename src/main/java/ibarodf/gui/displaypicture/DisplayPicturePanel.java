@@ -1,17 +1,28 @@
 package ibarodf.gui.displaypicture;
 
+import ibarodf.ResourceLoader;
 import ibarodf.gui.palette.FontPalette;
 
 import javax.swing.*;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Image;
+import java.io.IOException;
 
 /**
  * This class manage how to display a picture, with her label and her button to make a better display
  */
 public class DisplayPicturePanel extends JPanel {
-    private final static ImageIcon NO_THUMBNAILS_IMG = new ImageIcon("src/main/resources/img/no_img.png");
+    private final static ImageIcon NO_THUMBNAILS_IMG;
+
+    static {
+        try {
+            NO_THUMBNAILS_IMG = ResourceLoader.loadImgFromResource("img/no_img.png");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     private final static Dimension DIM = new Dimension(400, 350);
     private final JLabel labelPicture;
     private final JButton button;
