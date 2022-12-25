@@ -6,7 +6,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.Color;
 import java.awt.Component;
 
-public class HeaderColumnRender extends DefaultTableCellRenderer {
+class HeaderColumnRender extends DefaultTableCellRenderer {
 	private final Color bg, fg;
 
 	public HeaderColumnRender(Color bg, Color fg) {

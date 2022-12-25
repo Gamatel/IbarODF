@@ -11,11 +11,14 @@ import ibarodf.core.IbarOdfCore;
 import ibarodf.gui.TreeStructurePanel;
 import ibarodf.gui.toolbar.exception.CurrentFileIsADirectory;
 
+/**
+ * This class represent the Button that choice a file to be display in the TreeeStructurePanel and TablePanel
+ */
 public class OpenFileButton extends IconButtonWithLabel{
     private final static String BUTTON_LABEL = "Ouvrir un fichier"; 
     private final static String DIALOG_FRAME_MESSAGE = "Entrer le chemin absolu du fichier"; 
     private String fileToOpenPath;  
-    private TreeStructurePanel treeToPerformActionOn;
+    private final TreeStructurePanel treeToPerformActionOn;
 
 
 
@@ -34,6 +37,9 @@ public class OpenFileButton extends IconButtonWithLabel{
         }
     }
 
+    /**
+     * This method refresh the ThreePanel after a new selection
+     */
     public void refreshTreePanel(){
         try{
             Path newRootPath = IbarOdfCore.stringToPath(fileToOpenPath);

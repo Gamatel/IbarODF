@@ -7,24 +7,22 @@ import java.io.File;
 import java.util.Collection;
 import java.util.HashSet;
 
+/**
+ * This class represent a tabbed panel that contains DisplayPicturePanel class
+ */
 public class DisplayPictureTabbedPanel extends JTabbedPane {
     private Collection<String> imgPathSet;
     private final Dimension imgDim;
 
+    /**
+     * @param imgDim The size of the image that will be display
+     */
     public DisplayPictureTabbedPanel(Dimension imgDim) {
         super();
         this.imgPathSet = new HashSet<String>();
         this.imgDim = imgDim;
 
         constructPanelEmpty();
-    }
-
-    public DisplayPictureTabbedPanel(Collection<String> imgPathSet, Dimension imgDim) {
-        super();
-        this.imgPathSet = imgPathSet;
-        this.imgDim = imgDim;
-
-        constructPanel();
     }
 
     private void constructPanelEmpty() {
@@ -45,6 +43,10 @@ public class DisplayPictureTabbedPanel extends JTabbedPane {
         }
     }
 
+    /**
+     * This methode take the Path of image in a set and display them
+     * @param newImgPathSet Set of image path
+     */
     public void loadSetImg(Collection<String> newImgPathSet) {
         removeAll();
         imgPathSet = newImgPathSet;

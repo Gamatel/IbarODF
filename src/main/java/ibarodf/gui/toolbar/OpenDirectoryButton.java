@@ -1,22 +1,24 @@
 package ibarodf.gui.toolbar;
-import java.awt.Dimension;
-
-import javax.swing.ImageIcon;
-import javax.swing.JOptionPane;
 
 import ibarodf.core.IbarOdfCore;
 import ibarodf.gui.TreeStructurePanel;
 import ibarodf.gui.toolbar.exception.CurrentDirectoryIsAFile;
 
+import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
+import java.awt.Dimension;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.nio.file.Path;
 
+/**
+ * This class represent the Button that choice a Directory to be display in the TreeeStructurePanel
+ */
 public class OpenDirectoryButton extends IconButtonWithLabel {
     private final static String BUTTON_LABEL = "Ouvrir un dossier "; 
     private final static String DIALOG_FRAME_MESSAGE = " Entrer le chemin absolu du dossier "; 
     private String directoryToOpenPath; 
-    private TreeStructurePanel treeToPerformActionOn;
+    private final TreeStructurePanel treeToPerformActionOn;
     public final static ImageIcon IMAGE_BUTTON = new ImageIcon("src/main/resources/icons/new_folder.png");
 
     public OpenDirectoryButton(Dimension dimension, TreeStructurePanel treeToPerformActionOn){
@@ -24,6 +26,7 @@ public class OpenDirectoryButton extends IconButtonWithLabel {
         this.treeToPerformActionOn = treeToPerformActionOn;
     }
 
+    @Override
     public void mouseClicked(MouseEvent e){
         super.mouseClicked(e);
         directoryToOpenPath = JOptionPane.showInputDialog(getParent(), DIALOG_FRAME_MESSAGE);
@@ -33,7 +36,9 @@ public class OpenDirectoryButton extends IconButtonWithLabel {
     }
 
 
-
+    /**
+     * This method refresh the ThreePanel after a new selection
+     */
     public void refreshTreePanel(){
         try{
             Path newRootPath = IbarOdfCore.stringToPath(directoryToOpenPath);
@@ -53,10 +58,4 @@ public class OpenDirectoryButton extends IconButtonWithLabel {
             }
         }
     }
-
-
-
-
-
-    
 }

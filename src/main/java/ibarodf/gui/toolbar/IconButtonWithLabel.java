@@ -11,10 +11,18 @@ import javax.swing.SwingConstants;
 
 import ibarodf.gui.palette.ColorPalette;
 
+/**
+ * This class represent a button with his icon
+ */
 public class IconButtonWithLabel extends JButton implements MouseListener{
 	private final Color bgColor = ColorPalette.MAIN_COLOR;	
-	private final Color bgMousePressedColor = ColorPalette.SECONDARY_COLOR;	
+	private final Color bgMousePressedColor = ColorPalette.SECONDARY_COLOR;
 
+	/**
+	 * Constructor of iconButtonWithLabel
+	 * @param labelText The text that will be displayed in the label
+	 * @param icon The icon that will be displayed next to the button
+	 */
 	public IconButtonWithLabel(String labelText, ImageIcon icon) {
 		super(labelText);
 		this.setIcon(icon);
@@ -24,6 +32,12 @@ public class IconButtonWithLabel extends JButton implements MouseListener{
 
 	}
 
+	/**
+	 * Constructor of iconButtonWithLabel
+	 * @param labelText The text that will be displayed in the label
+	 * @param icon The icon that will be displayed next to the button
+	 * @param preferredSize The preferred Dimension for the whole component
+	 */
 	public IconButtonWithLabel(String labelText, ImageIcon icon,  Dimension preferredSize) {
 		this(labelText, icon);
 		setPreferredSize(preferredSize);

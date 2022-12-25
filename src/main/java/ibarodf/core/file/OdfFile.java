@@ -55,7 +55,7 @@ public class OdfFile extends RegularFile {
 	public static final String METADATA = "Metadata";
 	public static final String HAVE_THESE_METADATA = "Have ";
 
-	public OdfFile(Path path) throws IOException, ZipException, EmptyOdfFileException, UnableToLoadOdfDocumentException,UnableToAddMetadataException, FileNotFoundException{
+	public OdfFile(Path path) throws IOException, ZipException, EmptyOdfFileException, UnableToAddMetadataException {
 		super(path);
 		if(!path.toFile().exists()){
 			throw new FileNotFoundException("The file "+ path.getFileName());

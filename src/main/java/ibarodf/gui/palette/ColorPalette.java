@@ -2,6 +2,9 @@ package ibarodf.gui.palette;
 
 import java.awt.Color;
 
+/**
+ * This class contains all Color use in the GUI
+ */
 public class ColorPalette {
 	public static final Color MAIN_COLOR = new Color(156, 39, 176);
 	public static final Color SECONDARY_COLOR = new Color(225, 190, 230);

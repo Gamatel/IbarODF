@@ -13,7 +13,7 @@ import ibarodf.core.metadata.MetadataSubject;
 import ibarodf.core.metadata.MetadataTitle;
 import ibarodf.core.metadata.object.Hyperlink;
 
-public class PropsName {
+class PropsName {
     public static final String PROPS_FILE_NAME = AbstractGenericFile.FILE_NAME;
     public static final String PROPS_MIMETYPE = AbstractGenericFile.MIME_TYPE;
     public static final String PROPS_SIZE = AbstractGenericFile.SIZE;
@@ -23,7 +23,6 @@ public class PropsName {
     public static final String PROPS_SUBJECT = MetadataSubject.SUBJECT;
     public static final String PROPS_COMMENT = MetadataComment.COMMENTS;
     public static final String PROPS_KEYWORDS =  MetadataKeyword.KEYWORDS;
-    public static final String PROPS_HYPERLINKS =  MetadataHyperlink.HYPERLINKS;
     public static final String PROPS_CREATION_DATE =  MetadataCreationDate.CREATION_DATE;
 
     public static final String PROPS_NUMBER_OF_SUBDIRECTORY =  Directory.SUBDIRECTORIES;
@@ -33,7 +32,6 @@ public class PropsName {
     public static final String PROPS_TOTAL_NUMBER_OF_FILE =  Directory.TOTAL_NUMBER_OF_FILES;
 
 
-    public static final String PROPS_STATS = MetadataStats.STATISTICS;
     public static final String PROPS_STATS_CELL_COUNT = MetadataStats.CELL_COUNT;
     public static final String PROPS_STATS_CHARACTER_COUNT = MetadataStats.CHARACTER_COUNT;
     public static final String PROPS_STATS_DRAWN_COUNT = MetadataStats.DRAWN_COUNT;

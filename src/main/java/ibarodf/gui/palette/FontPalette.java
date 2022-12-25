@@ -2,6 +2,9 @@ package ibarodf.gui.palette;
 
 import java.awt.Font;
 
+/**
+ * This class contains all fonts use in the GUI
+ */
 public class FontPalette {
     public static final Font TABLE_FONT_HEADER = new Font(Font.MONOSPACED, Font.BOLD, 17);
     public static final Font TABLE_FONT_CONTENT = new Font(Font.MONOSPACED, Font.PLAIN, 15);

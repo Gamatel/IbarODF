@@ -14,6 +14,9 @@ import java.awt.FlowLayout;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * This class represent a panel with DisplayPicturePanel for thumbnails and DisplayPictureTabbedPanel for odf img
+ */
 public class ShowPicturePanel extends JPanel {
     private final static Dimension IMG_SIZE = new Dimension(200, 260);
     private final DisplayPicturePanel overviewPanel;
@@ -21,6 +24,9 @@ public class ShowPicturePanel extends JPanel {
 
     boolean isAnOdfFile = false;
 
+    /**
+     * Constructor of ShowPicturePanel
+     */
     public ShowPicturePanel() {
         setLayout(new FlowLayout(FlowLayout.CENTER, 70, 0));
         overviewPanel = new DisplayPicturePanel("Aperçu du fichier", "Agrandir l'image", IMG_SIZE);
@@ -30,6 +36,11 @@ public class ShowPicturePanel extends JPanel {
         add(overviewPanel);
     }
 
+    /**
+     * This method change picture that will be displayed in ShowPicturePanel
+     * @param dataJson the Json Object that represent the whole file
+     * @throws NoSuchMetadataException exception that represent that picture array or thumbnails object isn't in dataJson
+     */
     public void loadFilePicture(JSONObject dataJson) throws NoSuchMetadataException {
         isAnOdfFile = IbarOdfResultParser.isOdfFile(dataJson);
 

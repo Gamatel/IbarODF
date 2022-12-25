@@ -11,7 +11,7 @@ import ibarodf.core.metadata.exception.UnableToConvertToJsonFormatException;
  * that have met a probleme during the contruction of a directory.
  */
 public class WrongFile extends RegularFile {
-    private String errorMessage;
+    private final String errorMessage;
     public final static String ERRORMESSAGE = "Error Message"; 
     private static final String DEFAULT_ERROR_MESSAGE = "Cannot get the error Message";
 

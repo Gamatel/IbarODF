@@ -13,6 +13,9 @@ import javax.swing.table.TableColumn;
 import java.awt.Color;
 import java.awt.Dimension;
 
+/**
+ * This class represent a table that will display metadata of file
+ */
 public class TablePanel extends JScrollPane {
 	private static final Color bgHeaderColor = ColorPalette.SECONDARY_COLOR;
 	private final static Color headerTextColor = ColorPalette.MAIN_TEXT_COLOR;
@@ -21,6 +24,9 @@ public class TablePanel extends JScrollPane {
 	private final JTable table;
 	private final static Dimension TABLE_DIM = new Dimension(850, 410);
 
+	/**
+	 * Constructor of TablePanel
+	 */
 	public TablePanel() {
 		super();
 
@@ -62,6 +68,10 @@ public class TablePanel extends JScrollPane {
 		header.setFont(FontPalette.TABLE_FONT_HEADER);
 	}
 
+	/**
+	 * Set a new Model for the table ( need to show metadata of a different file )
+	 * @param dataJson the JSONObject that represent the file to show metaData
+	 */
 	public void setModel(JSONObject dataJson) {
 		TableModel model = new TableModel(dataJson);
 		table.setModel(model);

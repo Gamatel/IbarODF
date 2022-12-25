@@ -21,6 +21,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.nio.file.Path;
 
+/**
+ * This class represent the Tree Structure with user file and select file to be displayed in MetaDataPanel
+ */
 public class TreeStructurePanel extends JScrollPane {
 	public final static String CURRENT_DIRECTORY = ".";
 
@@ -28,15 +31,23 @@ public class TreeStructurePanel extends JScrollPane {
 	private DefaultMutableTreeNode root;
 	private JSONObject directory;
 	private String pathText;
-	private final Dimension preferedSize;
-	private MetaDataPanel metadataPanel; 
+	private MetaDataPanel metadataPanel;
 
+	/**
+	 * Constructor of TreeStructurePanel
+	 * @param preferredSize preferred size of the component
+	 * @param metadataPanel referenece to MetaDataPanel class
+	 */
 	public TreeStructurePanel(Dimension preferredSize, MetaDataPanel metadataPanel) {
 		this(preferredSize, defaultRoot());
 		this.metadataPanel = metadataPanel;
 	}
 
 
+	/**
+	 * this methode set up root Directory
+	 * @param path path of root Directory
+	 */
 	public void setRootAsADirectory(String path){
 		try{
 			pathText = path;
@@ -49,6 +60,11 @@ public class TreeStructurePanel extends JScrollPane {
 	}
 
 
+	/**
+	 * this methode set a file as root
+	 * @param path path of root file
+	 * @throws Exception is throw if the file can't be transformed to json object
+	 */
 	public void setRootAsFile(String path) throws Exception{
 		pathText = path;
 		Path currentPath = IbarOdfCore.stringToPath(path);
@@ -56,6 +72,11 @@ public class TreeStructurePanel extends JScrollPane {
 		root = new DefaultMutableTreeNode(currentPath.getFileName());
 	}
 
+	/**
+	 * this method update the TreeeStructurePanel with new path
+	 * @param path path of a file or directory
+	 * @throws Exception is throw if the file can't be transformed to json object
+	 */
 	public void refresh(String path) throws Exception{
 		Path newRootPath = IbarOdfCore.stringToPath(path);
 		JSONObject newRoot = IbarOdfCore.RegularFileToJson(newRootPath);
@@ -65,7 +86,7 @@ public class TreeStructurePanel extends JScrollPane {
 			setRootAsFile(path);
 		}
 		tree = new JTree(root);
-		//tree.setPreferredSize(preferedSize); COUPE L'ARBRE SINON
+		// tree.setPreferredSize(preferedSize); COUPE L'ARBRE SINON
 		tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 		tree.addTreeSelectionListener(new SelectionListener());
 		setViewportView(tree);
@@ -75,7 +96,6 @@ public class TreeStructurePanel extends JScrollPane {
 
 	public TreeStructurePanel(Dimension preferredSize, String path){
 		super();
-		this.preferedSize = preferredSize;
 		setPreferredSize(preferredSize);
 		setBackground(Color.BLUE);
 		setRootAsADirectory(path);
@@ -85,10 +105,6 @@ public class TreeStructurePanel extends JScrollPane {
 		tree.addTreeSelectionListener(new SelectionListener());
 		setViewportView(tree);
 		fillTreeStructure();
-	}
-
-	public JTree getTree() {
-		return tree;
 	}
 
 	public static String defaultRoot() {

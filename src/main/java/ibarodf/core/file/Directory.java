@@ -1,8 +1,11 @@
 package ibarodf.core.file;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-
+import ibarodf.core.IbarOdfCore;
+import ibarodf.core.file.exception.EmptyOdfFileException;
+import ibarodf.core.file.exception.UnableToAddMetadataException;
+import ibarodf.core.file.exception.UnrecognizableTypeFileException;
+import ibarodf.core.metadata.exception.UnableToConvertToJsonFormatException;
+import net.lingala.zip4j.exception.ZipException;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -11,13 +14,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import ibarodf.core.IbarOdfCore;
-import ibarodf.core.file.exception.EmptyOdfFileException;
-import ibarodf.core.file.exception.UnableToAddMetadataException;
-import ibarodf.core.file.exception.UnableToLoadOdfDocumentException;
-import ibarodf.core.file.exception.UnrecognizableTypeFileException;
-import ibarodf.core.metadata.exception.UnableToConvertToJsonFormatException;
-import net.lingala.zip4j.exception.ZipException;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * This class represents a directory. It contains a list of directories, a list of regular files
@@ -53,7 +51,7 @@ public  class Directory extends RegularFile {
         ArrayList<Path>filesPath = getSubFilesPathFromDirectory(path);
         addFiles(filesPath);
     }
-    
+
     public Directory(Path path) throws FileNotFoundException{
         this(path, false);
     }
@@ -85,7 +83,7 @@ public  class Directory extends RegularFile {
         }
     }
 
-    private void addAfile(Path odfFilePath) throws UnableToLoadOdfDocumentException, UnrecognizableTypeFileException, IOException, ZipException, EmptyOdfFileException, UnableToAddMetadataException{
+    private void addAfile(Path odfFilePath) throws UnrecognizableTypeFileException, IOException, ZipException, EmptyOdfFileException, UnableToAddMetadataException{
         if(IbarOdfCore.isAnOdfFile(odfFilePath)){
             odfFiles.add(new OdfFile(odfFilePath));
             numberOfOdfFiles++;
@@ -121,7 +119,7 @@ public  class Directory extends RegularFile {
      * @return A list of Path corresponding to the children of the search directory.
      */
     public static ArrayList<Path> getSubFilesPathFromDirectory(Path directoryPath) throws FileNotFoundException{
-        ArrayList<Path> filesPath = new ArrayList<Path>();
+        ArrayList<Path> filesPath = new ArrayList<>();
         File directory = new File(directoryPath.toString());
         String[] textPath = directory.list();
         String separator = IbarOdfCore.getCurrentSystemSeparator();

@@ -195,7 +195,7 @@ public abstract class IbarOdfCore {
 		return directory.toJonObject();
 	}
 
-	public static JSONObject directoryToJson(Path directoryPath) throws FileNotFoundException, UnableToConvertToJsonFormatException {
+public static JSONObject directoryToJson(Path directoryPath) throws FileNotFoundException, UnableToConvertToJsonFormatException {
 		return directoryToJson(directoryPath, false);
 	}
 
