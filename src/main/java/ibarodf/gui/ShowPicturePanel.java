@@ -73,7 +73,6 @@ public class ShowPicturePanel extends JPanel {
 
     private Set<String> getPicturePathSet(JSONObject dataJson) throws NoSuchMetadataException {
         Set<String> picturesPathSet = new HashSet<>();
-        System.err.println(dataJson);
         JSONArray picturesArrayJson = IbarOdfResultParser.getPictures(dataJson);
 
         int i = 0;
