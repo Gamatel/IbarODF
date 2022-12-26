@@ -80,6 +80,7 @@ public class TreeStructurePanel extends JScrollPane {
 	public void refresh(String path) throws Exception{
 		Path newRootPath = IbarOdfCore.stringToPath(path);
 		JSONObject newRoot = IbarOdfCore.RegularFileToJson(newRootPath);
+		root.removeAllChildren();
 		if(IbarOdfResultParser.isDirectory(newRoot)){
 			setRootAsADirectory(path);
 		}else{
