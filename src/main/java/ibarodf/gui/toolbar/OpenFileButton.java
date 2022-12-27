@@ -2,12 +2,15 @@ package ibarodf.gui.toolbar;
 import java.awt.Dimension;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Path;
 
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
+import ibarodf.ResourceLoader;
 import ibarodf.core.IbarOdfCore;
+import ibarodf.gui.OptionPane;
 import ibarodf.gui.TreeStructurePanel;
 import ibarodf.gui.toolbar.exception.CurrentFileIsADirectory;
 
@@ -17,9 +20,16 @@ public class OpenFileButton extends IconButtonWithLabel{
     private String fileToOpenPath;
     private final TreeStructurePanel treeToPerformActionOn;
 
+    public static ImageIcon BUTTON_IMAGE = new ImageIcon("src/main/resources/icons/file_open.png");
 
+    static {
+        try {
+            BUTTON_IMAGE = ResourceLoader.loadImgFromResource("icons/file_open.png");
+        } catch (IOException ignored) {
+            OptionPane.alertError(null, ResourceLoader.MSG_ERROR);
+        }
+    }
 
-    public final static ImageIcon BUTTON_IMAGE = new ImageIcon("src/main/resources/icons/file_open.png");
 
     public OpenFileButton(Dimension dimension, TreeStructurePanel treeToPerformActionOn){
         super(BUTTON_LABEL, BUTTON_IMAGE , dimension);
