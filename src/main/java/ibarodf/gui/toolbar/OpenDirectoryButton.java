@@ -1,43 +1,29 @@
 package ibarodf.gui.toolbar;
-
-import ibarodf.ResourceLoader;
-import ibarodf.core.IbarOdfCore;
-import ibarodf.gui.OptionPane;
-import ibarodf.gui.TreeStructurePanel;
-import ibarodf.gui.toolbar.exception.CurrentDirectoryIsAFile;
+import java.awt.Dimension;
 
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
-import java.awt.Dimension;
+
+import ibarodf.core.IbarOdfCore;
+import ibarodf.gui.TreeStructurePanel;
+import ibarodf.gui.toolbar.exception.CurrentDirectoryIsAFile;
+
 import java.awt.event.MouseEvent;
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Path;
 
-/**
- * This class represent the Button that choice a Directory to be display in the TreeeStructurePanel
- */
 public class OpenDirectoryButton extends IconButtonWithLabel {
-    private final static String BUTTON_LABEL = "Ouvrir un dossier "; 
-    private final static String DIALOG_FRAME_MESSAGE = " Entrer le chemin absolu du dossier "; 
-    private String directoryToOpenPath; 
+    private final static String BUTTON_LABEL = "Ouvrir un dossier ";
+    private final static String DIALOG_FRAME_MESSAGE = " Entrer le chemin du dossier ";
+    private String directoryToOpenPath;
     private final TreeStructurePanel treeToPerformActionOn;
-    public static ImageIcon IMAGE_BUTTON;
-
-    static {
-        try {
-            IMAGE_BUTTON = ResourceLoader.loadImgFromResource("icons/new_folder.png");
-        } catch (IOException e) {
-            OptionPane.alertError(null, ResourceLoader.MSG_ERROR);
-        }
-    }
+    public final static ImageIcon IMAGE_BUTTON = new ImageIcon("src/main/resources/icons/new_folder.png");
 
     public OpenDirectoryButton(Dimension dimension, TreeStructurePanel treeToPerformActionOn){
         super( BUTTON_LABEL,  IMAGE_BUTTON , dimension);
         this.treeToPerformActionOn = treeToPerformActionOn;
     }
 
-    @Override
     public void mouseClicked(MouseEvent e){
         super.mouseClicked(e);
         directoryToOpenPath = JOptionPane.showInputDialog(getParent(), DIALOG_FRAME_MESSAGE);
@@ -47,14 +33,20 @@ public class OpenDirectoryButton extends IconButtonWithLabel {
     }
 
 
-    /**
-     * This method refresh the ThreePanel after a new selection
-     */
+
     public void refreshTreePanel(){
         try{
+            StringBuilder filePath = new StringBuilder(directoryToOpenPath);
+            String currentSeparator = IbarOdfCore.getCurrentSystemSeparator();
+            if(directoryToOpenPath.startsWith("..")){
+                directoryToOpenPath = treeToPerformActionOn.rootName(currentSeparator)+currentSeparator+ filePath.toString();
+            }else if(directoryToOpenPath.startsWith(".")){
+                filePath.deleteCharAt(0);
+                directoryToOpenPath = treeToPerformActionOn.rootName(currentSeparator)+ currentSeparator+ filePath.toString();
+            }
             Path newRootPath = IbarOdfCore.stringToPath(directoryToOpenPath);
             if(newRootPath.toFile().isDirectory()){
-                treeToPerformActionOn.refresh(newRootPath.toString());
+                treeToPerformActionOn.refresh(newRootPath.toString(), true);
             }else{
                 throw new CurrentDirectoryIsAFile(newRootPath);
             }
